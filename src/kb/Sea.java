@@ -1,5 +1,5 @@
 package kb;
 
-public class Sea implements Province {
+public class Sea extends Province {
 
 }

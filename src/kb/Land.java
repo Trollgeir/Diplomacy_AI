@@ -1,5 +1,5 @@
 package kb;
 
-public class Land implements Province {
+public class Land extends Province {
 
 }

@@ -4,7 +4,7 @@ import kb.*;
 import kb.unit.*;
 
 /**
- * "Move" is the order to move a unit to an adjacent node
+ * The order to move a unit to an adjacent node.
  * @author Koen
  *
  */
@@ -14,15 +14,16 @@ public class Move implements Order {
 	Unit 		unit;
 	Node 		moveTo;
 	
-	Move(Unit _unit, Node _moveTo)
+	Move(Unit unit, Node moveTo)
 	{
-		unit = _unit;
-		moveTo = _moveTo;
+		this.unit = unit;
+		this.moveTo = moveTo;
 	}
 	
-	public String translateToDAIDE()
+	@Override
+	public String daide()
 	{
-		return "(" + "Unit indicator here!" + ") MTO " + "Province indicator here!";
+		return "(" + unit.daide() + ") MTO " + moveTo.daide();
 	}
 	
 }

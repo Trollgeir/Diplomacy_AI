@@ -1,13 +1,18 @@
 package kb.order;
 
+/**
+ * An order, these can be translated to DAIDE message syntax.
+ * @author Koen
+ *
+ */
 
 public interface Order {
 
 	
 	/**
-	 * Translate this order to DAIDE, allowing the server to process the order.
+	 * Get the DAIDE message syntax representation of this order.
 	 * @return The DAIDE version of this order.
 	 */
-	String translateToDAIDE();
+	String daide();
 	
 }
