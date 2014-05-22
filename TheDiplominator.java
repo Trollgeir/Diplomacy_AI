@@ -11,7 +11,6 @@ import java.util.*;
 
 /**
  * Koen was here
- * Thijs is a doofus
  */
 
 /**
