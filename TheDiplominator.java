@@ -1,6 +1,5 @@
 package dip.daide.us;
 
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -18,6 +17,8 @@ import java.util.*;
  * @changedby Brian Reigersberg
  *
  */
+
+
 public class TheDiplominator implements MessageListener{
 
 	static final String VERSION = "0.2";
@@ -40,7 +41,7 @@ public class TheDiplominator implements MessageListener{
 	private final int FAL = 2; 
 	private final int AUT = 3; 
 	private final int WIN = 4;
-    
+	
     public TheDiplominator(InetAddress ip, int port, String name){
     	this.name = name;
     	try {
