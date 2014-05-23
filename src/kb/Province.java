@@ -19,5 +19,35 @@ public abstract class Province {
 	{
 		return name;
 	}
+	
+	/**
+	 * 
+	 * @return Whether or not an army can walk on this Province
+	 */
+	public boolean armyAccess()
+	{
+		return isLand() || isCoast();
+	}
+	/**
+	 * 
+	 * @return Whether or not a fleet can move on this Province
+	 */
+	public boolean fleetAccess()
+	{
+		return isSea() || isCoast();
+	}
 
+	
+	public boolean isLand() 
+	{
+		return false;
+	}
+	public boolean isSea() 
+	{
+		return false;
+	}
+	public boolean isCoast() 
+	{
+		return false;
+	}
 }
