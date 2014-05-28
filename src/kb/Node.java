@@ -1,5 +1,9 @@
 package kb;
 
+import java.util.ArrayList;
+
+import kb.unit.Unit;
+
 /**
  * This is where the units will actually move around. 
  * Nodes & Provinces are separate classes because coastal provinces can have more than one node.
@@ -9,9 +13,11 @@ package kb;
 
 public class Node {
 
-	Province		province;
-	boolean			coastal;
-	String			coastName;
+	public Province			province;
+	boolean					coastal;
+	String					coastName;
+	public ArrayList<Node>	neighbors;
+	public Unit				unit;
 	
 	/**
 	 * Create a non-coastal Node.
@@ -22,6 +28,7 @@ public class Node {
 		this.province = province;
 		this.coastal = false;
 		this.coastName = "";
+		unit = null;
 	}
 	
 	/**
@@ -34,6 +41,7 @@ public class Node {
 		this.province = province;
 		this.coastal = true;
 		this.coastName = coastName;
+		unit = null;
 	}
 	
 	/**
@@ -48,8 +56,13 @@ public class Node {
 			return province.daide() + " " + coastName;
 	}
 	
+	public boolean occupied()
+	{
+		return unit != null;
+	}
 	
-	public boolean isCoastal()
+	
+	public boolean isCoast()
 	{
 		return coastal;
 	}

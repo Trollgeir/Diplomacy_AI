@@ -12,7 +12,7 @@ public class Hold implements Order {
 
 	Unit 		unit;
 	
-	Hold(Unit unit)
+	public Hold(Unit unit)
 	{
 		this.unit = unit;
 	}

@@ -14,7 +14,7 @@ public class Move implements Order {
 	Unit 		unit;
 	Node 		moveTo;
 	
-	Move(Unit unit, Node moveTo)
+	public Move(Unit unit, Node moveTo)
 	{
 		this.unit = unit;
 		this.moveTo = moveTo;

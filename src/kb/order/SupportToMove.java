@@ -14,7 +14,7 @@ public class SupportToMove implements Order {
 	Unit		unit, supportedUnit;
 	Node		movingTo;
 	
-	SupportToMove(Unit unit, Unit supportedUnit, Node movingTo)
+	public SupportToMove(Unit unit, Unit supportedUnit, Node movingTo)
 	{
 		this.unit = unit;
 		this.supportedUnit = supportedUnit;

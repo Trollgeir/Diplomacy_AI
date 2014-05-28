@@ -1,5 +1,7 @@
 package kb;
 
+import kb.unit.Unit;
+
 /**
  * A province. Provinces contain nodes, which is where the units will actually walk around.
  * @author Koen
@@ -8,8 +10,19 @@ package kb;
 
 public abstract class Province {
 	
-	String 		name;
-	Node		centralNode;
+	String 			name;
+	Node			centralNode;
+	
+	
+	public boolean occupied()
+	{
+		return unit() != null;
+	}
+	
+	public Unit unit()
+	{
+		return centralNode.unit;
+	}
 	
 	/**
 	 * Get the DAIDE message syntax representation of this province.

@@ -12,7 +12,7 @@ public class SupportToHold implements Order {
 
 	Unit		unit, supportedUnit;
 	
-	SupportToHold(Unit unit, Unit supportedUnit)
+	public SupportToHold(Unit unit, Unit supportedUnit)
 	{
 		this.unit = unit;
 		this.supportedUnit = supportedUnit;
