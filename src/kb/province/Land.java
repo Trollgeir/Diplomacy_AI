@@ -1,4 +1,4 @@
-package kb;
+package kb.province;
 
 /**
  * Inland province. These only have a central node and are only accessible by armies.

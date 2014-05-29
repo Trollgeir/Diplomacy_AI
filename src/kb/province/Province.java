@@ -1,5 +1,6 @@
-package kb;
+package kb.province;
 
+import kb.Node;
 import kb.unit.Unit;
 
 /**
@@ -28,7 +29,7 @@ public abstract class Province {
 	 * Get the DAIDE message syntax representation of this province.
 	 * @return The DAIDE version of this province.
 	 */
-	String daide()
+	public String daide()
 	{
 		return name;
 	}

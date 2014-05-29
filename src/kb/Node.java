@@ -2,6 +2,7 @@ package kb;
 
 import java.util.ArrayList;
 
+import kb.province.Province;
 import kb.unit.Unit;
 
 /**

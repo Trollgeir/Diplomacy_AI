@@ -1,7 +1,8 @@
-package kb;
+package kb.province;
 
 import java.util.ArrayList;
 
+import kb.Node;
 import kb.unit.Unit;
 
 /**

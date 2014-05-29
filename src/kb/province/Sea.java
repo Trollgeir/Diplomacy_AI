@@ -1,4 +1,4 @@
-package kb;
+package kb.province;
 
 /**
  * A sea province. Only accessible by fleets.
