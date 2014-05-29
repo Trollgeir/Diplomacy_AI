@@ -45,7 +45,6 @@ public abstract class Unit {
 		{
 			Node adjacentNode = location.neighbors.get(i);
 			
-			//Movement to adjacent inland provinces/nodes
 			if (this.canMoveOn(adjacentNode))
 			{
 				retList.add(new Move(this, adjacentNode));

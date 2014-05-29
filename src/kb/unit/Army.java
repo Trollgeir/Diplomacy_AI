@@ -11,7 +11,7 @@ import kb.Node;
  */
 public class Army extends Unit {
 
-	Army(Power owner, Node location) {
+	public Army(Power owner, Node location) {
 		super(owner, location);
 	}
 
@@ -23,7 +23,7 @@ public class Army extends Unit {
 	@Override
 	public boolean canMoveOn(Node node)
 	{
-		return node.equals(node.isLand());
+		return node.isLand();
 	}
 	
 }

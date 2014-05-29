@@ -23,7 +23,7 @@ public class Fleet extends Unit {
 	@Override
 	public boolean canMoveOn(Node node)
 	{
-		return node.equals(node.isSea() || node.isCoast());
+		return node.isSea() || node.isCoast();
 	}
 	
 }

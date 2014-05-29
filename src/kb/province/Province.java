@@ -14,6 +14,11 @@ public abstract class Province {
 	String 			name;
 	Node			centralNode;
 	
+	Province(String name)
+	{
+		this.name = name;
+	}
+	
 	
 	public boolean occupied()
 	{

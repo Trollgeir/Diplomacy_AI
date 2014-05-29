@@ -29,6 +29,7 @@ public class Node {
 		this.province = province;
 		this.coastal = false;
 		this.coastName = "";
+		neighbors = new ArrayList<Node>();
 		unit = null;
 	}
 	
@@ -42,6 +43,7 @@ public class Node {
 		this.province = province;
 		this.coastal = true;
 		this.coastName = coastName;
+		neighbors = new ArrayList<Node>();
 		unit = null;
 	}
 	

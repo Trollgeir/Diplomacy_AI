@@ -9,6 +9,11 @@ package kb.province;
 public class Sea extends Province {
 
 	
+	Sea(String name)
+	{
+		super(name);
+	}
+	
 	@Override
 	public boolean isSea() 
 	{

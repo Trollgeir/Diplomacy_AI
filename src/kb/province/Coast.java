@@ -15,6 +15,11 @@ import kb.unit.Unit;
 public class Coast extends Land{
 
 	ArrayList<Node>		coastLine;
+
+	Coast(String name)
+	{
+		super(name);
+	}
 	
 	@Override
 	public Unit unit()

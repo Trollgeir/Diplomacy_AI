@@ -8,6 +8,12 @@ package kb.province;
 
 public class Land extends Province {
 
+	public Land(String name)
+	{
+		super(name);
+	}
+	
+
 	@Override
 	public boolean isLand() 
 	{
