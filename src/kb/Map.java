@@ -22,13 +22,13 @@ public class Map {
 		Power power = new Power("POW");
 		Province p1, p2, p3;
 		Node n1, n2, n3;
-		p1 = new Land("NON");
+		p1 = new Land("NON", false);
 		n1 = new Node(p1);
 		
-		p2 = new Land("NTW");
+		p2 = new Land("NTW", false);
 		n2 = new Node(p2);
 		
-		p3 = new Land("NTH");
+		p3 = new Land("NTH", false);
 		n3 = new Node(p3);
 		
 		
@@ -45,4 +45,18 @@ public class Map {
 		}
 	}
 
+	public Node getNode(String name)
+	{
+		for (int i = 0; i < provinces.size(); i++)
+		{
+			Province ret = provinces.get(i);
+			if (ret.name() == name)
+			{
+				return ret.getNode();
+			}
+		}
+		
+		return null;
+	}
+	
 }

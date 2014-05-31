@@ -11,7 +11,7 @@ public class Sea extends Province {
 	
 	Sea(String name)
 	{
-		super(name);
+		super(name, false);
 	}
 	
 	@Override

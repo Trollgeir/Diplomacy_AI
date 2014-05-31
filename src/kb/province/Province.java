@@ -13,12 +13,29 @@ public abstract class Province {
 	
 	String 			name;
 	Node			centralNode;
+	boolean			supplyCenter;
 	
-	Province(String name)
+	Province(String name, boolean hasSupply)
 	{
 		this.name = name;
+		this.supplyCenter = hasSupply;
 	}
 	
+	
+	public String name()
+	{
+		return name;
+	}
+	
+	public Node getNode()
+	{
+		return centralNode;
+	}
+	
+	public Node getNode(String coastName)
+	{
+		return null;
+	}
 	
 	public boolean occupied()
 	{

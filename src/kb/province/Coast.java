@@ -16,9 +16,10 @@ public class Coast extends Land{
 
 	ArrayList<Node>		coastLine;
 
-	Coast(String name)
+	Coast(String name, boolean hasSupply)
 	{
-		super(name);
+		super(name, hasSupply);
+		coastLine = new ArrayList<Node>();
 	}
 	
 	@Override
@@ -35,6 +36,18 @@ public class Coast extends Land{
 			{
 				return coastLine.get(i).unit;
 			}
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public Node getNode(String coastName)
+	{
+		for (int i = 0; i < coastLine.size(); i++)
+		{
+			if (coastLine.get(i).coastName() == coastName)
+				return coastLine.get(i);
 		}
 		
 		return null;

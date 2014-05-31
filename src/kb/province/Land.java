@@ -8,9 +8,9 @@ package kb.province;
 
 public class Land extends Province {
 
-	public Land(String name)
+	public Land(String name, boolean hasSupply)
 	{
-		super(name);
+		super(name, hasSupply);
 	}
 	
 

@@ -70,6 +70,11 @@ public class Node {
 		return coastal;
 	}
 	
+	public String coastName()
+	{
+		return coastName;
+	}
+	
 	public boolean isLand()
 	{
 		if (!coastal)
