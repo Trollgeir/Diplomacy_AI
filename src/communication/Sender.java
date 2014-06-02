@@ -1,9 +1,14 @@
 package communication;
 
+import java.io.IOException;
 import java.net.InetAddress;
-import server.Server;
 
-public class Sender
+import communication.server.DisconnectedException;
+import communication.server.MessageListener;
+import communication.server.Server;
+import communication.server.UnknownTokenException;
+
+public class Sender implements MessageListener
 {
 	int port;
 	String name;
@@ -24,7 +29,7 @@ public class Sender
     	    String[] msg = new String[]{
     	    		"NME",
                     "(", "'" + this.name + "'", ")",
-                    "(", "'" + VERSION + "'", ")"
+                    "(", "'v 0.1'", ")"
                   };
     	    
     	    serv.send(msg);
@@ -43,7 +48,19 @@ public class Sender
 	
 	public void send(String[] message)
 	{
-		serv.send(message);
+		try {
+			serv.send(message);
+		} catch (UnknownTokenException | DisconnectedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
+
+	@Override
+	public void messageReceived(String[] message) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }
