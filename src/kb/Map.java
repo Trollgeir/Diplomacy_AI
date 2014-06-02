@@ -1,7 +1,10 @@
 package kb;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import communication.Sender;
 import kb.order.Order;
 import kb.province.Land;
 import kb.province.Province;
@@ -18,7 +21,16 @@ public class Map {
 	ArrayList<Province>		provinces;
 	ArrayList<Power>		powers;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws UnknownHostException {
+		try
+		{
+			Sender send = new Sender(InetAddress.getByName("localhost"), 0);
+			send.send("NME ('pbbpopbppbpppbpp', 'v 0.1')");
+		}
+		finally
+		{
+			
+		}
 		Power power = new Power("POW");
 		Province p1, p2, p3;
 		Node n1, n2, n3;
