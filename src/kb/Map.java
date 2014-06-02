@@ -22,7 +22,7 @@ public class Map {
 	ArrayList<Power>		powers;
 	
 	public static void main(String[] args) throws UnknownHostException {
-		Sender send = new Sender(InetAddress.getByName("localhost"), 16713, "LAME");
+		Sender send = new Sender(InetAddress.getByName("localhost"), 16713, "COOL");
 		Power power = new Power("POW");
 		Province p1, p2, p3;
 		Node n1, n2, n3;
