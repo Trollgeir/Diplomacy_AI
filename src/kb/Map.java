@@ -35,6 +35,8 @@ public class Map {
 		n1.neighbors.add(n2);
 		n2.neighbors.add(n1);
 		
+		n2.neighbors.add(n3);
+		n3.neighbors.add(n2);
 		
 		n2.unit = new Army(power, n2);
 		ArrayList<Order> order = n2.unit.possibleOrders();

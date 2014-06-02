@@ -12,10 +12,6 @@ public class Sender
 		this.ip = _ip;
 		this.port = _port;
 		
-		try
-		{
-			
-		}
 		
 		
 	}
