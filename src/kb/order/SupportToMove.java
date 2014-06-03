@@ -1,5 +1,7 @@
 package kb.order;
 
+import java.util.ArrayList;
+
 import kb.Node;
 import kb.unit.Unit;
 
@@ -22,8 +24,20 @@ public class SupportToMove implements Order {
 	}
 	
 	@Override
-	public String daide() {
-		return "(" + unit.daide() + ") SUP (" + supportedUnit.daide() + ") MTO " + movingTo.daide();
+	public ArrayList<String> daide() {
+ArrayList<String> ret = new ArrayList<String>();
+		
+		ret.add("(");
+		ret.addAll(unit.daide());
+		ret.add(")");
+		ret.add("SUP");
+		ret.add("(");
+		ret.addAll(supportedUnit.daide());
+		ret.add(")");
+		ret.add("MTO");
+		ret.addAll(movingTo.daide());
+		
+		return ret;
 	}
 
 }

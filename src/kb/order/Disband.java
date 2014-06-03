@@ -1,5 +1,7 @@
 package kb.order;
 
+import java.util.ArrayList;
+
 import kb.unit.Unit;
 
 /**
@@ -18,8 +20,15 @@ public class Disband implements Order {
 	}
 	
 	@Override
-	public String daide() {
-		return "(" + unit.daide() + ") DSB";
+	public ArrayList<String> daide() {
+ArrayList<String> ret = new ArrayList<String>();
+		
+		ret.add("(");
+		ret.addAll(unit.daide());
+		ret.add(")");
+		ret.add("DSB");
+		
+		return ret;
 	}
 
 }

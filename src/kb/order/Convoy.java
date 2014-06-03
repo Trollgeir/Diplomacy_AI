@@ -1,5 +1,7 @@
 package kb.order;
 
+import java.util.ArrayList;
+
 import kb.Node;
 import kb.unit.Unit;
 
@@ -28,8 +30,20 @@ public class Convoy implements Order {
 	}
 	
 	@Override
-	public String daide() {
-		return "(" + carrier.daide() + ") CVY (" + carrying.daide() + ") CTO " + carryTo.daide();
+	public ArrayList<String> daide() {
+		ArrayList<String> ret = new ArrayList<String>();
+		
+		ret.add("(");
+		ret.addAll(carrier.daide());
+		ret.add(")");
+		ret.add("CVY");
+		ret.add("(");
+		ret.addAll(carrying.daide());
+		ret.add(")");
+		ret.add("CTO");
+		ret.addAll(carryTo.daide());
+		
+		return ret;
 	}
 	
 }

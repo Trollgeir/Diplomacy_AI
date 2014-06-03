@@ -1,5 +1,7 @@
 package kb.order;
 
+import java.util.ArrayList;
+
 import kb.Power;
 
 /**
@@ -18,8 +20,13 @@ public class WaiveBuild implements Order {
 	}
 	
 	@Override
-	public String daide() {
-		return power.daide() + " WVE";
+	public ArrayList<String> daide() {
+		ArrayList<String> ret = new ArrayList<String>();
+		
+		ret.addAll(power.daide());
+		ret.add("WVE");
+		
+		return ret;
 	}
 
 }

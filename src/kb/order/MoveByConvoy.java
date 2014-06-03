@@ -31,13 +31,22 @@ public class MoveByConvoy implements Order {
 	}
 	
 	@Override
-	public String daide() {
-		String ret = "(" + unit.daide() + ") CTO " + destination.daide() + " VIA (";
+	public ArrayList<String> daide() {
+		ArrayList<String> ret = new ArrayList<String>();
+		
+		ret.add("(");
+		ret.addAll(unit.daide());
+		ret.add(")");
+		ret.add("CTO");
+		ret.addAll(destination.daide());
+		ret.add("VIA");
+		ret.add("(");
+		
 		
 		for (int i = 0; i < via.size(); i++)
-			ret += via.get(i).daide() + " ";
+			ret.addAll(via.get(i).daide());
 		
-		ret += ")";
+		ret.add(")");
 		
 		return ret;
 	}

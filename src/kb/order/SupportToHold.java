@@ -1,5 +1,7 @@
 package kb.order;
 
+import java.util.ArrayList;
+
 import kb.unit.Unit;
 
 /**
@@ -19,8 +21,18 @@ public class SupportToHold implements Order {
 	}
 	
 	@Override
-	public String daide() {
-		return "(" + unit.daide() + ") SUP (" + supportedUnit.daide() + ")";
+	public ArrayList<String> daide() {
+		ArrayList<String> ret = new ArrayList<String>();
+		
+		ret.add("(");
+		ret.addAll(unit.daide());
+		ret.add(")");
+		ret.add("SUP");
+		ret.add("(");
+		ret.addAll(supportedUnit.daide());
+		ret.add(")");
+		
+		return ret;
 	}
 
 }

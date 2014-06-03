@@ -1,5 +1,7 @@
 package kb.unit;
 
+import java.util.ArrayList;
+
 import kb.Power;
 import kb.Node;
 
@@ -16,8 +18,13 @@ public class Fleet extends Unit {
 	}
 
 	@Override
-	public String daide() {
-		return owner.daide() + " FLT " + location.daide(); 
+	public ArrayList<String> daide() {
+		ArrayList<String> ret = owner.daide();
+		
+		ret.add("FLT");
+		ret.addAll(location.daide());
+		
+		return ret;  
 	}
 	
 	@Override

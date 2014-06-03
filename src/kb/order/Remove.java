@@ -1,5 +1,7 @@
 package kb.order;
 
+import java.util.ArrayList;
+
 import kb.unit.Unit;
 
 /**
@@ -18,8 +20,15 @@ public class Remove implements Order {
 	}
 	
 	@Override
-	public String daide() {
-		return "(" + unit.daide() + ") REM";
+	public ArrayList<String> daide() {
+		ArrayList<String> ret = new ArrayList<String>();
+		
+		ret.add("(");
+		ret.addAll(unit.daide());
+		ret.add(")");
+		ret.add("REM");
+		
+		return ret;
 	}
 
 }

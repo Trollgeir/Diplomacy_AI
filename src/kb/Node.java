@@ -12,7 +12,7 @@ import kb.unit.Unit;
  *
  */
 
-public class Node {
+public class Node implements DaideMessage{
 
 	public Province			province;
 	boolean					coastal;
@@ -51,12 +51,16 @@ public class Node {
 	 * Get the DAIDE message syntax representation of this node.
 	 * @return The DAIDE version of this node.
 	 */
-	public String daide()
+	public ArrayList<String> daide()
 	{
-		if (!coastal)
-			return province.daide();
-		else
-			return province.daide() + " " + coastName;
+		ArrayList<String> ret = new ArrayList<String>();
+		
+		ret.add(province.daide());
+		
+		if (coastal)
+			ret.add(coastName);
+		
+		return ret;
 	}
 	
 	public boolean occupied()

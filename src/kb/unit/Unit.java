@@ -2,6 +2,7 @@ package kb.unit;
 
 import java.util.ArrayList;
 
+import kb.DaideMessage;
 import kb.Node;
 import kb.Power;
 import kb.order.Hold;
@@ -15,7 +16,7 @@ import kb.order.SupportToMove;
  * @author Koen
  *
  */
-public abstract class Unit {
+public abstract class Unit implements DaideMessage {
 
 	public Power	owner;
 	public Node		location;
@@ -29,7 +30,7 @@ public abstract class Unit {
 	
 	public abstract boolean canMoveOn(Node node);
 	
-	public abstract String daide();
+	public abstract ArrayList<String> daide();
 	
 	
 	public ArrayList<Order> possibleOrders()
