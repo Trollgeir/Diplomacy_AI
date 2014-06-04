@@ -1,6 +1,4 @@
-package kb;
-
-import java.util.ArrayList;
+package message;
 
 public interface DaideMessage {
 
@@ -8,6 +6,6 @@ public interface DaideMessage {
 	 * 
 	 * @return The DAIDE syntax representation of this object.
 	 */
-	public ArrayList<String> daide();
+	public DaideList daide();
 	
 }
