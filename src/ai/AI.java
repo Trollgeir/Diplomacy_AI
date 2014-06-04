@@ -1,10 +1,10 @@
 package ai;
 
-public abstract class AI implements MessageListener {
+public abstract class AI {
 
 	Interpreter;
 
-	public void messageReceived(String[] message) {
+	public void onMessage(String[] message) {
 		Interpreter.interpret(message); 
 	}
 

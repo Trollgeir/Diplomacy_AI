@@ -1,4 +1,4 @@
-package kb.order;
+package message.order;
 
 import java.util.ArrayList;
 
