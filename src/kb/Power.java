@@ -1,6 +1,7 @@
 package kb;
 
-import java.util.ArrayList;
+import message.DaideList;
+import message.DaideMessage;
 
 /**
  * One of the powers (players) in the game.
@@ -21,9 +22,9 @@ public class Power implements DaideMessage{
 	 * Get the DAIDE message syntax representation of this power.
 	 * @return The DAIDE version of this power.
 	 */
-	public ArrayList<String> daide()
+	public DaideList daide()
 	{
-		ArrayList<String> ret = new ArrayList<String>();
+		DaideList ret = new DaideList();
 		ret.add(name);
 		return ret;
 	}

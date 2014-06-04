@@ -1,7 +1,6 @@
 package message.order;
 
-import java.util.ArrayList;
-
+import message.DaideList;
 import kb.unit.Unit;
 
 /**
@@ -20,13 +19,12 @@ public class Hold implements Order {
 	}
 	
 	@Override
-	public ArrayList<String> daide() {
-		ArrayList<String> ret = new ArrayList<String>();
+	public DaideList daide() {
+		DaideList ret = new DaideList();
 		
 		ret.add("(");
 		ret.addAll(unit.daide());
-		ret.add(")");
-		ret.add("HLD");
+		ret.add2(")", "HLD");
 		
 		return ret;
 	}

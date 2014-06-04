@@ -4,8 +4,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import message.order.Order;
 import communication.Sender;
-import kb.order.Order;
 import kb.province.Land;
 import kb.province.Province;
 import kb.unit.Army;

@@ -2,6 +2,7 @@ package message.order;
 
 import java.util.ArrayList;
 
+import message.DaideList;
 import kb.Node;
 import kb.unit.Unit;
 
@@ -31,16 +32,14 @@ public class MoveByConvoy implements Order {
 	}
 	
 	@Override
-	public ArrayList<String> daide() {
-		ArrayList<String> ret = new ArrayList<String>();
+	public DaideList daide() {
+		DaideList ret = new DaideList();
 		
 		ret.add("(");
 		ret.addAll(unit.daide());
-		ret.add(")");
-		ret.add("CTO");
+		ret.add2(")", "CTO");
 		ret.addAll(destination.daide());
-		ret.add("VIA");
-		ret.add("(");
+		ret.add2("VIA", "(");
 		
 		
 		for (int i = 0; i < via.size(); i++)

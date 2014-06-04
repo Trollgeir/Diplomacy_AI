@@ -2,14 +2,11 @@ package kb.unit;
 
 import java.util.ArrayList;
 
-import kb.DaideMessage;
+import message.DaideList;
+import message.DaideMessage;
+import message.order.*;
 import kb.Node;
 import kb.Power;
-import kb.order.Hold;
-import kb.order.Move;
-import kb.order.Order;
-import kb.order.SupportToHold;
-import kb.order.SupportToMove;
 
 /**
  * A unit on the board
@@ -30,7 +27,7 @@ public abstract class Unit implements DaideMessage {
 	
 	public abstract boolean canMoveOn(Node node);
 	
-	public abstract ArrayList<String> daide();
+	public abstract DaideList daide();
 	
 	
 	public ArrayList<Order> possibleOrders()

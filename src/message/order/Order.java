@@ -1,8 +1,7 @@
 package message.order;
 
-import java.util.ArrayList;
-
-import kb.DaideMessage;
+import message.DaideList;
+import message.DaideMessage;
 
 /**
  * An order, these can be translated to DAIDE message syntax.
@@ -17,6 +16,6 @@ public interface Order extends DaideMessage {
 	 * Get the DAIDE message syntax representation of this order.
 	 * @return The DAIDE version of this order.
 	 */
-	ArrayList<String> daide();
+	DaideList daide();
 	
 }

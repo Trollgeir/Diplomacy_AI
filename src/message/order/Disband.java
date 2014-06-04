@@ -1,8 +1,7 @@
 package message.order;
 
-import java.util.ArrayList;
-
 import kb.unit.Unit;
+import message.DaideList;
 
 /**
  * The order to disband a unit during the Retreat phase.
@@ -20,13 +19,12 @@ public class Disband implements Order {
 	}
 	
 	@Override
-	public ArrayList<String> daide() {
-ArrayList<String> ret = new ArrayList<String>();
+	public DaideList daide() {
+		DaideList ret = new DaideList();
 		
 		ret.add("(");
 		ret.addAll(unit.daide());
-		ret.add(")");
-		ret.add("DSB");
+		ret.add2(")", "DSB");
 		
 		return ret;
 	}

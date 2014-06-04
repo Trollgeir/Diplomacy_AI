@@ -2,6 +2,7 @@ package kb.unit;
 
 import java.util.ArrayList;
 
+import message.DaideList;
 import kb.Power;
 import kb.Node;
 
@@ -18,8 +19,8 @@ public class Army extends Unit {
 	}
 
 	@Override
-	public ArrayList<String> daide() {
-		ArrayList<String> ret = owner.daide();
+	public DaideList daide() {
+		DaideList ret = owner.daide();
 		ret.add("AMY");
 		ret.addAll(location.daide());
 		

@@ -1,7 +1,6 @@
 package message.order;
 
-import java.util.ArrayList;
-
+import message.DaideList;
 import kb.*;
 import kb.unit.*;
 
@@ -23,14 +22,13 @@ public class Move implements Order {
 	}
 	
 	@Override
-	public ArrayList<String> daide()
+	public DaideList daide()
 	{
-		ArrayList<String> ret = new ArrayList<String>();
+		DaideList ret = new DaideList();
 		
 		ret.add("(");
 		ret.addAll(unit.daide());
-		ret.add(")");
-		ret.add("MTO");
+		ret.add2(")", "MTO");
 		ret.addAll(moveTo.daide());
 		
 		return ret;

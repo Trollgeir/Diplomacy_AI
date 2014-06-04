@@ -1,7 +1,6 @@
 package message.order;
 
-import java.util.ArrayList;
-
+import message.DaideList;
 import kb.Node;
 import kb.unit.Unit;
 
@@ -23,13 +22,12 @@ public class Retreat implements Order {
 	}
 	
 	@Override
-	public ArrayList<String> daide() {
-		ArrayList<String> ret = new ArrayList<String>();
+	public DaideList daide() {
+		DaideList ret = new DaideList();
 		
 		ret.add("(");
 		ret.addAll(unit.daide());
-		ret.add(")");
-		ret.add("RTO");
+		ret.add2(")", "RTO");
 		ret.addAll(retreatTo.daide());
 		
 		return ret;

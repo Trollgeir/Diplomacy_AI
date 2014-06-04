@@ -2,6 +2,8 @@ package kb;
 
 import java.util.ArrayList;
 
+import message.DaideList;
+import message.DaideMessage;
 import kb.province.Province;
 import kb.unit.Unit;
 
@@ -51,9 +53,9 @@ public class Node implements DaideMessage{
 	 * Get the DAIDE message syntax representation of this node.
 	 * @return The DAIDE version of this node.
 	 */
-	public ArrayList<String> daide()
+	public DaideList daide()
 	{
-		ArrayList<String> ret = new ArrayList<String>();
+		DaideList ret = new DaideList();
 		
 		ret.add(province.daide());
 		
