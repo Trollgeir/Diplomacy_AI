@@ -1,5 +1,5 @@
 /*
- * Asks the server for Supply Centre Ownership
+ * Asks the server for Supply Center Ownership
  */
 
 package message.server;
@@ -8,7 +8,7 @@ import message.DaideList;
 import message.DaideMessage;
 
 public class Sco implements DaideMessage {
-	public Sco()
+	public SupplyCenterOwnership()
 	{
 		// No parameters are needed
 	}
