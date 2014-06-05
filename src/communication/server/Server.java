@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Iterator;
 
+import message.DaideMessage; 
+import message.DaideList; 
+
 /**
  * The <code>Server</code> class wraps a <code>Connection</code>
  * with a more user-friendly interface.
@@ -100,5 +103,22 @@ public class Server implements DiplomaticMessageListener {
     public void send(String[] msg)
 	throws UnknownTokenException, DisconnectedException {
     	conn.send(msg);
+    }
+
+
+    /**
+    *
+    *
+    *
+    *
+    */
+    public void send(DaideMessage message)
+    throws UnknownTokenException, DisconnectedException {
+        DaideList l = message.daide(); 
+        String[] strmessage = new String[l.size()]; 
+        for (int i = 0; i < l.size(); ++i) {
+            strmessage[i] = l.get(i);
+        }
+        send(strmessage);
     }
 }

@@ -25,7 +25,7 @@ public class DodoAI extends AI {
 		}
 		try {
 			Connect connect = new Connect("DodoAI", "0.0.0.1"); 
-			serv.send(Sender.toDaide(connect));
+			serv.send(connect);
 		} catch (UnknownTokenException | DisconnectedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
