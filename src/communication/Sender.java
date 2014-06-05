@@ -2,6 +2,8 @@ package communication;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import message.DaideList;
+import message.DaideMessage;
 
 import communication.server.DisconnectedException;
 import communication.server.MessageListener;
@@ -62,4 +64,12 @@ public class Sender implements MessageListener
 		
 	}
 	
+	public static String[] toDaide(DaideMessage message) {
+		DaideList l = message.daide();
+		String result[] = new String[l.size()];
+		for (int i = 0; i < l.size(); ++i) {
+			result[i] = l.get(i);
+		}
+		return result;
+	}
 }

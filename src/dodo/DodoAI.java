@@ -3,6 +3,8 @@ package dodo;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import communication.Sender; 
+import message.Connect;
 
 import communication.server.DisconnectedException;
 import communication.server.Server;
@@ -22,9 +24,8 @@ public class DodoAI extends AI {
 			e1.printStackTrace();
 		}
 		try {
-			String[] str = {"NME", "'Herp'", "'derp'"};
-			
-			serv.send(str);
+			Connect connect = new Connect("DodoAI", "0.0.0.1"); 
+			serv.send(Sender.toDaide(connect));
 		} catch (UnknownTokenException | DisconnectedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
