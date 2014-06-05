@@ -25,7 +25,7 @@ public class Reconnect implements DaideMessage {
         result.add2("IAM","(");
         result.addAll(power.daide());
         result.add2(")");
-        result.add2("(", "'" + passcode + "'", ")");
+        result.add2("(",passcode, ")");
 
 		return result;
 	}
