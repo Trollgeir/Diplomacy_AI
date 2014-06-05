@@ -99,6 +99,6 @@ public class Server implements DiplomaticMessageListener {
      */
     public void send(String[] msg)
 	throws UnknownTokenException, DisconnectedException {
-	conn.send(msg);
+    	conn.send(msg);
     }
 }
