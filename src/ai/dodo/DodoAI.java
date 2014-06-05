@@ -1,4 +1,4 @@
-package dodo;
+package ai.dodo;
 
 import java.io.IOException;
 import java.net.InetAddress;
