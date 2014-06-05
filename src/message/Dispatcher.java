@@ -20,6 +20,7 @@ public class Dispatcher implements MessageListener {
 		/*
 			TODO: send message to AI or map depending on layout
 		*/
+		boolean forAI = true;
 		if (forAI) {
 			ai.onMessage(message); 
 		} else {
