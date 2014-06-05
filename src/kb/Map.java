@@ -12,7 +12,7 @@ import kb.unit.Army;
 
 /**
  * The map/knowledge base.
- * @author Koen/Jurian
+ * @author Koen
  *
  */
 
@@ -63,6 +63,9 @@ public class Map {
 		}
 		
 		return null;
+	}
+	
+	public void onMessage(String[] message) { 
 	}
 	
 }
