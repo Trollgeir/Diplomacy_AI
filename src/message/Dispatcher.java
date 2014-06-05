@@ -4,7 +4,7 @@ import communication.server.MessageListener;
 import ai.AI; 
 import kb.Map; 
 
-public class Dispatcher implements MessageReceiver {
+public class Dispatcher implements MessageListener {
 
 	public AI ai; 
 	public Map map; 
