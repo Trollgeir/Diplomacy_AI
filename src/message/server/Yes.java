@@ -9,9 +9,9 @@ public class Yes implements DaideMessage {
 		Message class to confirm messages
 	**/
 
-	private String message;
+	private String[] message;
 
-	public Yes(String message) {
+	public Yes(String[] message) {
 		this.message = message; 
 	} 
 
@@ -19,8 +19,9 @@ public class Yes implements DaideMessage {
 	public DaideList daide() {
 		DaideList result = new DaideList();
 		
-        result.add2("YES");
-        result.add2("(", message, ")");
+        result.add2("YES", "(");
+        result.add2(message);
+        result.add2(")");
 
 		return result;
 	}

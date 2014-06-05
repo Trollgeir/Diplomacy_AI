@@ -6,6 +6,8 @@ import java.net.UnknownHostException;
 
 import communication.Sender; 
 import message.server.Connect;
+import message.server.MapDefinition;
+import message.server.Yes;
 import communication.server.DisconnectedException;
 import communication.server.Server;
 import communication.server.UnknownTokenException;
@@ -26,6 +28,21 @@ public class DodoAI extends AI {
 		try {
 			Connect connect = new Connect("DodoAI", "0.0.0.1"); 
 			serv.send(connect);
+		} catch (UnknownTokenException | DisconnectedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		MapDefinition mapdef = new MapDefinition();
+		try {
+			serv.send(mapdef);
+		} catch (UnknownTokenException | DisconnectedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String[] str = {"MAP", "(", "'STANDARD'", ")"};
+		Yes yes = new Yes(str);
+		try {
+			serv.send(yes);
 		} catch (UnknownTokenException | DisconnectedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
