@@ -3,7 +3,7 @@ package message.server;
 import message.DaideList;
 import message.DaideMessage;
 
-public class REJ implements DaideMessage {
+public class Reject implements DaideMessage {
 
 	/*
 		Message class to reject
