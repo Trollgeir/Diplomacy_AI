@@ -3,9 +3,9 @@ package dodo;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import communication.Sender; 
-import message.Connect;
 
+import communication.Sender; 
+import message.server.Connect;
 import communication.server.DisconnectedException;
 import communication.server.Server;
 import communication.server.UnknownTokenException;

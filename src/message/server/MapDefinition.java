@@ -1,4 +1,7 @@
-package message; 
+package message.server; 
+
+import message.DaideList;
+import message.DaideMessage;
 
 public class MapDefinition implements DaideMessage {
 	
