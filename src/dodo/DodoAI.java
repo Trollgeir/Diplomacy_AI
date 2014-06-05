@@ -1,5 +1,11 @@
 package dodo;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import communication.server.DisconnectedException;
+import communication.server.Server;
+import communication.server.UnknownTokenException;
 import ai.AI;
 
 public class DodoAI extends AI {
