@@ -31,13 +31,13 @@ public class DodoAI extends AI {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		MapDefinition mapdef = new MapDefinition();
+		/*MapDefinition mapdef = new MapDefinition();
 		try {
 			serv.send(mapdef);
 		} catch (UnknownTokenException | DisconnectedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		String[] str = {"MAP", "(", "'STANDARD'", ")"};
 		Yes yes = new Yes(str);
 		try {
