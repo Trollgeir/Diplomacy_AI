@@ -11,12 +11,24 @@ import communication.server.DisconnectedException;
 import communication.server.Server;
 import communication.server.UnknownTokenException;
 import ai.AI;
+import game.Game;
 
 public class DodoAI extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
 
-	public static void main(String[] args) throws UnknownHostException {
-			
+	public DodoAI() {
+		super("DodoAI", "0.0.0.0.1");
+	}
+
+	@Override
+	public void onMessage(String[] message) {
+		/*TODO*/
+	} 
+
+	public static void main(String[] args) {
+		new Game(new DodoAI(), args[0], args[1]);
+
+	/*	
 		Server serv = new Server(InetAddress.getByName(args[0]), Integer.parseInt(args[1]));
 		try {
 			serv.connect();
@@ -46,6 +58,7 @@ public class DodoAI extends AI {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	*/
 	}
 	
 }
