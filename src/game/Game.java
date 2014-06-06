@@ -16,10 +16,17 @@ public class Game {
 
 	AI ai; 
 
-	public Game(AI ai, String ip, String port) {
+	public static void printUsage(AI ai) {
+		System.out.println("usage: " + ai.getClass().getName() + " [ip] [port] " + ai.getUsage()); 
+	}
+
+	public Game(AI ai, String[] args) {
 		this.ai = ai;
 		try {
-			Server serv = new Server(InetAddress.getByName(ip), Integer.parseInt(port));
+			ai.init(args); 
+			String name = args[0];
+			String port = args[1];
+			Server serv = new Server(InetAddress.getByName(name), Integer.parseInt(port));
 			serv.connect();
 			Connect connect = new Connect(ai.getName(), ai.getVersion()); 
 			serv.send(connect);
@@ -29,10 +36,13 @@ public class Game {
 			String[] str = {"MAP", "(", "'STANDARD'", ")"};
 			Yes yes = new Yes(str);
 			serv.send(yes);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			printUsage(ai);
+			System.exit(-1);
 		} catch (IOException | DisconnectedException | UnknownTokenException e) {
 			/*TODO handle exceptions*/ 
 			e.printStackTrace();
-		}
+		} 
 
 	}
 

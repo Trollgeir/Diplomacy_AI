@@ -1,4 +1,4 @@
-SOURCEDIR = src/
+SOURCEDIR = .
 SOURCEFILES := $(shell find $(SOURCEDIR) -name '*.java')
 CLASSFILES = $(SOURCEFILES:.java=.class)	 
 

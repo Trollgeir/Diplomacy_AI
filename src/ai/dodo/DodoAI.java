@@ -26,7 +26,7 @@ public class DodoAI extends AI {
 	} 
 
 	public static void main(String[] args) {
-		new Game(new DodoAI(), args[0], args[1]);
+		new Game(new DodoAI(), args);
 
 	/*	
 		Server serv = new Server(InetAddress.getByName(args[0]), Integer.parseInt(args[1]));
