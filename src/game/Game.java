@@ -12,9 +12,14 @@ import communication.server.DisconnectedException;
 import communication.server.Server;
 import communication.server.UnknownTokenException;
 
+import kb.Map;
+
 public class Game {
 
 	AI ai; 
+	Map map; 
+	Dispatcher dispatcher;
+
 
 	public static void printUsage(AI ai) {
 		System.out.println("usage: " + ai.getClass().getName() + " [ip] [port] " + ai.getUsage()); 
@@ -22,11 +27,15 @@ public class Game {
 
 	public Game(AI ai, String[] args) {
 		this.ai = ai;
+		this.map = new Map(); 
+		this.dispatcher = new Dispatcher(ai, map, this); 
+
 		try {
 			ai.init(args); 
 			String name = args[0];
 			String port = args[1];
 			Server serv = new Server(InetAddress.getByName(name), Integer.parseInt(port));
+			serv.addMessageListener(dispatcher); 
 			serv.connect();
 			Connect connect = new Connect(ai.getName(), ai.getVersion()); 
 			serv.send(connect);
@@ -46,4 +55,6 @@ public class Game {
 
 	}
 
+
+	public void onMessage(String[] message) {};
 }
