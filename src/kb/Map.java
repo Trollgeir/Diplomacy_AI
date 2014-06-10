@@ -47,7 +47,7 @@ public class Map extends Receiver {
 		for (int i = 0; i < provinces.size(); i++)
 		{
 			Province cst = provinces.get(i);
-			if (cst != null && cst.isCoast() && cst.getName().equals(name))
+			if (cst != null && cst.getName().equals(name))
 			{
 				return cst.getCoastNode(coast);
 			}
@@ -125,23 +125,43 @@ public class Map extends Receiver {
 	{
 		for (int i = 0; i < provinces.size(); i++)
 		{
-			System.out.println(provinces.get(i).daide());
+			Province cProv = provinces.get(i);
+			System.out.println(cProv.daide());
 			System.out.print("	LAND	");
-			for (int j = 0; j < provinces.get(i).getCentralNode().landNeighbors.size(); j++)
+			for (int j = 0; j < cProv.getCentralNode().landNeighbors.size(); j++)
 			{
-				ArrayList<Node> n = provinces.get(i).getCentralNode().landNeighbors;
+				ArrayList<Node> n = cProv.getCentralNode().landNeighbors;
 				Node an = n.get(j);
 				System.out.print(" " + an.daide());
 			}
 			System.out.println();
-			System.out.print("	SEA	");
-			for (int j = 0; j < provinces.get(i).getCentralNode().seaNeighbors.size(); j++)
+			
+			if (cProv.coastAmt() != 0)
 			{
-				ArrayList<Node> n = provinces.get(i).getCentralNode().seaNeighbors;
-				Node an = n.get(j);
-				System.out.print(" " + an.daide());
+				for (int c = 0; c < cProv.coastAmt(); c++)
+				{
+					System.out.print("	SEA	" + cProv.coastLine.get(c).coastName() + " ");
+					for (int j = 0; j < cProv.coastLine.get(c).seaNeighbors.size(); j++)
+					{
+						ArrayList<Node> n = cProv.coastLine.get(c).seaNeighbors;
+						Node an = n.get(j);
+						System.out.print(" " + an.daide());
+					}
+					System.out.println();
+				}
 			}
-			System.out.println();
+			else
+			{
+				System.out.print("	SEA		");
+				for (int j = 0; j < provinces.get(i).getCentralNode().seaNeighbors.size(); j++)
+				{
+					ArrayList<Node> n = provinces.get(i).getCentralNode().seaNeighbors;
+					Node an = n.get(j);
+					System.out.print(" " + an.daide());
+				}
+				System.out.println();
+			}
+			
 		}
 	}
 	
@@ -155,9 +175,7 @@ public class Map extends Receiver {
 		{
 			powers.add(new Power(message[i]));
 		}
-		
-		System.out.println("Powers parsed");
-		
+
 		//Province
 		int provStart = powEnd+1;		
 		int provEnd = unBracket(message, provStart);
@@ -184,8 +202,6 @@ public class Map extends Receiver {
 				sWord = powSupEnd+1;
 			}
 			
-			System.out.println("Supply centers parsed");
-			
 			//Non supply centers
 			int nonSupStart = supEnd+1;
 			int nonSupEnd = unBracket(message, nonSupStart);
@@ -194,10 +210,6 @@ public class Map extends Receiver {
 			{
 				provinces.add(new Province(message[n], false));
 			}
-		
-			System.out.println("Non-Supply centers parsed");
-			
-		System.out.println("Provinces parsed");
 			
 		//Adjacencies
 		int adjStart = provEnd+1;
@@ -248,14 +260,43 @@ public class Map extends Receiver {
 						province.getCentralNode().seaNeighbors.add(adjNode);
 					}
 				}
+				else if (uType.equals("("))
+				{
+					Node thisNode = province.getCoastNode(message[unitAdjStart+3]);
+					if (thisNode == null)
+					{
+						thisNode = new Node(province, message[unitAdjStart+3]);
+						province.addCoastalNode(thisNode);
+					}
+					
+					for (int a = unitAdjStart+5; a < unitAdjEnd; a++)
+					{
+						Node adjNode = null;
+						if (message[a].equals("("))
+						{
+							adjNode = getNode(message[a+1], message[a+2]);
+							if (adjNode == null)
+							{
+								Province nProvince = getProvince(message[a+1]);
+								adjNode = new Node(nProvince, message[a+2]);
+								nProvince.addCoastalNode(adjNode);
+							}
+							a += 3;
+						}
+						else
+						{
+							adjNode = getNode(message[a]);
+						}
+						
+						thisNode.seaNeighbors.add(adjNode);
+					}
+				}
 				
 				uWord = unitAdjEnd+1;
 			}
 			
 			cWord = provAdjEnd+1;
 		}
-		
-		System.out.println("Adjacencies parsed");
 		
 		printMap();
 	}

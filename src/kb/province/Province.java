@@ -18,7 +18,7 @@ public class Province {
 	Node				centralNode;
 	boolean				supplyCenter;
 	
-	ArrayList<Node>		coastLine;
+	public ArrayList<Node>		coastLine;
 	boolean				isLand, isSea, isCoast;
 	
 	public Province(String name, boolean hasSupply)
@@ -47,6 +47,11 @@ public class Province {
 		isCoast = l;
 	}
 	
+	public int coastAmt()
+	{
+		return coastLine.size();
+	}
+	
 	
 	public String getName()
 	{
@@ -59,14 +64,11 @@ public class Province {
 	}
 	public Node getCoastNode(String name)
 	{
-		if (isCoast())
+		for (int i = 0; i < coastLine.size(); i++)
 		{
-			for (int i = 0; i < coastLine.size(); i++)
+			if (coastLine.get(i).coastName().equals(name))
 			{
-				if (coastLine.get(i).coastName().equals(name))
-				{
-					return coastLine.get(i);
-				}
+				return coastLine.get(i);
 			}
 		}
 		return null;
