@@ -1,6 +1,9 @@
 package kb.province;
 
+import java.util.ArrayList;
+
 import kb.Node;
+import kb.Power;
 import kb.unit.Unit;
 
 /**
@@ -9,31 +12,62 @@ import kb.unit.Unit;
  *
  */
 
-public abstract class Province {
+public class Province {
 	
-	String 			name;
-	Node			centralNode;
-	boolean			supplyCenter;
+	String 				name;
+	Node				centralNode;
+	boolean				supplyCenter;
 	
-	Province(String name, boolean hasSupply)
+	ArrayList<Node>		coastLine;
+	boolean				isLand, isSea, isCoast;
+	
+	public Province(String name, boolean hasSupply)
 	{
 		this.name = name;
 		this.supplyCenter = hasSupply;
+		centralNode = new Node(this);
+	}
+	
+	public void addCoastalNode(Node n)
+	{
+		coastLine.add(n);
+	}
+	
+	public void setIsLand(boolean l)
+	{
+		isLand = l;
+	}
+	public void setIsSea(boolean l)
+	{
+		isSea = l;
+	}
+	public void setIsCoast(boolean l)
+	{
+		isCoast = l;
 	}
 	
 	
-	public String name()
+	public String getName()
 	{
 		return name;
 	}
 	
-	public Node getNode()
+	public Node getCentralNode()
 	{
 		return centralNode;
 	}
-	
-	public Node getNode(String coastName)
+	public Node getCoastNode(String name)
 	{
+		if (isCoast())
+		{
+			for (int i = 0; i < coastLine.size(); i++)
+			{
+				if (coastLine.get(i).coastName().equals(name))
+				{
+					return coastLine.get(i);
+				}
+			}
+		}
 		return null;
 	}
 	
@@ -44,7 +78,21 @@ public abstract class Province {
 	
 	public Unit unit()
 	{
-		return centralNode.unit;
+		if (!isCoast)
+		{
+			return centralNode.unit;
+		}
+		else
+		{
+			for (int i = 0; i < coastLine.size(); i++)
+			{
+				if (coastLine.get(i).unit != null)
+				{
+					return coastLine.get(i).unit;
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -76,14 +124,14 @@ public abstract class Province {
 	
 	public boolean isLand() 
 	{
-		return false;
+		return isLand;
 	}
 	public boolean isSea() 
 	{
-		return false;
+		return isSea;
 	}
 	public boolean isCoast() 
 	{
-		return false;
+		return isCoast;
 	}
 }

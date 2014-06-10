@@ -18,7 +18,7 @@ public class Node implements DaideMessage{
 
 	public Province			province;
 	boolean					coastal;
-	String					coastName;
+	public String			coastName;
 	public ArrayList<Node>	neighbors;
 	public Unit				unit;
 	
@@ -26,7 +26,7 @@ public class Node implements DaideMessage{
 	 * Create a non-coastal Node.
 	 * @param isIn
 	 */
-	Node(Province province)
+	public Node(Province province)
 	{
 		this.province = province;
 		this.coastal = false;
