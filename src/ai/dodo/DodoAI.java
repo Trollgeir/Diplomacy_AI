@@ -23,7 +23,7 @@ public class DodoAI extends AI {
 	@Override
 	public void onMessage(String[] message) {
 		
-		String[] newMessage = new String[8];
+		String[] newMessage = new String[1024];
 		int j = 0;
 		for(int i = 0; i < message.length; i++)
 		{
@@ -48,6 +48,11 @@ public class DodoAI extends AI {
 			} else {
 				// I lost.... :(
 			}
+		}
+		
+		// Handle the FRM message
+		if(message[0].equals("FRM")){
+			/*TODO ....*/
 		}
 		
 		// Handle the SMR message
