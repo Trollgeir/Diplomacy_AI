@@ -44,11 +44,11 @@ public class Dispatcher implements MessageListener {
 	}
 
 	public boolean forGame(String[] message) {
-		return false;
+		return in(message[0], "IAM","REJ","HUH","MIS","PRN");
 	}
 
 	public boolean forAI(String[] message) {
-		return in(message[0], "HLO");
+		return in(message[0], "HLO","FRM","ORD","OUT","SLO","SMR","THX","YES");
 	}
 
 
