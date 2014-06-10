@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import negotiator.Negotiator;
 import message.server.Connect;
 import message.server.MapDefinition;
 import message.server.Yes;
@@ -23,7 +24,7 @@ public class DodoAI extends AI {
 	@Override
 	public void onMessage(String[] message) {
 		
-		String[] newMessage = new String[8];
+		String[] newMessage = new String[1024];
 		int j = 0;
 		for(int i = 0; i < message.length; i++)
 		{
@@ -48,6 +49,11 @@ public class DodoAI extends AI {
 			} else {
 				// I lost.... :(
 			}
+		}
+		
+		// Handle the FRM message, send it to the negotiator
+		if(message[0].equals("FRM")){
+			this.negotiator.addProposal(message);
 		}
 		
 		// Handle the SMR message

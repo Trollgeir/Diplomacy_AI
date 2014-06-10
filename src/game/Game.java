@@ -40,16 +40,10 @@ public class Game extends Receiver {
 			server.connect();
 			Connect connect = new Connect(ai.getName(), ai.getVersion()); 
 			server.send(connect);
-			//TODO everything below here is a hack
-			MapDefinition mapdef = new MapDefinition();
-			server.send(mapdef);
-			String[] str = {"MAP", "(", "'STANDARD'", ")"};
-			Yes yes = new Yes(str);
-			server.send(yes);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			printUsage(ai);
 			System.exit(-1);
-		} catch (IOException | DisconnectedException | UnknownTokenException e) {
+		} catch (IOException | DisconnectedException e) {
 			/*TODO handle exceptions*/ 
 			e.printStackTrace();
 		} 

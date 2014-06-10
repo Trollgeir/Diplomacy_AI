@@ -5,7 +5,9 @@ import java.util.ArrayList;
 
 import kb.province.*;
 import game.Receiver;
-
+import message.server.*;
+import communication.server.*;
+import game.Game;
 /**
  * The map/knowledge base.
  * @author Koen
@@ -16,11 +18,14 @@ public class Map extends Receiver {
 
 	ArrayList<Province>		provinces;
 	ArrayList<Power>		powers;
+	boolean					isStandard;
 	
 	public Map()
 	{
 		powers = new ArrayList<Power>();
 		provinces = new ArrayList<Province>();
+		
+
 	}
 	
 	public Node getNode(String name)
@@ -257,12 +262,17 @@ public class Map extends Receiver {
 	
 	@Override
 	public void onMessage(String[] message) {
-		
-		if (message[0].equals("MDF"))
+		if (message[0].equals("MAP")) 
+		{
+			isStandard = message[2].equals("STANDARD");
+			Yes yes = new Yes(message);
+			Game.server.send(yes);
+			MapDefinition mapdef = new MapDefinition();
+			Game.server.send(mapdef);
+		}
+		else if (message[0].equals("MDF"))
 		{
 			processMDF(message);
-		}
-		
-		/* TODO, handle a message */
+		} 
 	}
 }
