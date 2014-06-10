@@ -40,15 +40,15 @@ public class Dispatcher implements MessageListener {
 	}
 
 	public boolean forMap(String[] message) {
-		return in(message[0], "MDF","NOW","SCO","ORD");
+		return in(message[0], "MDF","NOW","SCO","ORD","OUT");
 	}
 
 	public boolean forGame(String[] message) {
-		return in(message[0], "REJ","HUH","MIS","PRN");
+		return in(message[0], "MIS","PRN");
 	}
 
 	public boolean forAI(String[] message) {
-		return in(message[0], "HLO","FRM","OUT","SLO","SMR","THX","YES");
+		return in(message[0], "HLO","FRM","SLO","SMR","THX","YES","REJ","HUH");
 	}
 
 
