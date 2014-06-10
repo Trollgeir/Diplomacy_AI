@@ -55,6 +55,11 @@ public class DodoAI extends AI {
 				System.out.println("" + m);
 			}
 		}
+		
+		// Handle the THX message
+		if(message[0].equals("THX")){
+			this.setCanMessage(true);
+		}
 		//
 		/*TODO*/
 	} 

@@ -10,6 +10,7 @@ public abstract class AI extends Receiver {
 	private String power;
 	private String passcode;
 	private String lvl;
+	private boolean canMessage;
 
 	public AI(String name, String version) {
 		this.name = name; 
@@ -43,6 +44,10 @@ public abstract class AI extends Receiver {
 		return this.lvl;
 	}
 	
+	public boolean getCanMessage(){
+		return this.canMessage;
+	}
+	
 	public void setPower(String power) {
 		this.power = power;
 	}
@@ -53,6 +58,10 @@ public abstract class AI extends Receiver {
 	
 	public void setLVL(String lvl){
 		this.lvl = lvl;
+	}
+	
+	public void setCanMessage(boolean cm){
+		this.canMessage = cm;
 	}
 	
 
