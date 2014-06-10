@@ -45,7 +45,9 @@ public class DodoAI extends AI {
 		if (message[0].equals("SLO")) {
 			if (newMessage[1].equals(getPower())) {
 				// hooraay I won!!
-			} 
+			} else {
+				// I lost.... :(
+			}
 		}
 		
 		// Handle the SMR message
