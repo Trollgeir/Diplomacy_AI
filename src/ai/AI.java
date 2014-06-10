@@ -1,5 +1,6 @@
 package ai;
 
+import negotiator.Negotiator;
 import game.Receiver;
 
 public abstract class AI extends Receiver {
@@ -11,11 +12,13 @@ public abstract class AI extends Receiver {
 	private String passcode;
 	private String lvl;
 	private boolean canMessage;
+	protected Negotiator negotiator;
 
 	public AI(String name, String version) {
 		this.name = name; 
 		this.version = version;
 		usage = "";
+		this.negotiator = new Negotiator();
 	}
 
 	public void init(String[] args) throws ArrayIndexOutOfBoundsException {}; 
