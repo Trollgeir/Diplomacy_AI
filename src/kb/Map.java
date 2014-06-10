@@ -5,7 +5,9 @@ import java.util.ArrayList;
 
 import kb.province.*;
 import game.Receiver;
-
+import message.server.*;
+import communication.server.*;
+import game.Game;
 /**
  * The map/knowledge base.
  * @author Koen
@@ -16,7 +18,8 @@ public class Map extends Receiver {
 
 	ArrayList<Province>		provinces;
 	ArrayList<Power>		powers;
-	
+	boolean					isStandard;
+
 	public static void main(String[] args) throws UnknownHostException {
 	}
 
@@ -249,12 +252,22 @@ public class Map extends Receiver {
 	
 	@Override
 	public void onMessage(String[] message) {
-		
-		if (message[0].equals("MDF"))
+		if (message[0].equals("MAP")) 
+		{
+			isStandard = message[2].equals("STANDARD");
+			Yes yes = new Yes(message);
+			try {
+				Game.server.send(yes);
+				MapDefinition mapdef = new MapDefinition();
+				server.send(mapdef);
+			} catch (UnknownTokenException | DisconnectedException e) {
+				/*TODO I don't know*/
+				e.printStackTrace(); 
+			}
+		}
+		else if (message[0].equals("MDF"))
 		{
 			processMDF(message);
-		}
-		
-		/* TODO, handle a message */
+		} 
 	}
 }
