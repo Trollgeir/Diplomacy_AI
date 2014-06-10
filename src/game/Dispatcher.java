@@ -30,17 +30,20 @@ public class Dispatcher implements MessageListener {
 		*/
 		if (forMap(message)) {
 			map.onMessage(message); 
-		} else if (forGame(message)) {
+		}
+		if (forGame(message)) {
 			game.onMessage(message); 
-		} else if (forAI(message)) {
+		} 
+		if (forAI(message)) {
 			ai.onMessage(message);
-		} else {
+		}
+		if (!forMap(message) && !forAI(message) && !forGame(message)) {
 			System.out.println("Unhandled message: " + message[0]); 
 		}
 	}
 
 	public boolean forMap(String[] message) {
-		return in(message[0], "MDF","NOW","SCO","ORD","OUT");
+		return in(message[0], "MDF","NOW","SCO","ORD","OUT", "MAP");
 	}
 
 	public boolean forGame(String[] message) {
