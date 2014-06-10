@@ -13,9 +13,12 @@ import communication.server.Server;
 import communication.server.UnknownTokenException;
 import ai.AI;
 import game.Game;
+import communication.LogReader;
 
 public class DodoAI extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
+
+	String logpath = null; 
 
 	public DodoAI() {
 		super("DodoAI", "0.0.0.0.1");
@@ -40,6 +43,9 @@ public class DodoAI extends AI {
 			this.setPower(newMessage[1]);
 			this.setPasscode(newMessage[2]);
 			this.setLVL(newMessage[4]);
+			if (logpath != null) {
+				new LogReader().readLog(logpath);
+			}
 		}
 		
 		//Handle the SLO message
@@ -84,6 +90,14 @@ public class DodoAI extends AI {
 		
 		/*TODO*/
 	} 
+
+	@Override
+	public void init(String[] args) throws ArrayIndexOutOfBoundsException {
+		if (args.length < 3) return; 
+		setName(args[2]);
+		if (args.length < 4) return;
+		logpath = args[3];
+	}
 
 	public static void main(String[] args) {
 		new Game(new DodoAI(), args);

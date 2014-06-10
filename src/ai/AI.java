@@ -27,6 +27,10 @@ public abstract class AI extends Receiver {
 		return this.name; 
 	}
 
+	public void setName(String name) {
+		this.name = name; 
+	}
+
 	public String getVersion() {
 		return this.version; 
 	}
