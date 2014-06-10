@@ -62,7 +62,11 @@ public class DodoAI extends AI {
 		if(message[0].equals("THX")){
 			this.setCanMessage(true);
 		}
-		//
+		
+		// Handle the YES message
+		if(message[0].equals("YES")){
+			/*TODO*/
+		}
 		/*TODO*/
 	} 
 
