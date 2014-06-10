@@ -19,7 +19,7 @@ public class Node implements DaideMessage{
 	public Province			province;
 	boolean					coastal;
 	public String			coastName;
-	public ArrayList<Node>	neighbors;
+	public ArrayList<Node>	landNeighbors, seaNeighbors;
 	public Unit				unit;
 	
 	/**
@@ -31,7 +31,8 @@ public class Node implements DaideMessage{
 		this.province = province;
 		this.coastal = false;
 		this.coastName = "";
-		neighbors = new ArrayList<Node>();
+		landNeighbors = new ArrayList<Node>();
+		seaNeighbors = new ArrayList<Node>();
 		unit = null;
 	}
 	
@@ -45,7 +46,8 @@ public class Node implements DaideMessage{
 		this.province = province;
 		this.coastal = true;
 		this.coastName = coastName;
-		neighbors = new ArrayList<Node>();
+		landNeighbors = new ArrayList<Node>();
+		seaNeighbors = new ArrayList<Node>();
 		unit = null;
 	}
 	
