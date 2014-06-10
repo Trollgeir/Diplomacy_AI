@@ -32,8 +32,10 @@ public class Dispatcher implements MessageListener {
 			map.onMessage(message); 
 		} else if (forGame(message)) {
 			game.onMessage(message); 
-		} else {
+		} else if (forAI(message)) {
 			ai.onMessage(message);
+		} else {
+			System.out.println("Unhandled message: " + message[0]); 
 		}
 	}
 
@@ -42,7 +44,11 @@ public class Dispatcher implements MessageListener {
 	}
 
 	public boolean forGame(String[] message) {
-		return true;
+		return false;
+	}
+
+	public boolean forAI(String[] message) {
+		return in(message[0], "HLO");
 	}
 
 
