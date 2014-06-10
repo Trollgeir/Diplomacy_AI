@@ -65,8 +65,17 @@ public class DodoAI extends AI {
 		
 		// Handle the YES message
 		if(message[0].equals("YES")){
-			/*TODO*/
+			/*TODO, need to know all about sent messages..*/
 		}
+		
+		if(message[0].equals("REJ")){
+			/*TODO, need to know all about sent messages..*/
+		}
+		
+		if(message[0].equals("HUH")){
+			/*TODO, need to know all about sent messages..*/
+		}
+		
 		/*TODO*/
 	} 
 
