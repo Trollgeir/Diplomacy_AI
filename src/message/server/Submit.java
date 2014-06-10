@@ -29,12 +29,16 @@ public class Submit implements DaideMessage{
 		DaideList result = new DaideList();
 
 		if (turn != null) {
-			result.add2("(", turn, ")");
+			result.add("(");
+			result.addAll(turn.daide());
+			result.add(")");
 		} 
 
 		if (orders != null) {
 			for (Order o : orders) {
-				result.add2("(", o, ")");
+				result.add("(");
+				result.addAll(o.daide());
+				result.add(")");
 			}
 		}
 
