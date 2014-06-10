@@ -29,4 +29,8 @@ public class Power implements DaideMessage{
 		return ret;
 	}
 	
+	public String getName()
+	{
+		return name;
+	}
 }
