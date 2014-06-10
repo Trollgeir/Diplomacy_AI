@@ -17,9 +17,12 @@ public class Map extends Receiver {
 	ArrayList<Province>		provinces;
 	ArrayList<Power>		powers;
 	
-	public static void main(String[] args) throws UnknownHostException {
+	public Map()
+	{
+		powers = new ArrayList<Power>();
+		provinces = new ArrayList<Province>();
 	}
-
+	
 	public Node getNode(String name)
 	{
 		for (int i = 0; i < provinces.size(); i++)
@@ -113,6 +116,30 @@ public class Map extends Receiver {
 		return end;
 	}
 	
+	public void printMap()
+	{
+		for (int i = 0; i < provinces.size(); i++)
+		{
+			System.out.println(provinces.get(i).daide());
+			System.out.print("	LAND	");
+			for (int j = 0; j < provinces.get(i).getCentralNode().landNeighbors.size(); j++)
+			{
+				ArrayList<Node> n = provinces.get(i).getCentralNode().landNeighbors;
+				Node an = n.get(j);
+				System.out.print(" " + an.daide());
+			}
+			System.out.println();
+			System.out.print("	SEA	");
+			for (int j = 0; j < provinces.get(i).getCentralNode().seaNeighbors.size(); j++)
+			{
+				ArrayList<Node> n = provinces.get(i).getCentralNode().seaNeighbors;
+				Node an = n.get(j);
+				System.out.print(" " + an.daide());
+			}
+			System.out.println();
+		}
+	}
+	
 	public void processMDF(String[] message) {
 		
 		//Powers
@@ -124,6 +151,8 @@ public class Map extends Receiver {
 			powers.add(new Power(message[i]));
 		}
 		
+		System.out.println("Powers parsed");
+		
 		//Province
 		int provStart = powEnd+1;		
 		int provEnd = unBracket(message, provStart);
@@ -133,8 +162,8 @@ public class Map extends Receiver {
 			int supEnd = unBracket(message, supStart);
 			
 			int sWord = supStart + 1;
-			while (supStart < supEnd)
-			{
+			while (sWord < supEnd)
+			{				
 				int powSupStart = sWord;
 				int powSupEnd = unBracket(message, powSupStart);
 				
@@ -150,6 +179,8 @@ public class Map extends Receiver {
 				sWord = powSupEnd+1;
 			}
 			
+			System.out.println("Supply centers parsed");
+			
 			//Non supply centers
 			int nonSupStart = supEnd+1;
 			int nonSupEnd = unBracket(message, nonSupStart);
@@ -159,7 +190,10 @@ public class Map extends Receiver {
 				provinces.add(new Province(message[n], false));
 			}
 		
-		
+			System.out.println("Non-Supply centers parsed");
+			
+		System.out.println("Provinces parsed");
+			
 		//Adjacencies
 		int adjStart = provEnd+1;
 		int adjEnd = unBracket(message, adjStart);
@@ -183,13 +217,13 @@ public class Map extends Receiver {
 				if (uType.equals("AMY"))
 				{
 					for (int a = unitAdjStart+2; a < unitAdjEnd; a++)
-						province.getCentralNode().neighbors.add(getNode(message[a]));
+						province.getCentralNode().landNeighbors.add(getNode(message[a]));
 				}
 				else if (uType.equals("FLT"))
 				{
 					for (int a = unitAdjStart+2; a < unitAdjEnd; a++)
 					{
-						Node adjNode;
+						Node adjNode = null;
 						if (message[a].equals("("))
 						{
 							adjNode = getNode(message[a+1], message[a+2]);
@@ -198,53 +232,27 @@ public class Map extends Receiver {
 								Province nProvince = getProvince(message[a+1]);
 								adjNode = new Node(nProvince, message[a+2]);
 								nProvince.addCoastalNode(adjNode);
-								a += 2;
 							}
+							a += 3;
 						}
 						else
 						{
 							adjNode = getNode(message[a]);
 						}
 						
-						province.getCentralNode().neighbors.add(adjNode);
-					}
-				}
-				else if (uType.equals("("))
-				{
-					String coastName = message[unitAdjStart+3];
-					Node thisNode = province.getCoastNode(coastName);
-					if (thisNode == null)
-					{
-						thisNode = new Node(province, coastName);
-						province.addCoastalNode(thisNode);
-					}
-					
-					for (int a = unitAdjStart+5; a < unitAdjEnd; a++)
-					{
-						Node adjNode;
-						if (message[a].equals("("))
-						{
-							adjNode = getNode(message[a+1], message[a+2]);
-							if (adjNode == null)
-							{
-								Province nProvince = getProvince(message[a+1]);
-								adjNode = new Node(nProvince, message[a+2]);
-								nProvince.addCoastalNode(adjNode);
-								a += 2;
-							}
-						}
-						else
-						{
-							adjNode = getNode(message[a]);
-						}
-						
-						thisNode.neighbors.add(adjNode);
+						province.getCentralNode().seaNeighbors.add(adjNode);
 					}
 				}
 				
 				uWord = unitAdjEnd+1;
 			}
+			
+			cWord = provAdjEnd+1;
 		}
+		
+		System.out.println("Adjacencies parsed");
+		
+		printMap();
 	}
 	
 	@Override

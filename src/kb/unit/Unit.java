@@ -36,6 +36,7 @@ public abstract class Unit implements DaideMessage {
 		
 		ArrayList<Order> retList = new ArrayList<Order>();
 		
+		/*
 		retList.add(new Hold(this));
 		
 		//Check all adjacent nodes
@@ -67,6 +68,7 @@ public abstract class Unit implements DaideMessage {
 				retList.add(new SupportToHold(this, adjacentNode.unit));
 			}
 		}
+		*/
 		
 		return retList;
 	}

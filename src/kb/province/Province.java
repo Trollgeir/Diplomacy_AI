@@ -26,6 +26,7 @@ public class Province {
 		this.name = name;
 		this.supplyCenter = hasSupply;
 		centralNode = new Node(this);
+		coastLine = new ArrayList<Node>();
 	}
 	
 	public void addCoastalNode(Node n)
