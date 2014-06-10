@@ -21,7 +21,7 @@ public class DodoAI extends AI {
 	}
 
 	@Override
-	public void onMessage(String[] message) {
+	public void handleMessage(String[] message) {
 		/*TODO*/
 	} 
 

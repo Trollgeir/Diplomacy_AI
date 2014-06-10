@@ -14,7 +14,7 @@ import communication.server.UnknownTokenException;
 
 import kb.Map;
 
-public class Game {
+public class Game extends Receiver {
 
 	AI ai; 
 	Map map; 
@@ -55,6 +55,6 @@ public class Game {
 
 	}
 
-
-	public void onMessage(String[] message) {};
+	@Override
+	public void handleMessage(String[] message) {};
 }

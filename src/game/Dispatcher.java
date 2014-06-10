@@ -30,7 +30,6 @@ public class Dispatcher implements MessageListener {
 		*/
 		if (forMap(message)) {
 			map.onMessage(message); 
-			System.out.println("This message is for map."); 
 		} else if (forGame(message)) {
 			game.onMessage(message); 
 		} else {

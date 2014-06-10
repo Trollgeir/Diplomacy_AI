@@ -4,6 +4,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import kb.province.Province;
+import game.Receiver;
 
 /**
  * The map/knowledge base.
@@ -11,7 +12,7 @@ import kb.province.Province;
  *
  */
 
-public class Map {
+public class Map extends Receiver {
 
 	ArrayList<Province>		provinces;
 	ArrayList<Power>		powers;
@@ -33,7 +34,9 @@ public class Map {
 		return null;
 	}
 	
-	public void onMessage(String[] message) { 
+
+	@Override
+	public void handleMessage(String[] message) {
+		/* TODO, handle a message */
 	}
-	
 }

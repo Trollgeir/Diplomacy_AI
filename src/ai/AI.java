@@ -1,6 +1,8 @@
 package ai;
 
-public abstract class AI {
+import game.Receiver;
+
+public abstract class AI extends Receiver {
 
 	private String name;
 	private String version;
@@ -11,8 +13,6 @@ public abstract class AI {
 		this.version = version;
 		usage = "";
 	}
-
-	public abstract void onMessage(String[] message);
 
 	public void init(String[] args) throws ArrayIndexOutOfBoundsException {}; 
 
