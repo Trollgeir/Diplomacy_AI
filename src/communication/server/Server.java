@@ -112,13 +112,17 @@ public class Server implements DiplomaticMessageListener {
     *
     *
     */
-    public void send(DaideMessage message)
-    throws UnknownTokenException, DisconnectedException {
+    public void send(DaideMessage message) {
         DaideList l = message.daide(); 
         String[] strmessage = new String[l.size()]; 
         for (int i = 0; i < l.size(); ++i) {
             strmessage[i] = l.get(i);
         }
-        send(strmessage);
+        try {
+            send(strmessage);
+        } catch (UnknownTokenException | DisconnectedException e) {
+            System.out.println("Error sending message :(");
+            e.printStackTrace();  
+        }
     }
 }

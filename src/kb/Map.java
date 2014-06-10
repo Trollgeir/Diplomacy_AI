@@ -256,18 +256,13 @@ public class Map extends Receiver {
 		{
 			isStandard = message[2].equals("STANDARD");
 			Yes yes = new Yes(message);
-			try {
-				Game.server.send(yes);
-				MapDefinition mapdef = new MapDefinition();
-				server.send(mapdef);
-			} catch (UnknownTokenException | DisconnectedException e) {
-				/*TODO I don't know*/
-				e.printStackTrace(); 
-			}
+			Game.server.send(yes);
+			MapDefinition mapdef = new MapDefinition();
+			Game.server.send(mapdef);
 		}
 		else if (message[0].equals("MDF"))
 		{
-			processMDF(message);
+			//processMDF(message);
 		} 
 	}
 }
