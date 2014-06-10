@@ -40,7 +40,7 @@ public class Dispatcher implements MessageListener {
 	}
 
 	public boolean forMap(String[] message) {
-		return in(message[0], "MDF");
+		return in(message[0], "MDF","NOW","SCO");
 	}
 
 	public boolean forGame(String[] message) {
