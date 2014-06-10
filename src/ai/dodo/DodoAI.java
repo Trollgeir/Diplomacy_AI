@@ -34,12 +34,28 @@ public class DodoAI extends AI {
 			}
 		}		
 		
+		// handle the HLO message
 		if (message[0].equals ("HLO")) {
 			this.setPower(newMessage[1]);
 			this.setPasscode(newMessage[2]);
 			this.setLVL(newMessage[4]);
 		}
 		
+		//Handle the SLO message
+		if (message[0].equals("SLO")) {
+			if (newMessage[1].equals(getPower())) {
+				// hooraay I won!!
+			} 
+		}
+		
+		// Handle the SMR message
+		if (message[0].equals("SMR")){
+			System.out.println("\n endgame info: \n");
+			for (String m : message) {
+				System.out.println("" + m);
+			}
+		}
+		//
 		/*TODO*/
 	} 
 
