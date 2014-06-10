@@ -6,7 +6,7 @@ package message.server;
 
 import message.DaideList;
 import message.DaideMessage;
-import message.order.Server;
+import message.order.Order;
 import message.server.TurnHistory;
 
 public class Submit implements DaideMessage{
