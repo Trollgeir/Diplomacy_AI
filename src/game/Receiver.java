@@ -6,12 +6,13 @@ public abstract class Receiver {
 
 	protected LinkedBlockingQueue<String[]> queue = new LinkedBlockingQueue<String[]>();
 
-	public void onMessage(String[] message) {
+	public abstract void onMessage(String[] message);
+
+	public void addMessage(String[] message) {
 		synchronized(queue) {
 			queue.add(message);
 		}
 	}
-
 	public void clearMessages() {
 		synchronized(queue) {
 			queue.clear();
@@ -21,11 +22,9 @@ public abstract class Receiver {
 	public void handleMessages() {
 		synchronized(queue) {
 			for (String[] s : queue) {
-				handleMessage(s);
+				/*Do something?*/
 			}
 		}
 	}
-
-	public abstract void handleMessage(String[] message);
 
 }
