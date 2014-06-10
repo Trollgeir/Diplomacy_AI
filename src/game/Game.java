@@ -56,5 +56,5 @@ public class Game extends Receiver {
 	}
 
 	@Override
-	public void handleMessage(String[] message) {};
+	public void onMessage(String[] message) {};
 }

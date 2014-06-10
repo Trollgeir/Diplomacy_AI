@@ -36,7 +36,7 @@ public class Map extends Receiver {
 	
 
 	@Override
-	public void handleMessage(String[] message) {
+	public void onMessage(String[] message) {
 		/* TODO, handle a message */
 	}
 }
