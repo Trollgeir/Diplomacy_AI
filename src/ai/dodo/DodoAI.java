@@ -23,11 +23,21 @@ public class DodoAI extends AI {
 	@Override
 	public void onMessage(String[] message) {
 		
+		String[] newMessage = new String[8];
+		int j = 0;
+		for(int i = 0; i < message.length; i++)
+		{
+			if(!message[i].equals(")") && !message[i].equals("("))
+			{
+				newMessage[j] = message[i];
+				j++;
+			}
+		}		
+		
 		if (message[0].equals ("HLO")) {
-			this.setPower(message[1]);
-			this.setPasscode(message[2]);
-			System.out.println("message3: " + message[3]);
-			//this.setVariant(message[3]);
+			this.setPower(newMessage[1]);
+			this.setPasscode(newMessage[2]);
+			this.setLVL(newMessage[4]);
 		}
 		
 		/*TODO*/

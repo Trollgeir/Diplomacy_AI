@@ -9,7 +9,7 @@ public abstract class AI extends Receiver {
 	private String usage; 
 	private String power;
 	private String passcode;
-	private String[] variant;
+	private String lvl;
 
 	public AI(String name, String version) {
 		this.name = name; 
@@ -39,8 +39,8 @@ public abstract class AI extends Receiver {
 		return this.passcode;
 	}
 	
-	public String[] getVariant() {
-		return this.variant;
+	public String getLVL(){
+		return this.lvl;
 	}
 	
 	public void setPower(String power) {
@@ -51,8 +51,8 @@ public abstract class AI extends Receiver {
 		this.passcode = passcode;
 	}
 	
-	public void setVariant(String[] variant) {
-		this.variant = variant.clone();
+	public void setLVL(String lvl){
+		this.lvl = lvl;
 	}
 	
 
