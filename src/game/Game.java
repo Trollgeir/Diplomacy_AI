@@ -19,6 +19,7 @@ public class Game extends Receiver {
 	AI ai; 
 	Map map; 
 	Dispatcher dispatcher;
+	public static Server server; 
 
 
 	public static void printUsage(AI ai) {
@@ -34,17 +35,17 @@ public class Game extends Receiver {
 			ai.init(args); 
 			String name = args[0];
 			String port = args[1];
-			Server serv = new Server(InetAddress.getByName(name), Integer.parseInt(port));
-			serv.addMessageListener(dispatcher); 
-			serv.connect();
+			server = new Server(InetAddress.getByName(name), Integer.parseInt(port));
+			server.addMessageListener(dispatcher); 
+			server.connect();
 			Connect connect = new Connect(ai.getName(), ai.getVersion()); 
-			serv.send(connect);
+			server.send(connect);
 			//TODO everything below here is a hack
 			MapDefinition mapdef = new MapDefinition();
-			serv.send(mapdef);
+			server.send(mapdef);
 			String[] str = {"MAP", "(", "'STANDARD'", ")"};
 			Yes yes = new Yes(str);
-			serv.send(yes);
+			server.send(yes);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			printUsage(ai);
 			System.exit(-1);
