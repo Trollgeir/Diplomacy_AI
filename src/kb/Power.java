@@ -1,5 +1,8 @@
 package kb;
 
+import java.util.ArrayList;
+
+import kb.province.Province;
 import message.DaideList;
 import message.DaideMessage;
 
@@ -11,11 +14,13 @@ import message.DaideMessage;
 
 public class Power implements DaideMessage{
 
-	String		name;
+	String						name;
+	public ArrayList<Province>	homeProvinces;
 	
 	Power(String name)
 	{
 		this.name = name;
+		this.homeProvinces = new ArrayList<Province>();
 	}
 	
 	/**

@@ -145,19 +145,23 @@ public class Map extends Receiver {
 	
 	public void printMap()
 	{
+		System.out.println("=========MAP=========");
 		System.out.println(phase.toString() + " of year " + year);
 		
 		for (int i = 0; i < provinces.size(); i++)
 		{
+			System.out.println();
 			Province cProv = provinces.get(i);
-			System.out.println(cProv.daide());
+			System.out.println("Province: " + cProv.daide());
+			if (cProv.getOwner() != null)
+				System.out.println("Owner: " + cProv.getOwner().getName());
 			
 			if (cProv.occupied())
 			{
 				System.out.println("Occupied by: " + cProv.unit().daide());
 			}
 			
-			System.out.print("	LAND	");
+			System.out.print(" LAND ");
 			for (int j = 0; j < cProv.getCentralNode().landNeighbors.size(); j++)
 			{
 				ArrayList<Node> n = cProv.getCentralNode().landNeighbors;
@@ -170,7 +174,7 @@ public class Map extends Receiver {
 			{
 				for (int c = 0; c < cProv.coastAmt(); c++)
 				{
-					System.out.print("	SEA	" + cProv.coastLine.get(c).coastName() + " ");
+					System.out.print(" SEA " + cProv.coastLine.get(c).coastName() + " ");
 					for (int j = 0; j < cProv.coastLine.get(c).seaNeighbors.size(); j++)
 					{
 						ArrayList<Node> n = cProv.coastLine.get(c).seaNeighbors;
@@ -182,7 +186,7 @@ public class Map extends Receiver {
 			}
 			else
 			{
-				System.out.print("	SEA		");
+				System.out.print(" SEA ");
 				for (int j = 0; j < provinces.get(i).getCentralNode().seaNeighbors.size(); j++)
 				{
 					ArrayList<Node> n = provinces.get(i).getCentralNode().seaNeighbors;
@@ -193,6 +197,30 @@ public class Map extends Receiver {
 			}
 			
 		}
+		
+		System.out.println("====================");
+	}
+	
+	public void processSCO(String[] message)
+	{
+		int pWord = 1;
+		
+		while (pWord < message.length)
+		{
+			int powerStart = pWord;
+			int powerEnd = unBracket(message, powerStart);
+			
+			Power power = getPower(message[powerStart + 1]);
+			
+			for (int i = powerStart + 2; i < powerEnd; i++)
+			{
+				getProvince(message[i]).setOwner(power);
+			}
+			
+			pWord = powerEnd+1;
+		}
+		
+		printMap();
 	}
 	
 	public void processNOW(String[] message) {
@@ -218,6 +246,21 @@ public class Map extends Receiver {
 				loc = getNode(message[unitStart + 4], message[unitStart + 5]);
 			else
 				loc = getNode(message[unitStart + 3]);
+			
+			if (loc == null)
+			{
+				if (message[unitStart + 3].equals("("))
+					System.out.println("Coast");
+				
+				System.out.println(provinces.size());
+				for (int i = 0; i < provinces.size(); i++)
+					System.out.println(provinces.get(i).daide());
+				
+				for (int i = unitStart; i < unitEnd; i++)
+				{
+					System.out.println(message[i]);
+				}
+			}
 			
 			if (uType.equals("AMY"))
 			{
@@ -261,11 +304,12 @@ public class Map extends Receiver {
 				
 				Power pow = getPower(message[powSupStart + 1]);
 				
-				//TODO UNO & power home centers
-				
 				for (int p = powSupStart + 2; p < powSupEnd; p++)
 				{
-					provinces.add(new Province(message[p], true));
+					Province newProvince = new Province(message[p], true, pow);
+					provinces.add(newProvince);
+					if (pow != null)
+						pow.homeProvinces.add(newProvince);
 				}
 				
 				sWord = powSupEnd+1;
@@ -277,7 +321,7 @@ public class Map extends Receiver {
 		
 			for (int n = nonSupStart + 1; n < nonSupEnd; n++)
 			{
-				provinces.add(new Province(message[n], false));
+				provinces.add(new Province(message[n], false, null));
 			}
 			
 		//Adjacencies
@@ -387,6 +431,10 @@ public class Map extends Receiver {
 		else if (message[0].equals("NOW"))
 		{
 			processNOW(message);
+		}
+		else if (message[0].equals("SCO"))
+		{
+			processSCO(message);
 		}
 	}
 }

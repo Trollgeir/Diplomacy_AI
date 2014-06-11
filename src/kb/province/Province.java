@@ -17,16 +17,28 @@ public class Province {
 	String 				name;
 	Node				centralNode;
 	boolean				supplyCenter;
+	Power				owner;
 	
 	public ArrayList<Node>		coastLine;
 	boolean				isLand, isSea, isCoast;
 	
-	public Province(String name, boolean hasSupply)
+	public Province(String name, boolean hasSupply, Power owner)
 	{
 		this.name = name;
 		this.supplyCenter = hasSupply;
 		centralNode = new Node(this);
 		coastLine = new ArrayList<Node>();
+		this.owner = owner;
+	}
+	
+	public void setOwner(Power owner)
+	{
+		this.owner = owner;
+	}
+
+	public Power getOwner()
+	{
+		return owner;
 	}
 	
 	public void addCoastalNode(Node n)

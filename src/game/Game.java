@@ -26,9 +26,9 @@ public class Game extends Receiver {
 		System.out.println("usage: " + ai.getClass().getName() + " [ip] [port] " + ai.getUsage()); 
 	}
 
-	public Game(AI ai, String[] args) {
+	public Game(AI ai, Map map, String[] args) {
 		this.ai = ai;
-		this.map = new Map(); 
+		this.map = map; 
 		this.dispatcher = new Dispatcher(ai, map, this); 
 
 		try {

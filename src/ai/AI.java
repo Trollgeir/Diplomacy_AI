@@ -1,5 +1,8 @@
 package ai;
 
+import kb.Map;
+import kb.Power;
+import communication.LogReader;
 import negotiator.Negotiator;
 import game.Receiver;
 
@@ -8,17 +11,19 @@ public abstract class AI extends Receiver {
 	private String name;
 	private String version;
 	private String usage; 
-	private String power;
+	private Power power;
 	private String passcode;
 	private String lvl;
 	private boolean canMessage;
 	protected Negotiator negotiator;
+	protected Map	map;
 
-	public AI(String name, String version) {
+	public AI(String name, String version, Map map) {
 		this.name = name; 
 		this.version = version;
 		usage = "";
 		this.negotiator = new Negotiator();
+		this.map = map;
 	}
 
 	public void init(String[] args) throws ArrayIndexOutOfBoundsException {}; 
@@ -39,7 +44,7 @@ public abstract class AI extends Receiver {
 		return this.usage;
 	}
 	
-	public String getPower() {
+	public Power getPower() {
 		return this.power;
 	}
 	
@@ -55,7 +60,7 @@ public abstract class AI extends Receiver {
 		return this.canMessage;
 	}
 	
-	public void setPower(String power) {
+	public void setPower(Power power) {
 		this.power = power;
 	}
 	
@@ -71,5 +76,54 @@ public abstract class AI extends Receiver {
 		this.canMessage = cm;
 	}
 	
-
+	@Override
+	public void onMessage(String[] message) {
+		
+		String[] newMessage = new String[1024];
+		int j = 0;
+		for(int i = 0; i < message.length; i++)
+		{
+			if(!message[i].equals(")") && !message[i].equals("("))
+			{
+				newMessage[j] = message[i];
+				j++;
+			}
+		}		
+		
+		if (message[0].equals ("HLO")) {
+			handleHLO(newMessage);
+		}
+		if (message[0].equals("SLO")) {
+			handleSLO(newMessage);
+		}
+		if(message[0].equals("FRM")){
+			handleFRM(newMessage);
+		}
+		if (message[0].equals("SMR")){
+			handleSMR(newMessage);
+		}
+		if(message[0].equals("THX")){
+			handleTHX(newMessage);
+		}
+		if(message[0].equals("YES")){
+			handleYES(newMessage);
+		}
+		if(message[0].equals("REJ")){
+			handleREJ(newMessage);
+		}
+		if(message[0].equals("HUH")){
+			handleHUH(newMessage);
+		}
+		
+		/*TODO*/
+	} 
+	
+	protected abstract void handleHLO(String[] message);
+	protected abstract void handleSLO(String[] message);
+	protected abstract void handleFRM(String[] message);
+	protected abstract void handleSMR(String[] message);
+	protected abstract void handleTHX(String[] message);
+	protected abstract void handleYES(String[] message);
+	protected abstract void handleREJ(String[] message);
+	protected abstract void handleHUH(String[] message);
 }

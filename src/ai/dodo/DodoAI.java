@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import kb.Map;
 import negotiator.Negotiator;
 import message.server.Connect;
 import message.server.MapDefinition;
@@ -20,77 +21,66 @@ public class DodoAI extends AI {
 
 	String logpath = null; 
 
-	public DodoAI() {
-		super("DodoAI", "0.0.0.0.1");
+	public DodoAI(Map map) {
+		super("DodoAI", "0.0.0.0.1", map);
 	}
 
-	@Override
-	public void onMessage(String[] message) {
-		
-		String[] newMessage = new String[1024];
-		int j = 0;
-		for(int i = 0; i < message.length; i++)
-		{
-			if(!message[i].equals(")") && !message[i].equals("("))
-			{
-				newMessage[j] = message[i];
-				j++;
-			}
-		}		
-		
-		// handle the HLO message
-		if (message[0].equals ("HLO")) {
-			this.setPower(newMessage[1]);
-			this.setPasscode(newMessage[2]);
-			this.setLVL(newMessage[4]);
-			if (logpath != null) {
-				new LogReader().readLog(logpath);
-			}
-		}
-		
-		//Handle the SLO message
-		if (message[0].equals("SLO")) {
-			if (newMessage[1].equals(getPower())) {
-				// hooraay I won!!
-			} else {
-				// I lost.... :(
-			}
-		}
-		
-		// Handle the FRM message, send it to the negotiator
-		if(message[0].equals("FRM")){
-			this.negotiator.addProposal(message);
-		}
-		
-		// Handle the SMR message
-		if (message[0].equals("SMR")){
-			System.out.println("\n endgame info: \n");
-			for (String m : message) {
-				System.out.println("" + m);
-			}
-		}
-		
-		// Handle the THX message
-		if(message[0].equals("THX")){
-			this.setCanMessage(true);
-		}
-		
-		// Handle the YES message
-		if(message[0].equals("YES")){
-			/*TODO, need to know all about sent messages..*/
-		}
-		
-		if(message[0].equals("REJ")){
-			/*TODO, need to know all about sent messages..*/
-		}
-		
-		if(message[0].equals("HUH")){
-			/*TODO, need to know all about sent messages..*/
-		}
-		
-		/*TODO*/
-	} 
 
+	
+	@Override
+	protected void handleHLO(String[] message)
+	{
+		this.setPower(map.getPower(message[1]));
+		this.setPasscode(message[2]);
+		this.setLVL(message[4]);
+		if (logpath != null) {
+			new LogReader().readLog(logpath);
+		}
+	}
+	@Override
+	protected void handleSLO(String[] message)
+	{
+		if (message[1].equals(getPower().getName())) {
+			// hooraay I won!!
+		} else {
+			// I lost.... :(
+		}
+	}
+	@Override
+	protected void handleFRM(String[] message)
+	{
+		this.negotiator.addProposal(message);
+	}
+	@Override
+	protected void handleSMR(String[] message)
+	{
+		System.out.println("\n endgame info: \n");
+		for (String m : message) {
+			System.out.println("" + m);
+		}
+	}
+	@Override
+	protected void handleTHX(String[] message)
+	{
+		this.setCanMessage(true);
+	}
+	@Override
+	protected void handleYES(String[] message)
+	{
+		/*TODO, need to know all about sent messages..*/
+	}
+	@Override
+	protected void handleREJ(String[] message)
+	{
+		/*TODO, need to know all about sent messages..*/
+	}
+	@Override
+	protected void handleHUH(String[] message)
+	{
+		/*TODO, need to know all about sent messages..*/
+	}
+	
+	
 	@Override
 	public void init(String[] args) throws ArrayIndexOutOfBoundsException {
 		if (args.length < 3) return; 
@@ -100,7 +90,9 @@ public class DodoAI extends AI {
 	}
 
 	public static void main(String[] args) {
-		new Game(new DodoAI(), args);
+		Map map = new Map();
+		AI ai = new DodoAI(map);
+		new Game(ai, map, args);
 
 	/*	
 		Server serv = new Server(InetAddress.getByName(args[0]), Integer.parseInt(args[1]));
