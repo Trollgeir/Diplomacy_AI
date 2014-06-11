@@ -22,13 +22,18 @@ public abstract class Unit implements DaideMessage {
 	Unit(Power owner, Node location)
 	{
 		this.owner = owner;
-		this.location = location;
+		moveTo(location);
 	}
 	
 	public abstract boolean canMoveOn(Node node);
 	
 	public abstract DaideList daide();
 	
+	public void moveTo(Node node)
+	{
+		location = node;
+		node.setUnit(this);
+	}
 	
 	public ArrayList<Order> possibleOrders()
 	{

@@ -1,31 +1,40 @@
 package kb;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import kb.province.*;
 import game.Receiver;
 import message.server.*;
-import communication.server.*;
 import game.Game;
+import kb.unit.*;
 /**
  * The map/knowledge base.
  * @author Koen
  *
  */
 
+enum Phase
+{
+	SUM, FAL, AUT, WIN, SPR
+};
+
 public class Map extends Receiver {
 
 	ArrayList<Province>		provinces;
 	ArrayList<Power>		powers;
+	ArrayList<Unit>			units;
 	boolean					isStandard;
+	Phase					phase;
+	int						year;
 	
 	public Map()
 	{
 		powers = new ArrayList<Power>();
 		provinces = new ArrayList<Province>();
-		
+		units = new ArrayList<Unit>();
 
+		phase = Phase.SUM;
+		year = -1;
 	}
 	
 	public Node getNode(String name)
@@ -121,12 +130,33 @@ public class Map extends Receiver {
 		return end;
 	}
 	
+	public ArrayList<Unit> powerUnits(Power power)
+	{
+		ArrayList<Unit> ret = new ArrayList<Unit>();
+		
+		for (int i = 0; i < units.size(); i++)
+		{
+			if (units.get(i).owner.name.equals(power.name))
+				ret.add(units.get(i));
+		}
+		
+		return ret;
+	}
+	
 	public void printMap()
 	{
+		System.out.println(phase.toString() + " of year " + year);
+		
 		for (int i = 0; i < provinces.size(); i++)
 		{
 			Province cProv = provinces.get(i);
 			System.out.println(cProv.daide());
+			
+			if (cProv.occupied())
+			{
+				System.out.println("Occupied by: " + cProv.unit().daide());
+			}
+			
 			System.out.print("	LAND	");
 			for (int j = 0; j < cProv.getCentralNode().landNeighbors.size(); j++)
 			{
@@ -163,6 +193,45 @@ public class Map extends Receiver {
 			}
 			
 		}
+	}
+	
+	public void processNOW(String[] message) {
+		units.clear();
+		for (int i = 0; i < provinces.size(); i++)
+			provinces.get(i).removeUnit();
+		
+		phase = Phase.valueOf(message[2]);
+		year = Integer.parseInt(message[3]);
+		
+		int uWord = 5;
+		
+		while (uWord < message.length)
+		{
+			int unitStart = uWord;
+			int unitEnd = unBracket(message, unitStart);
+			
+			Power pow = getPower(message[unitStart + 1]);
+			String uType = message[unitStart + 2];
+			Node loc = null;
+			
+			if (message[unitStart + 3].equals("("))
+				loc = getNode(message[unitStart + 4], message[unitStart + 5]);
+			else
+				loc = getNode(message[unitStart + 3]);
+			
+			if (uType.equals("AMY"))
+			{
+				units.add(new Army(pow, loc));
+			}
+			else
+			{
+				units.add(new Fleet(pow, loc));
+			}
+			
+			uWord = unitEnd + 1;
+		}
+		
+		printMap();
 	}
 	
 	public void processMDF(String[] message) {
@@ -314,6 +383,10 @@ public class Map extends Receiver {
 		else if (message[0].equals("MDF"))
 		{
 			processMDF(message);
-		} 
+		}
+		else if (message[0].equals("NOW"))
+		{
+			processNOW(message);
+		}
 	}
 }

@@ -14,7 +14,7 @@ import kb.Node;
 
 public class Fleet extends Unit {
 
-	Fleet(Power owner, Node location) {
+	public Fleet(Power owner, Node location) {
 		super(owner, location);
 	}
 

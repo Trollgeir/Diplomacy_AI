@@ -96,4 +96,8 @@ public class Node implements DaideMessage{
 			return province.isSea();
 		return false;
 	}
+
+	public void setUnit(Unit unit) {	
+		this.unit = unit;
+	}
 }

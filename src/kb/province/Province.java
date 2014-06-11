@@ -98,6 +98,21 @@ public class Province {
 		return null;
 	}
 	
+	public void removeUnit()
+	{
+		if (!isCoast)
+		{
+			centralNode.unit = null;
+		}
+		else
+		{
+			for (int i = 0; i < coastLine.size(); i++)
+			{
+				coastLine.get(i).unit = null;
+			}
+		}
+	}
+	
 	/**
 	 * Get the DAIDE message syntax representation of this province.
 	 * @return The DAIDE version of this province.
