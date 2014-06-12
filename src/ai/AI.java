@@ -1,6 +1,10 @@
 package ai;
 
+import java.util.ArrayList;
+
+import kb.province.*;
 import kb.Map;
+import kb.Node;
 import kb.Power;
 import communication.LogReader;
 import negotiator.Negotiator;
@@ -17,6 +21,7 @@ public abstract class AI extends Receiver {
 	private boolean canMessage;
 	protected Negotiator negotiator;
 	protected Map	map;
+	protected ArrayList<ArrayList<Node>> adjacencyList;
 
 	public AI(String name, String version, Map map) {
 		this.name = name; 
@@ -27,11 +32,34 @@ public abstract class AI extends Receiver {
 	}
 
 	public void init(String[] args) throws ArrayIndexOutOfBoundsException {}; 
-
+	
 	public String getName() {
 		return this.name; 
 	}
 
+	public void findAdjacent()
+	{
+		for(Province p : ownProvinces)
+		{
+			ArrayList<Node> local = new ArrayList<Node>();
+			Node n = p.getCentralNode();
+			if(p.unit() != null)
+			{
+				for(Node adj : n.landNeighbors)
+				{
+					if(!local.contains(adj))
+						local.add(adj);
+				}
+				for(Node adj : n.seaNeighbors)
+				{
+					if(!local.contains(adj))
+						local.add(adj);
+				}
+			}
+			adjacencyList.add(local);
+		}
+	}
+	
 	public void setName(String name) {
 		this.name = name; 
 	}
@@ -126,4 +154,6 @@ public abstract class AI extends Receiver {
 	protected abstract void handleYES(String[] message);
 	protected abstract void handleREJ(String[] message);
 	protected abstract void handleHUH(String[] message);
+	protected abstract void offensiveMove();
+	protected abstract void defensiveMove();
 }

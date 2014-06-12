@@ -25,7 +25,18 @@ public class DodoAI extends AI {
 		super("DodoAI", "0.0.0.0.1", map);
 	}
 
-
+	public void findGains()
+	{}
+	
+	@Override
+	protected void offensiveMove()
+	{
+	}
+	
+	@Override
+	protected void defensiveMove()
+	{
+	}
 	
 	@Override
 	protected void handleHLO(String[] message)
