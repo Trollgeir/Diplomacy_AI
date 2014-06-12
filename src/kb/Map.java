@@ -158,6 +158,19 @@ public class Map extends Receiver {
 		return ret;
 	}
 	
+	public ArrayList<Province> getProvincesByOwner(Power power)
+	{
+		ArrayList<Province> ret = new ArrayList<Province>();
+		
+		for (int i = 0; i < provinces.size(); i++)
+		{
+			if (provinces.get(i).getOwner().name.equals(power.name))
+				ret.add(provinces.get(i));
+		}
+		
+		return ret;
+	}
+	
 	public void printMap()
 	{
 		System.out.println("=========MAP=========");
