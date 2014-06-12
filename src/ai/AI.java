@@ -137,14 +137,8 @@ public abstract class AI extends Receiver {
 	
 	protected void handleQueue()
 	{
-		Order[] oList = new Order[queue.size()];  
-		
-		int i = 0;
-		while (queue.size() > 0)
-		{
-			oList[i] = queue.poll();
-			queue.poll();
-		}
+		Order[] oList = new Order[queue.size()];
+		queue.toArray(oList);  
 		
 		Game.server.send(new Submit(oList));
 	}
