@@ -185,7 +185,7 @@ public class DodoAI extends AI {
 		for(int i = 0; i < units.size(); i++)
 		{
 			d = Math.random();
-			if(d < 0.5)
+			if(d <= 1)
 				queue.add(this.offensiveMove(i));
 			else
 				queue.add(this.defensiveMove(i));
