@@ -185,10 +185,12 @@ public abstract class AI extends Receiver {
 	
 	protected void handleQueue()
 	{
+		if (queue.size() == 0) return; 
 		Order[] oList = new Order[queue.size()];
 		queue.toArray(oList);  
 		
 		Game.server.send(new Submit(oList));
+		queue.clear();
 	}
 	
 	protected abstract void handleHLO(String[] message);

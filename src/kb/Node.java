@@ -59,10 +59,15 @@ public class Node implements DaideMessage{
 	{
 		DaideList ret = new DaideList();
 		
+		if (coastal)
+			ret.add("("); 
+
 		ret.add(province.daide());
 		
-		if (coastal)
+		if (coastal) {
 			ret.add(coastName);
+			ret.add(")");
+		}
 		
 		return ret;
 	}

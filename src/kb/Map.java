@@ -145,6 +145,8 @@ public class Map extends Receiver {
 		return end;
 	}
 	
+
+
 	public ArrayList<Unit> getUnitsByOwner(Power power)
 	{
 		ArrayList<Unit> ret = new ArrayList<Unit>();
@@ -172,6 +174,17 @@ public class Map extends Receiver {
 		}
 		
 		return ret;
+	}
+
+	public ArrayList<Node> getValidNeighbours(Unit unit) {
+		ArrayList<Node> result = new ArrayList<Node>(); 
+		//filter based on unit type
+		if (unit.isArmy()) {
+			result.addAll(unit.location.landNeighbors);
+		} else {
+			result.addAll(unit.location.seaNeighbors);
+		}
+		return result;
 	}
 	
 	public void printMap()

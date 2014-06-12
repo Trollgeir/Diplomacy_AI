@@ -13,7 +13,7 @@ public class Remove implements Order {
 
 	Unit		unit;
 	
-	Remove(Unit unit)
+	public Remove(Unit unit)
 	{
 		this.unit = unit;
 	}

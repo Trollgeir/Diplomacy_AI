@@ -11,9 +11,7 @@ import kb.Node;
 import kb.province.Province;
 import kb.unit.Unit;
 import negotiator.Negotiator;
-import message.order.Hold;
-import message.order.Move;
-import message.order.Order;
+import message.order.*;
 import message.server.Connect;
 import message.server.MapDefinition;
 import message.server.Submit;
@@ -25,6 +23,7 @@ import ai.AI;
 import ai.Heuristics;
 import game.Game;
 import kb.Names; 
+import kb.Phase; 
 
 public class DodoAI extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
@@ -159,7 +158,8 @@ public class DodoAI extends AI {
 	public void newTurn()
 	{
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
-
+		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
+/*
 		this.adjacencyList = new ArrayList<ArrayList<Node>>();
 		findAdjacent();
 
@@ -181,6 +181,21 @@ public class DodoAI extends AI {
 				//TODO - replace unit with army or fleet
 				System.out.println("A unit is going defensive...");
 			}
+		}*/
+		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
+			for (Unit u : units) {
+				ArrayList<Node> nbh = map.getValidNeighbours(u);
+				int idx = (int)(Math.random() * nbh.size()); 
+				queue.add(new Move(u, nbh.get(idx)));
+			}
+		} else if (map.getPhase() == Phase.WIN) { 
+
+			while (units.size() > provinces.size()) {
+				System.out.println(getPower().getName() + " " + units.size() + " - " + provinces.size()); 
+				int idx = (int)(Math.random() * units.size());
+				queue.add(new Remove(units.get(idx)));
+				units.remove(idx); 
+			}  
 		}
 
 		if (key_to_send) {
@@ -192,8 +207,10 @@ public class DodoAI extends AI {
 				e.printStackTrace(); 
 			}
 		}
+
+
 		handleQueue();
-		System.out.println(this.getPower().getName() + " sent his order!"); 
+		//System.out.println(this.getPower().getName() + " sent his order!"); 
 	}
 	
 }
