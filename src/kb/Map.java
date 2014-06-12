@@ -164,8 +164,11 @@ public class Map extends Receiver {
 		
 		for (int i = 0; i < provinces.size(); i++)
 		{
-			if (provinces.get(i).getOwner().name.equals(power.name))
-				ret.add(provinces.get(i));
+			if(provinces.get(i).getOwner() != null)
+			{
+				if (provinces.get(i).getOwner().name.equals(power.name))
+					ret.add(provinces.get(i));
+			}
 		}
 		
 		return ret;

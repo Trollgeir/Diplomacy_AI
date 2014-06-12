@@ -168,9 +168,12 @@ public class DodoAI extends AI {
 	
 	public void newTurn()
 	{
+		findAdjacent();
+		
+		
 		double d = Math.random();
 		
-		ArrayList<Unit> units = map.getUnitsByOwner(this.power);
+		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		for(int i = 0; i < units.size(); i++)
 			visitedProvinces.add(units.get(i).location.province);
 		
