@@ -14,9 +14,9 @@ import kb.unit.Unit;
 
 public class MoveByConvoy implements Order {
 
-	Unit				unit;
-	Node				destination;
-	ArrayList<Node> 	via;
+	Unit		unit;
+	Node		destination;
+	Node[] 		via;
 	
 	/**
 	 * 
@@ -24,7 +24,7 @@ public class MoveByConvoy implements Order {
 	 * @param destination The final destination of the convoy.
 	 * @param via The list of nodes that the fleet will pass through.
 	 */
-	MoveByConvoy(Unit unit, Node destination, ArrayList<Node> via)
+	MoveByConvoy(Unit unit, Node destination, Node[] via)
 	{
 		this.unit = unit;
 		this.destination = destination;
@@ -42,8 +42,8 @@ public class MoveByConvoy implements Order {
 		ret.add2("VIA", "(");
 		
 		
-		for (int i = 0; i < via.size(); i++)
-			ret.addAll(via.get(i).daide());
+		for (int i = 0; i < via.length; i++)
+			ret.addAll(via[i].daide());
 		
 		ret.add(")");
 		

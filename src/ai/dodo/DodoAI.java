@@ -21,6 +21,7 @@ import communication.server.DisconnectedException;
 import communication.server.Server;
 import communication.server.UnknownTokenException;
 import ai.AI;
+import ai.Heuristics;
 import game.Game;
 import kb.Names; 
 

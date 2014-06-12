@@ -145,7 +145,7 @@ public class Map extends Receiver {
 		return end;
 	}
 	
-	public ArrayList<Unit> powerUnits(Power power)
+	public ArrayList<Unit> getUnitsByOwner(Power power)
 	{
 		ArrayList<Unit> ret = new ArrayList<Unit>();
 		
