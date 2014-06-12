@@ -168,12 +168,16 @@ public class DodoAI extends AI {
 	
 	public void newTurn()
 	{
+		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
+		this.adjacencyList = new ArrayList<ArrayList<Node>>();
+		for(int i = 0; i < units.size(); i++)
+		{
+			this.adjacencyList.add(new ArrayList<Node>());
+		}
 		findAdjacent();
-		
 		
 		double d = Math.random();
 		
-		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		for(int i = 0; i < units.size(); i++)
 			visitedProvinces.add(units.get(i).location.province);
 		
@@ -181,9 +185,9 @@ public class DodoAI extends AI {
 		{
 			d = Math.random();
 			if(d < 0.5)
-				this.offensiveMove(i);
+				queue.add(this.offensiveMove(i));
 			else
-				this.defensiveMove(i);
+				queue.add(this.defensiveMove(i));
 		}
 		
 		handleQueue();
