@@ -52,7 +52,10 @@ public class Game extends Receiver {
 
 	@Override
 	public void onMessage(String[] message) {
-		
+		if (message[0].equals("OFF")) {
+			System.out.println("Server was manually terminated."); 
+			System.exit(0); 
+		}
 		
 	};
 }

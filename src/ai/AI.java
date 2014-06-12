@@ -1,8 +1,11 @@
 package ai;
 
+import java.util.concurrent.LinkedBlockingQueue;
+
 import kb.Map;
 import kb.Power;
 import communication.LogReader;
+import message.order.Order;
 import negotiator.Negotiator;
 import game.Game;
 import game.Receiver;
@@ -19,12 +22,14 @@ public abstract class AI extends Receiver {
 	protected Negotiator negotiator;
 	protected Map	map;
 	protected Game game;
-	
+	protected LinkedBlockingQueue<Order> queue;
+
 	public AI(String name, String version, Map map) {
 		this.name = name; 
 		this.version = version;
 		usage = "";
 		this.negotiator = new Negotiator();
+		this.queue = new LinkedBlockingQueue<Order>();
 		this.map = map;
 		map.setAI(this);
 	}
