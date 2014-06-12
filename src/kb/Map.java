@@ -302,7 +302,7 @@ public class Map extends Receiver {
 			uWord = unitEnd + 1;
 		}
 		
-		ai.newTurn();
+		//ai.newTurn();
 		
 		//printMap();
 	}

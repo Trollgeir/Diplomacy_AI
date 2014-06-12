@@ -29,15 +29,21 @@ public class LogReader {
 
 			e.printStackTrace();
 		}
-/*
+
 		for (int i = 0; i < 8; ++i) {
 			System.out.println(i + ": " + names[i] + " - " + powers[i]); 
-		}*/
+		}
 	} 
 
 
 	public void processLine(String line) {
-		char x = line.charAt(9) == ' ' ? line.charAt(8) : line.charAt(9);
+		if (line.charAt(0) == ' ') return; 
+		int i = 0; 
+		while (line.charAt(i++) != ' ');
+		i--;
+		while (line.charAt(i++) == ' ');
+		i--;
+		char x = line.charAt(i); 
 		int num = x - '0';
 		if (num == 0 || num > 7) return;
 		int idx = line.indexOf("NME");
@@ -60,6 +66,12 @@ public class LogReader {
 		int end = start;
 		while (line.charAt(end) != ' ') end++;
 		return line.substring(start, end);
+	}
+
+	public static void main(String args[]) {
+		String a[] = new String[8];
+		String b[] = new String[8];
+		new LogReader().readLog(args[0], a, b);
 	}
 
 }
