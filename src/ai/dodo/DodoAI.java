@@ -189,14 +189,21 @@ public class DodoAI extends AI {
 				queue.add(new Move(u, nbh.get(idx)));
 			}
 		} else if (map.getPhase() == Phase.WIN) { 
-			if (units.size() < provinces.size()) {
-				queue.add(new WaiveBuild(power));
-			}
-			while (units.size() > provinces.size()) {
+			// error > 0 means more units then provinces so REMOVE
+			// error < 0 means more provinces then units so WAIVE
+			int error = units.size() - provinces.size(); 
+			while (error > 0) {
+				//REMOVE
 				int idx = (int)(Math.random() * units.size());
 				queue.add(new Remove(units.get(idx)));
 				units.remove(idx); 
-			} 
+				error--; 
+			}
+			while (error < 0) {
+				//WAIVE
+				queue.add(new WaiveBuild(power));
+				error++; 
+			}
 		}
 
 		if (key_to_send) {
