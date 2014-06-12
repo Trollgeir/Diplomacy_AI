@@ -8,6 +8,7 @@ import java.util.Random;
 
 import kb.Map;
 import kb.Node;
+import kb.province.Province;
 import kb.unit.Unit;
 import negotiator.Negotiator;
 import message.order.Hold;
@@ -29,6 +30,7 @@ public class DodoAI extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
 
 	Names names = null; 
+	ArrayList<Province> visitedProvinces = new ArrayList<Province>();
 
 	public DodoAI(Map map) {
 		super("DodoAI", "0.0.0.0.1", map);
@@ -36,23 +38,39 @@ public class DodoAI extends AI {
 
 	public void findGains()
 	{}
-	
+		
 	@Override
-	protected void offensiveMove()
-	{
+	protected Order offensiveMove(int i)
+	{	
+		int[] shuffled = shuffle(this.adjacencyList.get(i).size());
+		ArrayList<Unit> units = map.getUnitsByOwner(this.power);
+		
+		for(int j = 0; j < shuffled.length; j++)
+		{
+			Province p = this.adjacencyList.get(i).get(j).province;
+			if(!visitedProvinces.contains(p))
+			{
+				visitedProvinces.remove(units.get(i).location.province);
+				visitedProvinces.add(p);
+				return new Move(units.get(i), this.adjacencyList.get(i).get(j));
+			}
+		}
+		return new Hold(units.get(i));
 	}
 	
 	@Override
-	protected void defensiveMove()
+	protected Order defensiveMove(int i)
 	{
+		ArrayList<Unit> units = map.getUnitsByOwner(this.power); 
+		return new Hold(units.get(i));
 	}
 	
 	@Override
 	protected void handleHLO(String[] message)
 	{
-		this.setPower(map.getPower(message[1]));
-		this.setPasscode(message[2]);
-		this.setLVL(message[4]);
+		this.power =  map.getPower(message[1]);
+		this.passcode = message[2];
+		this.lvl = message[4];
 		if (names != null) {
 			names.init(map);
 		}
@@ -150,11 +168,19 @@ public class DodoAI extends AI {
 	
 	public void newTurn()
 	{
-		ArrayList<Unit> units = map.getUnitsByOwner(this.power);
+		double d = Math.random();
 		
-		for (int i = 0; i < units.size(); i++)
+		ArrayList<Unit> units = map.getUnitsByOwner(this.power);
+		for(int i = 0; i < units.size(); i++)
+			visitedProvinces.add(units.get(i).location.province);
+		
+		for(int i = 0; i < units.size(); i++)
 		{
-			queue.add(new Hold(units.get(i)));
+			d = Math.random();
+			if(d < 0.5)
+				this.offensiveMove(i);
+			else
+				this.defensiveMove(i);
 		}
 		
 		handleQueue();

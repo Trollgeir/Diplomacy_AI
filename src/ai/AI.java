@@ -166,6 +166,23 @@ public abstract class AI extends Receiver {
 		/*TODO*/
 	} 
 	
+	protected int[] shuffle(int size)	
+	{
+		int[] shuffled = new int[size];
+		for(int i = 0; i < size; i++)
+		{
+			shuffled[i] = i;
+		}
+		for(int i = 0; i < shuffled.length; i++)
+		{
+			int j = (int)(Math.random() * shuffled.length);
+			int temp = shuffled[i];
+			shuffled[i] = shuffled[j];
+			shuffled[j] = temp;
+		}
+		return shuffled;
+	}
+	
 	protected void handleQueue()
 	{
 		Order[] oList = new Order[queue.size()];
@@ -184,6 +201,6 @@ public abstract class AI extends Receiver {
 	protected abstract void handleHUH(String[] message);
 	
 	public abstract void newTurn();
-	protected abstract void offensiveMove();
-	protected abstract void defensiveMove();
+	protected abstract Order offensiveMove(int i);
+	protected abstract Order defensiveMove(int i);
 }
