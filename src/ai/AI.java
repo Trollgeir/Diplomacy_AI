@@ -5,6 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import kb.Map;
 import kb.Power;
 import communication.LogReader;
+import message.order.Order;
 import negotiator.Negotiator;
 import game.Receiver;
 
@@ -19,14 +20,14 @@ public abstract class AI extends Receiver {
 	private boolean canMessage;
 	protected Negotiator negotiator;
 	protected Map	map;
-	protected LinkedBlockingQueue<String[]> queue = new LinkedBlockingQueue<String[]>();
+	protected LinkedBlockingQueue<Order> queue;
 
 	public AI(String name, String version, Map map) {
 		this.name = name; 
 		this.version = version;
 		usage = "";
 		this.negotiator = new Negotiator();
-		this.queue = new LinkedBlockingQueue<String[]>();
+		this.queue = new LinkedBlockingQueue<Order>();
 		this.map = map;
 	}
 
@@ -64,11 +65,7 @@ public abstract class AI extends Receiver {
 		return this.canMessage;
 	}
 	
-	public LinkedBlockingQueue<String[]> getQueue() {
-		return this.queue;
-	}
-	
-	public void setQueue(LinkedBlockingQueue<String[]> queue) {
+	public void setQueue(LinkedBlockingQueue<Order> queue) {
 		this.queue = queue;
 	}
 	
