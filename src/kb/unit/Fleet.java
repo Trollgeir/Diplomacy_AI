@@ -18,12 +18,28 @@ public class Fleet extends Unit {
 		super(owner, location);
 	}
 
+	public boolean isArmy()
+	{
+		return false;
+	}
+	public boolean isFleet()
+	{
+		return true;
+	}
+	
 	@Override
 	public DaideList daide() {
 		DaideList ret = owner.daide();
 		
 		ret.add("FLT");
+		
+		if (!location.coastName().equals(""))
+			ret.add("(");
+		
 		ret.addAll(location.daide());
+		
+		if (!location.coastName().equals(""))
+			ret.add(")");
 		
 		return ret;  
 	}

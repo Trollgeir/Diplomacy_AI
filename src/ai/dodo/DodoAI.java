@@ -3,23 +3,31 @@ package ai.dodo;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Random;
 
 import kb.Map;
+import kb.Node;
+import kb.unit.Unit;
 import negotiator.Negotiator;
+import message.order.Hold;
+import message.order.Move;
+import message.order.Order;
 import message.server.Connect;
 import message.server.MapDefinition;
+import message.server.Submit;
 import message.server.Yes;
 import communication.server.DisconnectedException;
 import communication.server.Server;
 import communication.server.UnknownTokenException;
 import ai.AI;
 import game.Game;
-import communication.LogReader;
+import kb.Names; 
 
 public class DodoAI extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
 
-	String logpath = null; 
+	Names names = null; 
 
 	public DodoAI(Map map) {
 		super("DodoAI", "0.0.0.0.1", map);
@@ -44,8 +52,8 @@ public class DodoAI extends AI {
 		this.setPower(map.getPower(message[1]));
 		this.setPasscode(message[2]);
 		this.setLVL(message[4]);
-		if (logpath != null) {
-			new LogReader().readLog(logpath);
+		if (names != null) {
+			names.init(map);
 		}
 	}
 	@Override
@@ -97,7 +105,7 @@ public class DodoAI extends AI {
 		if (args.length < 3) return; 
 		setName(args[2]);
 		if (args.length < 4) return;
-		logpath = args[3];
+		names = new Names(args[3]);
 	}
 
 	public static void main(String[] args) {
@@ -136,6 +144,19 @@ public class DodoAI extends AI {
 			e.printStackTrace();
 		}
 	*/
+	}
+	
+	
+	public void newTurn()
+	{
+		ArrayList<Unit> units = map.powerUnits(getPower());
+		
+		for (int i = 0; i < units.size(); i++)
+		{
+			queue.add(new Hold(units.get(i)));
+		}
+		
+		handleQueue();
 	}
 	
 }

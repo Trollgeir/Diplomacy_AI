@@ -1,13 +1,18 @@
 package ai;
 
 import java.util.ArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
 
-import kb.province.*;
 import kb.Map;
 import kb.Node;
 import kb.Power;
+import kb.unit.Unit;
 import communication.LogReader;
+import message.order.Hold;
+import message.order.Order;
+import message.server.Submit;
 import negotiator.Negotiator;
+import game.Game;
 import game.Receiver;
 
 public abstract class AI extends Receiver {
@@ -22,16 +27,25 @@ public abstract class AI extends Receiver {
 	protected Negotiator negotiator;
 	protected Map	map;
 	protected ArrayList<ArrayList<Node>> adjacencyList;
+	protected Game game;
+	protected LinkedBlockingQueue<Order> queue;
 
 	public AI(String name, String version, Map map) {
 		this.name = name; 
 		this.version = version;
 		usage = "";
 		this.negotiator = new Negotiator();
+		this.queue = new LinkedBlockingQueue<Order>();
 		this.map = map;
+		map.setAI(this);
 	}
 
 	public void init(String[] args) throws ArrayIndexOutOfBoundsException {}; 
+	
+	public void setGame(Game g)
+	{
+		game = g;
+	}
 	
 	public String getName() {
 		return this.name; 
@@ -146,6 +160,14 @@ public abstract class AI extends Receiver {
 		/*TODO*/
 	} 
 	
+	protected void handleQueue()
+	{
+		Order[] oList = new Order[queue.size()];
+		queue.toArray(oList);  
+		
+		Game.server.send(new Submit(oList));
+	}
+	
 	protected abstract void handleHLO(String[] message);
 	protected abstract void handleSLO(String[] message);
 	protected abstract void handleFRM(String[] message);
@@ -154,6 +176,8 @@ public abstract class AI extends Receiver {
 	protected abstract void handleYES(String[] message);
 	protected abstract void handleREJ(String[] message);
 	protected abstract void handleHUH(String[] message);
+	
+	public abstract void newTurn();
 	protected abstract void offensiveMove();
 	protected abstract void defensiveMove();
 }

@@ -25,6 +25,10 @@ public abstract class Unit implements DaideMessage {
 		moveTo(location);
 	}
 	
+	public abstract boolean isArmy();
+	public abstract boolean isFleet();
+	
+	
 	public abstract boolean canMoveOn(Node node);
 	
 	public abstract DaideList daide();
