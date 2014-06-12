@@ -2,6 +2,7 @@ package kb;
 
 import java.util.ArrayList;
 
+import ai.AI;
 import kb.province.*;
 import game.Receiver;
 import message.server.*;
@@ -13,11 +14,6 @@ import kb.unit.*;
  *
  */
 
-enum Phase
-{
-	SUM, FAL, AUT, WIN, SPR
-};
-
 public class Map extends Receiver {
 
 	ArrayList<Province>		provinces;
@@ -26,6 +22,7 @@ public class Map extends Receiver {
 	boolean					isStandard;
 	Phase					phase;
 	int						year;
+	AI						ai;
 	
 	String[] mapMessage; 
 
@@ -37,6 +34,13 @@ public class Map extends Receiver {
 
 		phase = Phase.SUM;
 		year = -1;
+		
+		ai = null;
+	}
+	
+	public void setAI(AI ai)
+	{
+		this.ai = ai;
 	}
 	
 	public Node getNode(String name)
@@ -93,6 +97,15 @@ public class Map extends Receiver {
 		}
 		
 		return null;
+	}
+	
+	public int getYear()
+	{
+		return year;
+	}
+	public Phase getPhase()
+	{
+		return phase;
 	}
 	
 	public static int unBracket(String[] messageIn, int start)
@@ -222,7 +235,7 @@ public class Map extends Receiver {
 			pWord = powerEnd+1;
 		}
 		
-		printMap();
+		//printMap();
 	}
 	
 	public void processNOW(String[] message) {
@@ -276,7 +289,9 @@ public class Map extends Receiver {
 			uWord = unitEnd + 1;
 		}
 		
-		printMap();
+		ai.newTurn();
+		
+		//printMap();
 	}
 	
 	public void processMDF(String[] message) {
@@ -413,7 +428,7 @@ public class Map extends Receiver {
 			cWord = provAdjEnd+1;
 		}
 		
-		printMap();
+		//printMap();
 	}
 	
 	@Override

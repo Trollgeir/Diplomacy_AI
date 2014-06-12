@@ -3,11 +3,16 @@ package ai.dodo;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import kb.Map;
+import kb.unit.Unit;
 import negotiator.Negotiator;
+import message.order.Hold;
+import message.order.Order;
 import message.server.Connect;
 import message.server.MapDefinition;
+import message.server.Submit;
 import message.server.Yes;
 import communication.server.DisconnectedException;
 import communication.server.Server;
@@ -125,6 +130,21 @@ public class DodoAI extends AI {
 			e.printStackTrace();
 		}
 	*/
+	}
+	
+	
+	public void newTurn()
+	{
+		ArrayList<Unit> units = map.powerUnits(getPower());
+		
+		Order[] oList = new Order[units.size()];  
+		
+		for (int i = 0; i < units.size(); i++)
+		{
+			oList[i] = new Hold(units.get(i));
+		}
+		
+		Game.server.send(new Submit(oList));
 	}
 	
 }

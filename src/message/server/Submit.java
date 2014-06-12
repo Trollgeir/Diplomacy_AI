@@ -28,6 +28,8 @@ public class Submit implements DaideMessage{
 	public DaideList daide() {
 		DaideList result = new DaideList();
 
+		result.add("SUB");
+		
 		if (turn != null) {
 			result.add("(");
 			result.addAll(turn.daide());

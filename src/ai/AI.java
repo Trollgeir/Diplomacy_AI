@@ -4,6 +4,7 @@ import kb.Map;
 import kb.Power;
 import communication.LogReader;
 import negotiator.Negotiator;
+import game.Game;
 import game.Receiver;
 
 public abstract class AI extends Receiver {
@@ -17,17 +18,24 @@ public abstract class AI extends Receiver {
 	private boolean canMessage;
 	protected Negotiator negotiator;
 	protected Map	map;
-
+	protected Game game;
+	
 	public AI(String name, String version, Map map) {
 		this.name = name; 
 		this.version = version;
 		usage = "";
 		this.negotiator = new Negotiator();
 		this.map = map;
+		map.setAI(this);
 	}
 
 	public void init(String[] args) throws ArrayIndexOutOfBoundsException {}; 
 
+	public void setGame(Game g)
+	{
+		game = g;
+	}
+	
 	public String getName() {
 		return this.name; 
 	}
@@ -126,4 +134,6 @@ public abstract class AI extends Receiver {
 	protected abstract void handleYES(String[] message);
 	protected abstract void handleREJ(String[] message);
 	protected abstract void handleHUH(String[] message);
+	
+	public abstract void newTurn();
 }

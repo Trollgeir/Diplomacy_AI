@@ -23,7 +23,14 @@ public class Fleet extends Unit {
 		DaideList ret = owner.daide();
 		
 		ret.add("FLT");
+		
+		if (!location.coastName().equals(""))
+			ret.add("(");
+		
 		ret.addAll(location.daide());
+		
+		if (!location.coastName().equals(""))
+			ret.add(")");
 		
 		return ret;  
 	}
