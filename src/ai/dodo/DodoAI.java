@@ -28,12 +28,35 @@ import kb.Names;
 
 public class DodoAI extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
-
+	
+	boolean key_to_send = false; 
 	Names names = null; 
 	ArrayList<Province> visitedProvinces = new ArrayList<Province>();
 
 	public DodoAI(Map map) {
 		super("DodoAI", "0.0.0.0.1", map);
+	}
+
+	@Override
+	public String getUsage() {
+		return "\nOptional flags:\n\t-n [name] (Changes name of this AI)\n\t-l [path to log file] (Enables reading names from log file)\n\t-k (Enables require key to send messages)" ;
+	}
+
+	public void parseCommandLineArguments(String[] args) {
+		// first two argument are always ip and port
+		for (int i = 2; i < args.length; i ++) {
+			String flag = args[i]; 
+			if (flag.equals("-n")) {
+				setName(args[++i]);  
+			} else if (flag.equals("-l")) {
+				names = new Names(args[++i]); 
+			} else if (flag.equals("-k")) {
+				key_to_send = true; 
+			} else  {
+				//hack to throw outofboundexception
+				String error = args[-20]; 
+			}
+		}
 	}
 
 	public void findGains()
@@ -121,10 +144,7 @@ public class DodoAI extends AI {
 	
 	@Override
 	public void init(String[] args) throws ArrayIndexOutOfBoundsException {
-		if (args.length < 3) return; 
-		setName(args[2]);
-		if (args.length < 4) return;
-		names = new Names(args[3]);
+		parseCommandLineArguments(args);
 	}
 
 	public static void main(String[] args) {
@@ -191,6 +211,15 @@ public class DodoAI extends AI {
 				queue.add(this.defensiveMove(i));
 		}
 		
+		if (key_to_send) {
+			try {
+				System.out.println("Press key to continue.");
+				System.in.read(); 
+			} catch (IOException e) {
+				//Should never happen though...
+				e.printStackTrace(); 
+			}
+		}
 		handleQueue();
 	}
 	
