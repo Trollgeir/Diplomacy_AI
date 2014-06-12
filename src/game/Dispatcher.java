@@ -47,7 +47,7 @@ public class Dispatcher implements MessageListener {
 	}
 
 	public boolean forGame(String[] message) {
-		return in(message[0], "MIS","PRN");
+		return in(message[0], "MIS","PRN", "OFF");
 	}
 
 	public boolean forAI(String[] message) {
