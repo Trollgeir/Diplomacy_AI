@@ -176,10 +176,11 @@ public class DodoAI extends AI {
 				//TODO - replace unit with army or fleet
 				System.out.println("A unit is going offensive...");
 			}
-			else 
+			else {
 				queue.add(this.defensiveMove(i));
 				//TODO - replace unit with army or fleet
 				System.out.println("A unit is going defensive...");
+			}
 		}
 
 		if (key_to_send) {
