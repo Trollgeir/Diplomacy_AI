@@ -468,4 +468,43 @@ public class Map extends Receiver {
 			processSCO(message);
 		}
 	}
+	
+	public int distance(Node n1, Node n2)
+	{
+		java.util.Map<Node, Integer> distanceList = new java.util.HashMap<Node, Integer>();
+		ArrayList<Node> procdList = new ArrayList<Node>();
+		ArrayList<Node> addedList = new ArrayList<Node>();
+		
+		addedList.add(n1);
+		
+		for (int j = 0; j < addedList.size(); j++)
+		{
+			Node cNode = addedList.get(j);
+			
+			if (distanceList.containsKey(cNode))
+				return distanceList.get(cNode);
+			
+			for (int i = 0; i < cNode.landNeighbors.size(); i++)
+			{
+				Node adjNode = cNode.landNeighbors.get(i);
+				if (!distanceList.containsKey(adjNode))
+				{
+					distanceList.put(adjNode, distanceList.get(cNode) + 1);
+					addedList.add(adjNode);
+				}
+			}
+			for (int i = 0; i < cNode.seaNeighbors.size(); i++)
+			{
+				Node adjNode = cNode.seaNeighbors.get(i);
+				if (!distanceList.containsKey(adjNode))
+				{
+					distanceList.put(adjNode, distanceList.get(cNode) + 1);
+					addedList.add(adjNode);
+				}
+			}
+			procdList.add(cNode);
+		}
+		
+		return -1;
+	}
 }

@@ -149,7 +149,12 @@ public class DodoAI extends AI {
 	
 	public void newTurn()
 	{
-		ArrayList<Unit> units = map.powerUnits(getPower());
+		System.out.println("DodoAI's turn!");
+		
+		ArrayList<Unit> units = map.getUnitsByOwner(getPower());
+		
+		System.out.println("Distance ");
+		System.out.println(map.distance(map.getNode("BUL"), map.getNode("CON")));
 		
 		for (int i = 0; i < units.size(); i++)
 		{

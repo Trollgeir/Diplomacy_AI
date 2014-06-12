@@ -139,22 +139,22 @@ public abstract class AI extends Receiver {
 		if (message[0].equals("SLO")) {
 			handleSLO(newMessage);
 		}
-		if(message[0].equals("FRM")){
+		if (message[0].equals("FRM")){
 			handleFRM(newMessage);
 		}
 		if (message[0].equals("SMR")){
 			handleSMR(newMessage);
 		}
-		if(message[0].equals("THX")){
+		if (message[0].equals("THX")){
 			handleTHX(newMessage);
 		}
-		if(message[0].equals("YES")){
+		if (message[0].equals("YES")){
 			handleYES(newMessage);
 		}
-		if(message[0].equals("REJ")){
+		if (message[0].equals("REJ")){
 			handleREJ(newMessage);
 		}
-		if(message[0].equals("HUH")){
+		if (message[0].equals("HUH")){
 			handleHUH(newMessage);
 		}
 		
