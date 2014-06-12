@@ -1,11 +1,15 @@
 package ai;
 
+import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import kb.Map;
 import kb.Power;
+import kb.unit.Unit;
 import communication.LogReader;
+import message.order.Hold;
 import message.order.Order;
+import message.server.Submit;
 import negotiator.Negotiator;
 import game.Game;
 import game.Receiver;
@@ -130,6 +134,20 @@ public abstract class AI extends Receiver {
 		
 		/*TODO*/
 	} 
+	
+	protected void handleQueue()
+	{
+		Order[] oList = new Order[queue.size()];  
+		
+		int i = 0;
+		while (queue.size() > 0)
+		{
+			oList[i] = queue.poll();
+			queue.poll();
+		}
+		
+		Game.server.send(new Submit(oList));
+	}
 	
 	protected abstract void handleHLO(String[] message);
 	protected abstract void handleSLO(String[] message);

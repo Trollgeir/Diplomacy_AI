@@ -137,14 +137,12 @@ public class DodoAI extends AI {
 	{
 		ArrayList<Unit> units = map.powerUnits(getPower());
 		
-		Order[] oList = new Order[units.size()];  
-		
 		for (int i = 0; i < units.size(); i++)
 		{
-			oList[i] = new Hold(units.get(i));
+			queue.add(new Hold(units.get(i)));
 		}
 		
-		Game.server.send(new Submit(oList));
+		handleQueue();
 	}
 	
 }
