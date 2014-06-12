@@ -122,7 +122,7 @@ public class DodoAI extends AI {
 	@Override
 	protected void handleTHX(String[] message)
 	{
-		System.out.println("Server thanks " + this.getPower().getName() + " for his order."); 
+		//System.out.println("Server thanks " + this.getPower().getName() + " for his order."); 
 		this.setCanMessage(true);
 	}
 	@Override
@@ -189,13 +189,14 @@ public class DodoAI extends AI {
 				queue.add(new Move(u, nbh.get(idx)));
 			}
 		} else if (map.getPhase() == Phase.WIN) { 
-
+			if (units.size() < provinces.size()) {
+				queue.add(new WaiveBuild(power));
+			}
 			while (units.size() > provinces.size()) {
-				System.out.println(getPower().getName() + " " + units.size() + " - " + provinces.size()); 
 				int idx = (int)(Math.random() * units.size());
 				queue.add(new Remove(units.get(idx)));
 				units.remove(idx); 
-			}  
+			} 
 		}
 
 		if (key_to_send) {

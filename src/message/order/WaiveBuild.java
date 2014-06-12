@@ -13,7 +13,7 @@ public class WaiveBuild implements Order {
 
 	Power		power;
 	
-	WaiveBuild(Power power)
+	public WaiveBuild(Power power)
 	{
 		this.power = power;
 	}
