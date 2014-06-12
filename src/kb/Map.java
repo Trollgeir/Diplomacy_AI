@@ -27,6 +27,8 @@ public class Map extends Receiver {
 	Phase					phase;
 	int						year;
 	
+	String[] mapMessage; 
+
 	public Map()
 	{
 		powers = new ArrayList<Power>();
@@ -419,14 +421,15 @@ public class Map extends Receiver {
 		if (message[0].equals("MAP")) 
 		{
 			isStandard = message[2].equals("STANDARD");
-			Yes yes = new Yes(message);
-			Game.server.send(yes);
 			MapDefinition mapdef = new MapDefinition();
 			Game.server.send(mapdef);
+			mapMessage = message; 
 		}
 		else if (message[0].equals("MDF"))
 		{
 			processMDF(message);
+			Yes yes = new Yes(mapMessage);
+			Game.server.send(yes);
 		}
 		else if (message[0].equals("NOW"))
 		{
