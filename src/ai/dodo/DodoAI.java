@@ -14,12 +14,12 @@ import communication.server.Server;
 import communication.server.UnknownTokenException;
 import ai.AI;
 import game.Game;
-import communication.LogReader;
+import kb.Names; 
 
 public class DodoAI extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
 
-	String logpath = null; 
+	Names names = null; 
 
 	public DodoAI(Map map) {
 		super("DodoAI", "0.0.0.0.1", map);
@@ -33,8 +33,8 @@ public class DodoAI extends AI {
 		this.setPower(map.getPower(message[1]));
 		this.setPasscode(message[2]);
 		this.setLVL(message[4]);
-		if (logpath != null) {
-			new LogReader().readLog(logpath);
+		if (names != null) {
+			names.init(map);
 		}
 	}
 	@Override
@@ -86,7 +86,7 @@ public class DodoAI extends AI {
 		if (args.length < 3) return; 
 		setName(args[2]);
 		if (args.length < 4) return;
-		logpath = args[3];
+		names = new Names(args[3]);
 	}
 
 	public static void main(String[] args) {
