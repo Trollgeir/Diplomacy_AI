@@ -18,13 +18,13 @@ import game.Receiver;
 
 public abstract class AI extends Receiver {
 
-	private String name;
-	private String version;
-	private String usage; 
-	private Power power;
-	private String passcode;
-	private String lvl;
-	private boolean canMessage;
+	protected String name;
+	protected String version;
+	protected String usage; 
+	protected Power power;
+	protected String passcode;
+	protected String lvl;
+	protected boolean canMessage;
 	protected Negotiator negotiator;
 	protected Map	map;
 	protected ArrayList<ArrayList<Node>> adjacencyList;
