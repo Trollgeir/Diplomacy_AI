@@ -150,7 +150,7 @@ public class DodoAI extends AI {
 	
 	public void newTurn()
 	{
-		ArrayList<Unit> units = map.powerUnits(getPower());
+		ArrayList<Unit> units = map.getUnitsByOwner(this.power);
 		
 		for (int i = 0; i < units.size(); i++)
 		{
