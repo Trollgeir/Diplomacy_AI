@@ -57,18 +57,23 @@ public abstract class AI extends Receiver {
 		for(Province p : map.getProvincesByOwner(this.power))
 		{
 			ArrayList<Node> local = new ArrayList<Node>();
-			Node n = p.getCentralNode();
-			if(p.unit() != null)
+			ArrayList<Node> nodes = p.coastLine;
+			nodes.add(p.getCentralNode());
+			
+			for(Node n : nodes)
 			{
-				for(Node adj : n.landNeighbors)
+				if(p.unit() != null)
 				{
-					if(!local.contains(adj))
-						local.add(adj);
-				}
-				for(Node adj : n.seaNeighbors)
-				{
-					if(!local.contains(adj))
-						local.add(adj);
+					for(Node adj : n.landNeighbors)
+					{
+						if(!local.contains(adj))
+							local.add(adj);
+					}
+					for(Node adj : n.seaNeighbors)
+					{
+						if(!local.contains(adj))
+							local.add(adj);
+					}
 				}
 			}
 			adjacencyList.add(local);
