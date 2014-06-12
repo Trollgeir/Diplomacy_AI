@@ -19,12 +19,12 @@ public class Dispatcher implements MessageListener {
 
 	@Override
 	public void messageReceived(String[] message) {
-		System.out.println("Message received:\n"); 
+		/*System.out.println("Message received:\n"); 
 		for (String s : message) {
 			System.out.print(s);
 			System.out.print(" "); 
 		}	
-		System.out.println("\n");
+		System.out.println("\n");*/
 		/*
 			TODO: send message to AI or map depending on layout
 		*/

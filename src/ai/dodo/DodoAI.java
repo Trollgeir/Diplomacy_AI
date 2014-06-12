@@ -70,7 +70,7 @@ public class DodoAI extends AI {
 		
 		for(int j = 0; j < shuffled.length; j++)
 		{
-			Province p = this.adjacencyList.get(i).get(j).province;
+			Province p = this.adjacencyList.get(i).get(shuffled[j]).province;
 			if(!visitedProvinces.contains(p))
 			{
 				visitedProvinces.remove(units.get(i).location.province);
@@ -123,6 +123,7 @@ public class DodoAI extends AI {
 	@Override
 	protected void handleTHX(String[] message)
 	{
+		System.out.println("Server thanks " + this.getPower().getName() + " for his order."); 
 		this.setCanMessage(true);
 	}
 	@Override
@@ -134,6 +135,7 @@ public class DodoAI extends AI {
 	protected void handleREJ(String[] message)
 	{
 		/*TODO, need to know all about sent messages..*/
+		System.out.println("Rejected order muh."); 
 	}
 	@Override
 	protected void handleHUH(String[] message)
@@ -151,52 +153,16 @@ public class DodoAI extends AI {
 		Map map = new Map();
 		AI ai = new DodoAI(map);
 		new Game(ai, map, args);
-
-	/*	
-		Server serv = new Server(InetAddress.getByName(args[0]), Integer.parseInt(args[1]));
-		try {
-			serv.connect();
-		} catch (IOException | DisconnectedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			Connect connect = new Connect("DodoAI", "0.0.0.1"); 
-			serv.send(connect);
-		} catch (UnknownTokenException | DisconnectedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		MapDefinition mapdef = new MapDefinition();
-		try {
-			serv.send(mapdef);
-		} catch (UnknownTokenException | DisconnectedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		String[] str = {"MAP", "(", "'STANDARD'", ")"};
-		Yes yes = new Yes(str);
-		try {
-			serv.send(yes);
-		} catch (UnknownTokenException | DisconnectedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	*/
 	}
 	
 	
 	public void newTurn()
 	{
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
-		this.adjacencyList = new ArrayList<ArrayList<Node>>();
-		for(int i = 0; i < units.size(); i++)
-		{
-			this.adjacencyList.add(new ArrayList<Node>());
-		}
 
+		this.adjacencyList = new ArrayList<ArrayList<Node>>();
 		findAdjacent();
-		
+
 		double d = Math.random();
 		
 		for(int i = 0; i < units.size(); i++)
@@ -210,10 +176,10 @@ public class DodoAI extends AI {
 			else
 				queue.add(this.defensiveMove(i));
 		}
-		
+
 		if (key_to_send) {
 			try {
-				System.out.println("Press key to continue.");
+				System.out.println("Press enter to continue.");
 				System.in.read(); 
 			} catch (IOException e) {
 				//Should never happen though...
@@ -221,6 +187,7 @@ public class DodoAI extends AI {
 			}
 		}
 		handleQueue();
+		System.out.println(this.getPower().getName() + " sent his order!"); 
 	}
 	
 }
