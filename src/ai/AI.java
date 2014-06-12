@@ -6,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import kb.Map;
 import kb.Node;
 import kb.Power;
+import kb.province.Province;
 import kb.unit.Unit;
 import communication.LogReader;
 import message.order.Hold;
@@ -53,7 +54,7 @@ public abstract class AI extends Receiver {
 
 	public void findAdjacent()
 	{
-		for(Province p : ownProvinces)
+		for(Province p : map.getProvincesByOwner(this.power))
 		{
 			ArrayList<Node> local = new ArrayList<Node>();
 			Node n = p.getCentralNode();
