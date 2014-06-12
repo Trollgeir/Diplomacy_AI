@@ -18,13 +18,13 @@ import game.Receiver;
 
 public abstract class AI extends Receiver {
 
-	private String name;
-	private String version;
-	private String usage; 
-	private Power power;
-	private String passcode;
-	private String lvl;
-	private boolean canMessage;
+	protected String name;
+	protected String version;
+	protected String usage; 
+	protected Power power;
+	protected String passcode;
+	protected String lvl;
+	protected boolean canMessage;
 	protected Negotiator negotiator;
 	protected Map	map;
 	protected ArrayList<ArrayList<Node>> adjacencyList;
@@ -57,18 +57,23 @@ public abstract class AI extends Receiver {
 		for(Province p : map.getProvincesByOwner(this.power))
 		{
 			ArrayList<Node> local = new ArrayList<Node>();
-			Node n = p.getCentralNode();
-			if(p.unit() != null)
+			ArrayList<Node> nodes = p.coastLine;
+			nodes.add(p.getCentralNode());
+			
+			for(Node n : nodes)
 			{
-				for(Node adj : n.landNeighbors)
+				if(p.unit() != null)
 				{
-					if(!local.contains(adj))
-						local.add(adj);
-				}
-				for(Node adj : n.seaNeighbors)
-				{
-					if(!local.contains(adj))
-						local.add(adj);
+					for(Node adj : n.landNeighbors)
+					{
+						if(!local.contains(adj))
+							local.add(adj);
+					}
+					for(Node adj : n.seaNeighbors)
+					{
+						if(!local.contains(adj))
+							local.add(adj);
+					}
 				}
 			}
 			adjacencyList.add(local);
@@ -161,6 +166,23 @@ public abstract class AI extends Receiver {
 		/*TODO*/
 	} 
 	
+	protected int[] shuffle(int size)	
+	{
+		int[] shuffled = new int[size];
+		for(int i = 0; i < size; i++)
+		{
+			shuffled[i] = i;
+		}
+		for(int i = 0; i < shuffled.length; i++)
+		{
+			int j = (int)(Math.random() * shuffled.length);
+			int temp = shuffled[i];
+			shuffled[i] = shuffled[j];
+			shuffled[j] = temp;
+		}
+		return shuffled;
+	}
+	
 	protected void handleQueue()
 	{
 		Order[] oList = new Order[queue.size()];
@@ -179,6 +201,6 @@ public abstract class AI extends Receiver {
 	protected abstract void handleHUH(String[] message);
 	
 	public abstract void newTurn();
-	protected abstract void offensiveMove();
-	protected abstract void defensiveMove();
+	protected abstract Order offensiveMove(int i);
+	protected abstract Order defensiveMove(int i);
 }

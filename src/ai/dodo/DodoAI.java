@@ -8,6 +8,7 @@ import java.util.Random;
 
 import kb.Map;
 import kb.Node;
+import kb.province.Province;
 import kb.unit.Unit;
 import negotiator.Negotiator;
 import message.order.Hold;
@@ -21,6 +22,7 @@ import communication.server.DisconnectedException;
 import communication.server.Server;
 import communication.server.UnknownTokenException;
 import ai.AI;
+import ai.Heuristics;
 import game.Game;
 import kb.Names; 
 
@@ -28,6 +30,7 @@ public class DodoAI extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
 
 	Names names = null; 
+	ArrayList<Province> visitedProvinces = new ArrayList<Province>();
 
 	public DodoAI(Map map) {
 		super("DodoAI", "0.0.0.0.1", map);
@@ -35,23 +38,39 @@ public class DodoAI extends AI {
 
 	public void findGains()
 	{}
-	
+		
 	@Override
-	protected void offensiveMove()
-	{
+	protected Order offensiveMove(int i)
+	{	
+		int[] shuffled = shuffle(this.adjacencyList.get(i).size());
+		ArrayList<Unit> units = map.getUnitsByOwner(this.power);
+		
+		for(int j = 0; j < shuffled.length; j++)
+		{
+			Province p = this.adjacencyList.get(i).get(j).province;
+			if(!visitedProvinces.contains(p))
+			{
+				visitedProvinces.remove(units.get(i).location.province);
+				visitedProvinces.add(p);
+				return new Move(units.get(i), this.adjacencyList.get(i).get(j));
+			}
+		}
+		return new Hold(units.get(i));
 	}
 	
 	@Override
-	protected void defensiveMove()
+	protected Order defensiveMove(int i)
 	{
+		ArrayList<Unit> units = map.getUnitsByOwner(this.power); 
+		return new Hold(units.get(i));
 	}
 	
 	@Override
 	protected void handleHLO(String[] message)
 	{
-		this.setPower(map.getPower(message[1]));
-		this.setPasscode(message[2]);
-		this.setLVL(message[4]);
+		this.power =  map.getPower(message[1]);
+		this.passcode = message[2];
+		this.lvl = message[4];
 		if (names != null) {
 			names.init(map);
 		}
@@ -149,16 +168,31 @@ public class DodoAI extends AI {
 	
 	public void newTurn()
 	{
+<<<<<<< HEAD
 		System.out.println("DodoAI's turn!");
 		
 		ArrayList<Unit> units = map.getUnitsByOwner(getPower());
 		
 		System.out.println("Distance ");
 		System.out.println(map.distance(map.getNode("BUL"), map.getNode("CON")));
+=======
+		findAdjacent();
 		
-		for (int i = 0; i < units.size(); i++)
+		
+		double d = Math.random();
+		
+		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
+		for(int i = 0; i < units.size(); i++)
+			visitedProvinces.add(units.get(i).location.province);
+>>>>>>> origin/master
+		
+		for(int i = 0; i < units.size(); i++)
 		{
-			queue.add(new Hold(units.get(i)));
+			d = Math.random();
+			if(d < 0.5)
+				this.offensiveMove(i);
+			else
+				this.defensiveMove(i);
 		}
 		
 		handleQueue();
