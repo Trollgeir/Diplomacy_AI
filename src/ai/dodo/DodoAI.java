@@ -171,10 +171,15 @@ public class DodoAI extends AI {
 		for(int i = 0; i < units.size(); i++)
 		{
 			d = Math.random();
-			if(d <= 1)
+			if(d <= 1) {
 				queue.add(this.offensiveMove(i));
-			else
+				//TODO - replace unit with army or fleet
+				System.out.println("A unit is going offensive...");
+			}
+			else 
 				queue.add(this.defensiveMove(i));
+				//TODO - replace unit with army or fleet
+				System.out.println("A unit is going defensive...");
 		}
 
 		if (key_to_send) {
