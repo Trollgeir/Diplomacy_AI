@@ -102,9 +102,9 @@ public class DodoAI extends AI {
 	protected void handleSLO(String[] message)
 	{
 		if (message[1].equals(getPower().getName())) {
-			// hooraay I won!!
+			System.out.println("I won!"); 
 		} else {
-			// I lost.... :(
+			System.out.println("I lost."); 
 		}
 	}
 	@Override
@@ -118,6 +118,7 @@ public class DodoAI extends AI {
 		System.out.println("\n endgame info: \n");
 		for (String m : message) {
 			System.out.println("" + m);
+		
 		}
 	}
 	@Override
