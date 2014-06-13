@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import kb.Map;
+import kb.unit.*;
 import kb.Node;
 import kb.province.Province;
 import kb.unit.Unit;
@@ -155,9 +156,35 @@ public class DodoAI extends AI {
 	}
 	
 	
+	public ArrayList<Node> filterNeighbours(Unit unit, ArrayList<Node> neighbours, ArrayList<Node> occupied) {
+		ArrayList<Node> result = new ArrayList<Node>();
+		for (Node n : neighbours) {
+			if (!occupied.contains(n)) result.add(n);
+		} 
+		return result;
+	}
+
+	public ArrayList<Province> filterProvinces(ArrayList<Province> provinces, ArrayList<Province> built, ArrayList<Unit> units) {
+		ArrayList<Province> result = new ArrayList<Province>(); 
+		for (Province p : provinces) {
+			if (built.contains(p)) continue; 
+			if (!power.homeProvinces.contains(p)) continue;
+			boolean empty = true; 
+			for (Unit u : units) {
+				if (u.location.province == p) {
+					empty = false; 
+					break; 
+				} 
+			}
+			if (empty) result.add(p);
+		}
+		return result;
+	};
+
 	public void newTurn()
 	{
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
+		ArrayList<Province> home = power.homeProvinces;
 		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
 /*
 		this.adjacencyList = new ArrayList<ArrayList<Node>>();
@@ -183,14 +210,25 @@ public class DodoAI extends AI {
 			}
 		}*/
 		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
+			//Keep track of where units are and are sent
+			ArrayList<Node> occupied = new ArrayList<Node>();
+			for (Unit u : units) occupied.add(u.location);
+
 			for (Unit u : units) {
-				ArrayList<Node> nbh = map.getValidNeighbours(u);
-				int idx = (int)(Math.random() * nbh.size()); 
-				queue.add(new Move(u, nbh.get(idx)));
+				ArrayList<Node> nbh = filterNeighbours(u, map.getValidNeighbours(u), occupied);
+				if (nbh.size() == 0) {
+					queue.add(new Hold(u)); 
+				} else {
+					int idx = (int)(Math.random() * nbh.size());
+					queue.add(new Move(u, nbh.get(idx)));
+					occupied.remove(u.location);
+					occupied.add(nbh.get(idx)); 	
+				}
 			}
 		} else if (map.getPhase() == Phase.WIN) { 
 			// error > 0 means more units then provinces so REMOVE
 			// error < 0 means more provinces then units so WAIVE
+			ArrayList<Province> built = new ArrayList<Province>(); 
 			int error = units.size() - provinces.size(); 
 			while (error > 0) {
 				//REMOVE
@@ -200,8 +238,34 @@ public class DodoAI extends AI {
 				error--; 
 			}
 			while (error < 0) {
-				//WAIVE
-				queue.add(new WaiveBuild(power));
+				//BUILD
+				ArrayList<Province> scs = filterProvinces(map.getProvincesByOwner(power), built, units);
+
+				System.out.println(power.getName() + " can build. He has control over:");
+				for (Province p : map.getProvincesByOwner(power)) {
+					System.out.println("\t" + p.getName()); 
+				}
+				System.out.println("His units are in:");
+				for (Unit u : units) {
+					System.out.println("\t" + u.location.province.getName()); 
+				} 
+				System.out.println("He has already built new units in:");
+				for (Province p : built) {
+					System.out.println("\t" + p.getName()); 
+				} 
+				System.out.println("He thinks he can build here:");
+				for (Province p : scs) {
+					System.out.println("\t" + p.getName()); 
+				} 
+
+				if (scs.size() == 0) { 
+					queue.add(new WaiveBuild(power));
+				} else {
+					int idx = (int)(Math.random() * scs.size());
+					queue.add(new Build(new Army(power, scs.get(idx).getCentralNode())));
+					built.add(scs.get(idx));
+				}
+				
 				error++; 
 			}
 		}
