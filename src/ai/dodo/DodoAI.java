@@ -122,7 +122,7 @@ public class DodoAI extends AI {
 		
 		}
 		//TODO Write belief base info to file. thanks.
-		System.exit("TO BE CONTINUED?"); 
+		System.out.println("TO BE CONTINUED?"); 
 		System.exit(0); 
 	}
 	@Override
