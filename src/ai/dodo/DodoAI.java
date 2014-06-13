@@ -117,8 +117,12 @@ public class DodoAI extends AI {
 	{
 		System.out.println("\n endgame info: \n");
 		for (String m : message) {
+			if (m == null) break; 
 			System.out.println("" + m);
 		}
+		//TODO Write belief base info to file. thanks.
+		System.exit("TO BE CONTINUED?"); 
+		Sytem.exit(0); 
 	}
 	@Override
 	protected void handleTHX(String[] message)
