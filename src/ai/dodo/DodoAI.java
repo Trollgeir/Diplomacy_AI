@@ -210,7 +210,7 @@ public class DodoAI extends AI {
 			for (Node node : neighbourhood) {
 				ArrayList<Node> n_neigbourhood = filterNeighbours(map.getValidNeighbours(unit, node), occupied);
 				ArrayList<Node> n_commandCenters = getCommandCenterNodes(n_neigbourhood);
-				indirectCommandCenters.add(node); 
+				if (n_commandCenters.size() > 0) indirectCommandCenters.add(node); 
 			}
 			if (indirectCommandCenters.size() > 0) {
 				return getRandomElement(indirectCommandCenters);
