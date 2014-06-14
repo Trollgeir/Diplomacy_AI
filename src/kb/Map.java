@@ -32,6 +32,7 @@ public class Map extends Receiver {
 		provinces = new ArrayList<Province>();
 		units = new ArrayList<Unit>();
 
+		isStandard = false;
 		phase = Phase.SUM;
 		year = -1;
 		
@@ -106,6 +107,10 @@ public class Map extends Receiver {
 	public Phase getPhase()
 	{
 		return phase;
+	}
+	public boolean getStandard()
+	{
+		return isStandard;
 	}
 	
 	public static int unBracket(String[] messageIn, int start)

@@ -23,9 +23,9 @@ import ai.AI;
 import game.Game;
 import kb.Names; 
 
-public abstract class Heuristics {
+public class Heuristics {
 	
-	public LinkedBlockingQueue<Order> getOpeningMovesSpring(Power power, boolean isStandard, Map map) {
+	public static LinkedBlockingQueue<Order> getOpeningMovesSpring(Power power, boolean isStandard, Map map) {
 		LinkedBlockingQueue<Order> orderList = new LinkedBlockingQueue<Order>();
 		
 		if (isStandard) {
@@ -126,7 +126,7 @@ public abstract class Heuristics {
 		
 		return orderList; 
 	}
-	public LinkedBlockingQueue<Order> getOpeningMovesFall(Power power, boolean isStandard, Map map) {
+	public static LinkedBlockingQueue<Order> getOpeningMovesFall(Power power, boolean isStandard, Map map) {
 		LinkedBlockingQueue<Order> orderList = new LinkedBlockingQueue<Order>();
 		
 		if (isStandard) {

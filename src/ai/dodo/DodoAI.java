@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import kb.Map;
 import kb.unit.*;
@@ -191,6 +192,7 @@ public class DodoAI extends AI {
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
 		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
+		
 /*
 		this.adjacencyList = new ArrayList<ArrayList<Node>>();
 		findAdjacent();
@@ -214,6 +216,7 @@ public class DodoAI extends AI {
 				System.out.println("A unit is going defensive...");
 			}
 		}*/
+		
 		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
 			//Keep track of where units are and are sent
 			ArrayList<Node> occupied = new ArrayList<Node>();
@@ -274,6 +277,18 @@ public class DodoAI extends AI {
 				error++; 
 			}
 		}
+		
+		// handle first turn heuristics (doesnt work...):
+		/*
+		if (map.getYear() == 1901 && map.getPhase() == Phase.SPR) {
+			LinkedBlockingQueue<Order> orderList = new LinkedBlockingQueue<Order>();
+			orderList = Heuristics.getOpeningMovesSpring(this.getPower(), map.getStandard(), map);
+			queue.clear();	
+			
+			for (Order o : orderList) {
+				queue.add(o);
+			}
+		}*/
 
 		if (key_to_send) {
 			try {
