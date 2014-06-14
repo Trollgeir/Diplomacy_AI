@@ -49,15 +49,78 @@ public abstract class Heuristics {
 				orderList.add(new Move(fleet2, map.getNode("NTH")));
 				
 			} else if (power.getName() == "FRA") {
+				fleet1 = map.getNode("BRE").unit;
+				army1 = map.getNode("MAR").unit;
+				army2 = map.getNode("PAR").unit;
+				
+				orderList.add(new Move(fleet1, map.getNode("MAO")));
+				orderList.add(new SupportToMove(army1, army2, map.getNode("BUR")));
+				orderList.add(new Move(army2, map.getNode("BUR")));
 				
 			} else if (power.getName() == "GER") {
+				fleet1 = map.getNode("KIE").unit;
+				army1 = map.getNode("BER").unit;
+				army2 = map.getNode("MUN").unit;
+				
+				// default
+				orderList.add(new Move(army1, map.getNode("KIE")));
+				orderList.add(new Move(army2, map.getNode("RUH")));
+				
+				// england is 'objective', france ally, russia neutral, most popular (very non-offensive)
+				orderList.add(new Move(fleet1, map.getNode("DEN")));
+				
+				// france is 'objective', england ally, russia neutral, second most popular (offensive to france)
+				//orderList.add(new Move(fleet1, map.getNode("HOL")));
 				
 			} else if (power.getName() == "ITA") {
+				fleet1 = map.getNode("NAP").unit;
+				army1 = map.getNode("ROM").unit;
+				army2 = map.getNode("VEN").unit;				
+				
+				// default
+				orderList.add(new Move(fleet1, map.getNode("ION")));
+				
+				// alliance with austria, anti turkey
+				orderList.add(new Move(army1, map.getNode("APU")));
+				orderList.add(new Hold(army2));
+				
+				// anti austria (almost never happens)
+				//orderList.add(new Move(army1, map.getNode("VEN")));
+				//orderList.add(new Move(army2, map.getNode("TYR")));			
 				
 			} else if (power.getName() == "RUS") {
+				fleet1 = map.getNode("STP","SCS").unit;
+				fleet2 = map.getNode("SEV").unit;
+				army1 = map.getNode("MOS").unit;
+				army2 = map.getNode("WAR").unit;
+				
+				// default
+				orderList.add(new Move(fleet1, map.getNode("BOT")));
+				orderList.add(new Move(army1, map.getNode("UKR")));
+				orderList.add(new Move(army2, map.getNode("GAL")));
+				
+				// Attack on Austria, Allied turkey
+				orderList.add(new Move(fleet2, map.getNode("RUM")));
+				
+				// Attack on Turkey 
+				//orderList.add(new Move(fleet2, map.getNode("BLA")));
+				
 				
 			} else if (power.getName() == "TUR") {
+				fleet1 = map.getNode("ANK").unit;
+				army1 = map.getNode("CON").unit;
+				army2 = map.getNode("SMY").unit;
 				
+				// default
+				orderList.add(new Move(army1, map.getNode("BUL")));
+				
+				// western push
+				orderList.add(new Move(fleet1, map.getNode("CON")));
+				orderList.add(new Hold(army2));
+				
+				// unsure of Russia but weak
+				//orderList.add(new Move(fleet1, map.getNode("BLA")));
+				//orderList.add(new Move(army2, map.getNode("CON")));
 			} 
 		}
 		
@@ -80,20 +143,30 @@ public abstract class Heuristics {
 				fleet1 = map.getNode("NWG").unit;
 				fleet2 = map.getNode("NTH").unit;
 				
-				//orderList.add(new MoveByConvoy(army1, map.getNode("NOR"), new Node[] {map.getNode("NTH")}));
-				//orderList.add(new (fleet1, map.getNode("NWG")));
-				orderList.add(new Move(fleet2, map.getNode("NTH")));
+				orderList.add(new MoveByConvoy(army1, map.getNode("NOR"), new Node[] {map.getNode("NTH")}));
+				orderList.add(new Move(fleet1, map.getNode("BAR")));
+				orderList.add(new Convoy(fleet2, army1, map.getNode("NOR")));
 				
 			} else if (power.getName() == "FRA") {
+				fleet1 = map.getNode("MAO").unit;
+				army1 = map.getNode("MAR").unit;
+				army2 = map.getNode("BUR").unit;
+				
+				orderList.add(new Move(fleet1, map.getNode("POR")));
+				orderList.add(new Move(army1, map.getNode("SPA")));
+				orderList.add(new Move(army2, map.getNode("BEL")));
 				
 			} else if (power.getName() == "GER") {
-				
+				// openings depend too much on alliances
+			
 			} else if (power.getName() == "ITA") {
+				// openings depend too much on alliances
 				
 			} else if (power.getName() == "RUS") {
+				// openings depend too much on alliances
 				
 			} else if (power.getName() == "TUR") {
-				
+				// openings depend too much on alliances
 			} 
 		}
 		
