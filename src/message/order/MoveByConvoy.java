@@ -24,7 +24,7 @@ public class MoveByConvoy implements Order {
 	 * @param destination The final destination of the convoy.
 	 * @param via The list of nodes that the fleet will pass through.
 	 */
-	MoveByConvoy(Unit unit, Node destination, Node[] via)
+	public MoveByConvoy(Unit unit, Node destination, Node[] via)
 	{
 		this.unit = unit;
 		this.destination = destination;
