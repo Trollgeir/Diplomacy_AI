@@ -21,7 +21,7 @@ public class Convoy implements Order {
 	 * @param carrying The unit that is to be carried
 	 * @param carryTo The destination
 	 */
-	Convoy(Unit carrier, Unit carrying, Node carryTo)
+	public Convoy(Unit carrier, Unit carrying, Node carryTo)
 	{
 		this.carrier = carrier;
 		this.carrying = carrying;
