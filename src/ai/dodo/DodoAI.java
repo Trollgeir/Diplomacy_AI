@@ -279,20 +279,20 @@ public class DodoAI extends AI {
 		}
 		
 		// handle first turn heuristics (doesnt work...):
-		/*
+		
 		if (map.getYear() == 1901 && map.getPhase() == Phase.SPR) {
-			LinkedBlockingQueue<Order> orderList = new LinkedBlockingQueue<Order>();
+			LinkedBlockingQueue<Order> orderList;
 			orderList = Heuristics.getOpeningMovesSpring(this.getPower(), map.getStandard(), map);
 			queue.clear();	
 			
 			for (Order o : orderList) {
 				queue.add(o);
 			}
-		}*/
+		}
 
 		if (key_to_send) {
 			try {
-				Sytem.out.println(""+map.getPhase()); 
+				System.out.println(""+map.getPhase()); 
 				System.out.println("Press enter to continue.");
 				System.in.read(); 
 			} catch (IOException e) {

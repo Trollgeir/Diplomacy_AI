@@ -469,7 +469,8 @@ public class Map extends Receiver {
 	public void onMessage(String[] message) {
 		if (message[0].equals("MAP")) 
 		{
-			isStandard = message[2].equals("STANDARD");
+			System.out.println(message[2]); 
+			isStandard = message[2].equals("'STANDARD'");
 			MapDefinition mapdef = new MapDefinition();
 			Game.server.send(mapdef);
 			mapMessage = message; 

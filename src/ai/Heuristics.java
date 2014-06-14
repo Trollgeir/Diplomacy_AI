@@ -29,8 +29,10 @@ public class Heuristics {
 		LinkedBlockingQueue<Order> orderList = new LinkedBlockingQueue<Order>();
 		
 		if (isStandard) {
+			System.out.println(power.getName() + " game is standard."); 
 			Unit fleet1,fleet2,army1,army2;
-			if (power.getName() == "AUS") {
+			if (power.getName().equals("AUS")) {
+				System.out.println("I am AUS!");  
 				fleet1 = map.getNode("TRI").unit;
 				army1 = map.getNode("BUD").unit;
 				army2 = map.getNode("VIE").unit;
@@ -39,7 +41,7 @@ public class Heuristics {
 				orderList.add(new Move(army1, map.getNode("SER")));
 				orderList.add(new Move(army2, map.getNode("TRI")));
 				
-			} else if (power.getName() == "ENG") {
+			} else if (power.getName().equals("ENG")) {
 				army1 = map.getNode("LVP").unit;
 				fleet1 = map.getNode("EDI").unit;
 				fleet2 = map.getNode("LON").unit;
@@ -48,7 +50,7 @@ public class Heuristics {
 				orderList.add(new Move(fleet1, map.getNode("NWG")));
 				orderList.add(new Move(fleet2, map.getNode("NTH")));
 				
-			} else if (power.getName() == "FRA") {
+			} else if (power.getName().equals("FRA")) {
 				fleet1 = map.getNode("BRE").unit;
 				army1 = map.getNode("MAR").unit;
 				army2 = map.getNode("PAR").unit;
@@ -57,7 +59,7 @@ public class Heuristics {
 				orderList.add(new SupportToMove(army1, army2, map.getNode("BUR")));
 				orderList.add(new Move(army2, map.getNode("BUR")));
 				
-			} else if (power.getName() == "GER") {
+			} else if (power.getName().equals("GER")) {
 				fleet1 = map.getNode("KIE").unit;
 				army1 = map.getNode("BER").unit;
 				army2 = map.getNode("MUN").unit;
@@ -72,7 +74,7 @@ public class Heuristics {
 				// france is 'objective', england ally, russia neutral, second most popular (offensive to france)
 				//orderList.add(new Move(fleet1, map.getNode("HOL")));
 				
-			} else if (power.getName() == "ITA") {
+			} else if (power.getName().equals("ITA")) {
 				fleet1 = map.getNode("NAP").unit;
 				army1 = map.getNode("ROM").unit;
 				army2 = map.getNode("VEN").unit;				
@@ -88,14 +90,14 @@ public class Heuristics {
 				//orderList.add(new Move(army1, map.getNode("VEN")));
 				//orderList.add(new Move(army2, map.getNode("TYR")));			
 				
-			} else if (power.getName() == "RUS") {
+			} else if (power.getName().equals("RUS")) {
 				fleet1 = map.getNode("STP","SCS").unit;
 				fleet2 = map.getNode("SEV").unit;
 				army1 = map.getNode("MOS").unit;
 				army2 = map.getNode("WAR").unit;
 				
 				// default
-				orderList.add(new Move(fleet1, map.getNode("BOT")));
+				orderList.add(new Move(fleet1, map.getNode("GOB")));
 				orderList.add(new Move(army1, map.getNode("UKR")));
 				orderList.add(new Move(army2, map.getNode("GAL")));
 				
@@ -106,7 +108,7 @@ public class Heuristics {
 				//orderList.add(new Move(fleet2, map.getNode("BLA")));
 				
 				
-			} else if (power.getName() == "TUR") {
+			} else if (power.getName().equals("TUR")) {
 				fleet1 = map.getNode("ANK").unit;
 				army1 = map.getNode("CON").unit;
 				army2 = map.getNode("SMY").unit;
