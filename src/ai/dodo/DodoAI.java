@@ -277,6 +277,7 @@ public class DodoAI extends AI {
 
 		if (key_to_send) {
 			try {
+				Sytem.out.println(""+map.getPhase()); 
 				System.out.println("Press enter to continue.");
 				System.in.read(); 
 			} catch (IOException e) {
