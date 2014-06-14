@@ -9,4 +9,14 @@ public class DaideList extends ArrayList<String> {
 			add(s); 
 	};
 
+	@Override
+	public String toString() {
+		String result = "";
+		for (int i = 0; i < size(); ++i) {
+			result += get(i); 
+			result += i < size() - 1 ? " " : "";
+		}
+		return result; 
+	} 
+
 }

@@ -191,6 +191,17 @@ public class Map extends Receiver {
 		}
 		return result;
 	}
+
+	public ArrayList<Node> getValidNeighbours(Unit unit, Node node) {
+		ArrayList<Node> result = new ArrayList<Node>(); 
+		//filter based on unit type
+		if (unit.isArmy()) {
+			result.addAll(node.landNeighbors);
+		} else {
+			result.addAll(node.seaNeighbors);
+		}
+		return result;
+	}
 	
 	public void printMap()
 	{

@@ -164,4 +164,8 @@ public class Province {
 	{
 		return isCoast;
 	}
+
+	public boolean isSupplyCenter() {
+		return supplyCenter; 
+	}
 }

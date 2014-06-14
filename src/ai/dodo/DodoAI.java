@@ -161,8 +161,11 @@ public class DodoAI extends AI {
 		new Game(ai, map, args);
 	}
 	
-	
-	public ArrayList<Node> filterNeighbours(Unit unit, ArrayList<Node> neighbours, ArrayList<Node> occupied) {
+	public <T> T getRandomElement(ArrayList<T> list) {
+		return list.get((int)(Math.random() * list.size())); 
+	} 
+
+	public ArrayList<Node> filterNeighbours(ArrayList<Node> neighbours, ArrayList<Node> occupied) {
 		ArrayList<Node> result = new ArrayList<Node>();
 		for (Node n : neighbours) {
 			if (!occupied.contains(n)) result.add(n);
@@ -186,6 +189,35 @@ public class DodoAI extends AI {
 		}
 		return result;
 	};
+
+	public ArrayList<Node> getCommandCenterNodes(ArrayList<Node> nodes) {
+		//only return those nodes which are in a province with command center which are NOT ours!
+		ArrayList<Node> result = new ArrayList<Node>(); 
+		for (Node n : nodes) {
+			if (n.province.isSupplyCenter() && n.province.getOwner() != power) {
+				result.add(n); 
+			}
+		}
+		return result; 
+	}
+
+	public Node moveToCommandCenter(Unit unit, ArrayList<Node> neighbourhood, ArrayList<Node> occupied) {
+		ArrayList<Node> commandCenters = getCommandCenterNodes(neighbourhood); 
+		if (commandCenters.size() > 0) {
+			return getRandomElement(commandCenters);  
+		} else {
+			ArrayList<Node> indirectCommandCenters = new ArrayList<Node>(); 
+			for (Node node : neighbourhood) {
+				ArrayList<Node> n_neigbourhood = filterNeighbours(map.getValidNeighbours(unit, node), occupied);
+				ArrayList<Node> n_commandCenters = getCommandCenterNodes(n_neigbourhood);
+				indirectCommandCenters.add(node); 
+			}
+			if (indirectCommandCenters.size() > 0) {
+				return getRandomElement(indirectCommandCenters);
+			}
+		}
+		return getRandomElement(neighbourhood); 
+	}
 
 	public void newTurn()
 	{
@@ -216,28 +248,41 @@ public class DodoAI extends AI {
 				System.out.println("A unit is going defensive...");
 			}
 		}*/
-		
-		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
+
+			
+		if (map.getYear() == 1901 && map.getPhase() == Phase.SPR) {
+			/*
+			Opening moves
+			*/
+			queue = Heuristics.getOpeningMovesSpring(this.getPower(), map.getStandard(), map);
+		} else if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
+			/*
+			MOVEMENT PHASES
+			*/
 			//Keep track of where units are and are sent
 			ArrayList<Node> occupied = new ArrayList<Node>();
 			for (Unit u : units) occupied.add(u.location);
 
 			for (Unit u : units) {
-				ArrayList<Node> nbh = filterNeighbours(u, map.getValidNeighbours(u), occupied);
+				ArrayList<Node> nbh = filterNeighbours(map.getValidNeighbours(u), occupied);
 				if (nbh.size() == 0) {
+					//There are no possible moves so hold
 					queue.add(new Hold(u)); 
 				} else {
-					int idx = (int)(Math.random() * nbh.size());
-					queue.add(new Move(u, nbh.get(idx)));
-					occupied.remove(u.location);
-					occupied.add(nbh.get(idx)); 	
-				}
+					Node destination = moveToCommandCenter(u, nbh, occupied);
+					occupied.remove(u.location); 
+					occupied.add(destination);
+					System.out.println(power.getName() + " : " + "I want " + u.location.daide() + " to move to " + destination.daide()); 
+					queue.add(new Move(u, destination)); 				}
 			}
 		} else if (map.getPhase() == Phase.WIN) { 
-			// error > 0 means more units then provinces so REMOVE
-			// error < 0 means more provinces then units so WAIVE
+			/*
+			BUILD PHASE
+			*/
 			ArrayList<Province> built = new ArrayList<Province>(); 
 			int error = units.size() - provinces.size(); 
+			// error > 0 means more units then provinces so REMOVE
+			// error < 0 means more provinces then units so  BUILD
 			while (error > 0) {
 				//REMOVE
 				int idx = (int)(Math.random() * units.size());
@@ -248,23 +293,6 @@ public class DodoAI extends AI {
 			while (error < 0) {
 				//BUILD
 				ArrayList<Province> scs = filterProvinces(map.getProvincesByOwner(power), built, units);
-
-				System.out.println(power.getName() + " can build. He has control over:");
-				for (Province p : map.getProvincesByOwner(power)) {
-					System.out.println("\t" + p.getName()); 
-				}
-				System.out.println("His units are in:");
-				for (Unit u : units) {
-					System.out.println("\t" + u.location.province.getName()); 
-				} 
-				System.out.println("He has already built new units in:");
-				for (Province p : built) {
-					System.out.println("\t" + p.getName()); 
-				} 
-				System.out.println("He thinks he can build here:");
-				for (Province p : scs) {
-					System.out.println("\t" + p.getName()); 
-				} 
 
 				if (scs.size() == 0) { 
 					queue.add(new WaiveBuild(power));
@@ -278,17 +306,6 @@ public class DodoAI extends AI {
 			}
 		}
 		
-		// handle first turn heuristics (doesnt work...):
-		
-		if (map.getYear() == 1901 && map.getPhase() == Phase.SPR) {
-			LinkedBlockingQueue<Order> orderList;
-			orderList = Heuristics.getOpeningMovesSpring(this.getPower(), map.getStandard(), map);
-			queue.clear();	
-			
-			for (Order o : orderList) {
-				queue.add(o);
-			}
-		}
 
 		if (key_to_send) {
 			try {
