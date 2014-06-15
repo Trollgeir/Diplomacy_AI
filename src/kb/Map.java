@@ -185,12 +185,17 @@ public class Map extends Receiver {
 	{
 		ArrayList<Province> ret = new ArrayList<Province>();
 		
+		System.out.println("PROVINCES: " + provinces.size());
+		
 		for(Province p : provinces)
 		{
-			if(p.getOwner() != null && p.getOwner() == power && p.isSupplyCenter())
-				ret.add(p);
+			if(p.getOwner() != null)
+			{
+				if(p.getOwner() == power && p.isSupplyCenter())
+					ret.add(p);
+			}
 		}
-		return null;
+		return ret;
 	}
 	
 	public ArrayList<Node> getValidNeighbours(Unit unit) {
