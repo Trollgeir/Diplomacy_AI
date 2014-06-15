@@ -224,7 +224,7 @@ public class DodoAI extends AI {
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
 		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
-		
+		ArrayList<Province> supplyCenters = map.getSupplyCenters(this.getPower());
 /*
 		this.adjacencyList = new ArrayList<ArrayList<Node>>();
 		findAdjacent();
@@ -280,7 +280,7 @@ public class DodoAI extends AI {
 			BUILD PHASE
 			*/
 			ArrayList<Province> built = new ArrayList<Province>(); 
-			int error = units.size() - provinces.size(); 
+			int error = units.size() - supplyCenters.size(); 
 			// error > 0 means more units then provinces so REMOVE
 			// error < 0 means more provinces then units so  BUILD
 			while (error > 0) {

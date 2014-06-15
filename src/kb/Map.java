@@ -181,6 +181,23 @@ public class Map extends Receiver {
 		return ret;
 	}
 
+	public ArrayList<Province> getSupplyCenters(Power power)
+	{
+		ArrayList<Province> ret = new ArrayList<Province>();
+		
+		System.out.println("PROVINCES: " + provinces.size());
+		
+		for(Province p : provinces)
+		{
+			if(p.getOwner() != null)
+			{
+				if(p.getOwner() == power && p.isSupplyCenter())
+					ret.add(p);
+			}
+		}
+		return ret;
+	}
+	
 	public ArrayList<Node> getValidNeighbours(Unit unit) {
 		ArrayList<Node> result = new ArrayList<Node>(); 
 		//filter based on unit type
