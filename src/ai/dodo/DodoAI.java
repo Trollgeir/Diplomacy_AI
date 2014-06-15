@@ -165,10 +165,10 @@ public class DodoAI extends AI {
 		return list.get((int)(Math.random() * list.size())); 
 	} 
 
-	public ArrayList<Node> filterNeighbours(ArrayList<Node> neighbours, ArrayList<Node> occupied) {
+	public ArrayList<Node> filterNeighbours(ArrayList<Node> neighbours, ArrayList<Province> occupied) {
 		ArrayList<Node> result = new ArrayList<Node>();
 		for (Node n : neighbours) {
-			if (!occupied.contains(n)) result.add(n);
+			if (!occupied.contains(n.province)) result.add(n);
 		} 
 		return result;
 	}
@@ -201,7 +201,7 @@ public class DodoAI extends AI {
 		return result; 
 	}
 
-	public Node moveToCommandCenter(Unit unit, ArrayList<Node> neighbourhood, ArrayList<Node> occupied) {
+	public Node moveToCommandCenter(Unit unit, ArrayList<Node> neighbourhood, ArrayList<Province> occupied) {
 		ArrayList<Node> commandCenters = getCommandCenterNodes(neighbourhood); 
 		if (commandCenters.size() > 0) {
 			return getRandomElement(commandCenters);  
@@ -259,8 +259,8 @@ public class DodoAI extends AI {
 			MOVEMENT PHASES
 			*/
 			//Keep track of where units are and are sent
-			ArrayList<Node> occupied = new ArrayList<Node>();
-			for (Unit u : units) occupied.add(u.location);
+			ArrayList<Province> occupied = new ArrayList<Province>();
+			for (Unit u : units) occupied.add(u.location.province);
 
 			for (Unit u : units) {
 				ArrayList<Node> nbh = filterNeighbours(map.getValidNeighbours(u), occupied);
@@ -270,7 +270,7 @@ public class DodoAI extends AI {
 				} else {
 					Node destination = moveToCommandCenter(u, nbh, occupied);
 					occupied.remove(u.location); 
-					occupied.add(destination);
+					occupied.add(destination.province);
 					System.out.println(power.getName() + " : " + "I want " + u.location.daide() + " to move to " + destination.daide()); 
 					queue.add(new Move(u, destination)); 				}
 			}
