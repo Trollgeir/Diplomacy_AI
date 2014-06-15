@@ -15,7 +15,7 @@ public class Retreat implements Order {
 	Unit 		unit;
 	Node		retreatTo;
 	
-	Retreat(Unit unit, Node retreatTo)
+	public Retreat(Unit unit, Node retreatTo)
 	{
 		this.unit = unit;
 		this.retreatTo = retreatTo;
