@@ -224,7 +224,6 @@ public class DodoAI extends AI {
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
 		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
-		ArrayList<Province> supplyCenters = map.getSupplyCenters(this.getPower());
 /*
 		this.adjacencyList = new ArrayList<ArrayList<Node>>();
 		findAdjacent();
