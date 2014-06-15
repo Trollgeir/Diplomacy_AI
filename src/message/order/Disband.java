@@ -13,7 +13,7 @@ public class Disband implements Order {
 
 	Unit 		unit;
 	
-	Disband(Unit unit)
+	public Disband(Unit unit)
 	{
 		this.unit = unit;
 	}

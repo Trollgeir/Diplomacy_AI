@@ -221,47 +221,29 @@ public class DodoAI extends AI {
 
 	public void newTurn()
 	{
+		System.out.println();
+		System.out.println("New turn:");
+		System.out.println("Year: " + map.getYear() + "--" + map.getPhase()); 
+		
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
 		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
-/*
-		this.adjacencyList = new ArrayList<ArrayList<Node>>();
-		findAdjacent();
-
-		double d = Math.random();
-		
-		for(int i = 0; i < units.size(); i++)
-			visitedProvinces.add(units.get(i).location.province);
-		
-		for(int i = 0; i < units.size(); i++)
-		{
-			d = Math.random();
-			if(d <= 1) {
-				queue.add(this.offensiveMove(i));
-				//TODO - replace unit with army or fleet
-				System.out.println("A unit is going offensive...");
-			}
-			else {
-				queue.add(this.defensiveMove(i));
-				//TODO - replace unit with army or fleet
-				System.out.println("A unit is going defensive...");
-			}
-		}*/
-
 			
+		//Keep track of where units are and are sent
+		ArrayList<Province> occupied = new ArrayList<Province>();
+		for (Unit u : units) occupied.add(u.location.province);
+		
 		if (map.getYear() == 1901 && map.getPhase() == Phase.SPR) {
 			/*
 			Opening moves
 			*/
+			System.out.println("Performing opening moves...");
 			queue = Heuristics.getOpeningMovesSpring(this.getPower(), map.getStandard(), map);
 		} else if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
 			/*
 			MOVEMENT PHASES
 			*/
-			//Keep track of where units are and are sent
-			ArrayList<Province> occupied = new ArrayList<Province>();
-			for (Unit u : units) occupied.add(u.location.province);
-
+			
 			for (Unit u : units) {
 				ArrayList<Node> nbh = filterNeighbours(map.getValidNeighbours(u), occupied);
 				if (nbh.size() == 0) {
@@ -274,7 +256,66 @@ public class DodoAI extends AI {
 					System.out.println(power.getName() + " : " + "I want " + u.location.daide() + " to move to " + destination.daide()); 
 					queue.add(new Move(u, destination)); 				}
 			}
-		} else if (map.getPhase() == Phase.WIN) { 
+		} /* The retreat disband part :D
+		
+			else if(map.getPhase() == Phase.SUM || map.getPhase() == Phase.SPR){
+			for(Unit u : units)
+			{
+				if(u.mustRetreat)
+				{
+					if(u.nodes.size() == 0) // no possible retreat moves must disband
+						queue.add(new Disband(u));
+					else
+					{
+						ArrayList<Node> scs = new ArrayList<Node>();
+						ArrayList<Node> adjscs = new ArrayList<Node>();
+						ArrayList<Node> other = new ArrayList<Node>();
+						for(Node n : u.nodes)
+						{
+							if(n.province.isSupplyCenter() && !occupied.contains(n.province))
+								scs.add(n);
+							else
+							{
+								for(Node n2 : n.landNeighbors)
+								{
+									if(n2.province.isSupplyCenter() && !occupied.contains(n.province))
+									{	
+										adjscs.add(n);
+										break;
+									}
+									
+								}
+								other.add(n);
+							}
+						}
+						Node returnTo = null;
+						if(scs.size() != 0) // We can retreat to a supply center
+						{
+							returnTo = this.getRandomElement(scs);
+							occupied.remove(u.location);
+							occupied.add(returnTo.province);
+							queue.add(new Retreat(u, returnTo));
+						}
+						else if(adjscs.size() != 0) // We can retreat to a supply center bordering province
+						{
+							returnTo = this.getRandomElement(adjscs);
+							occupied.remove(u.location);
+							occupied.add(returnTo.province);
+							queue.add(new Retreat(u, returnTo));
+						}
+						else if(other.size() != 0) // Any other province
+						{
+							returnTo = this.getRandomElement(other);
+							occupied.remove(u.location);
+							occupied.add(returnTo.province);
+							queue.add(new Retreat(u, returnTo));
+						}
+						else // no other possibility
+							continue;
+					}
+				}
+			}
+		}*/ else if (map.getPhase() == Phase.WIN) { 
 			/*
 			BUILD PHASE
 			*/
@@ -294,6 +335,7 @@ public class DodoAI extends AI {
 				ArrayList<Province> scs = filterProvinces(map.getProvincesByOwner(power), built, units);
 
 				if (scs.size() == 0) { 
+					System.out.println("No (more) building or removing needed, waiving..");
 					queue.add(new WaiveBuild(power));
 				} else {
 					int idx = (int)(Math.random() * scs.size());
@@ -308,7 +350,6 @@ public class DodoAI extends AI {
 
 		if (key_to_send) {
 			try {
-				System.out.println(""+map.getPhase()); 
 				System.out.println("Press enter to continue.");
 				System.in.read(); 
 			} catch (IOException e) {
