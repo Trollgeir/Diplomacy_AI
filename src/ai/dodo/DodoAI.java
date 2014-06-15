@@ -279,7 +279,7 @@ public class DodoAI extends AI {
 			BUILD PHASE
 			*/
 			ArrayList<Province> built = new ArrayList<Province>(); 
-			int error = units.size() - supplyCenters.size(); 
+			int error = units.size() - provinces.size(); 
 			// error > 0 means more units then provinces so REMOVE
 			// error < 0 means more provinces then units so  BUILD
 			while (error > 0) {
