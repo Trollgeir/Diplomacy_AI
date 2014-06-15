@@ -251,71 +251,28 @@ public class DodoAI extends AI {
 					queue.add(new Hold(u)); 
 				} else {
 					Node destination = moveToCommandCenter(u, nbh, occupied);
-					occupied.remove(u.location); 
+					occupied.remove(u.location.province); 
 					occupied.add(destination.province);
 					System.out.println(power.getName() + " : " + "I want " + u.location.daide() + " to move to " + destination.daide()); 
 					queue.add(new Move(u, destination)); 				}
 			}
-		} /* The retreat disband part :D
-		
-			else if(map.getPhase() == Phase.SUM || map.getPhase() == Phase.SPR){
+		} else if(map.getPhase() == Phase.SUM || map.getPhase() == Phase.AUT){
 			for(Unit u : units)
 			{
-				if(u.mustRetreat)
-				{
-					if(u.nodes.size() == 0) // no possible retreat moves must disband
-						queue.add(new Disband(u));
-					else
-					{
-						ArrayList<Node> scs = new ArrayList<Node>();
-						ArrayList<Node> adjscs = new ArrayList<Node>();
-						ArrayList<Node> other = new ArrayList<Node>();
-						for(Node n : u.nodes)
-						{
-							if(n.province.isSupplyCenter() && !occupied.contains(n.province))
-								scs.add(n);
-							else
-							{
-								for(Node n2 : n.landNeighbors)
-								{
-									if(n2.province.isSupplyCenter() && !occupied.contains(n.province))
-									{	
-										adjscs.add(n);
-										break;
-									}
-									
-								}
-								other.add(n);
-							}
-						}
-						Node returnTo = null;
-						if(scs.size() != 0) // We can retreat to a supply center
-						{
-							returnTo = this.getRandomElement(scs);
-							occupied.remove(u.location);
-							occupied.add(returnTo.province);
-							queue.add(new Retreat(u, returnTo));
-						}
-						else if(adjscs.size() != 0) // We can retreat to a supply center bordering province
-						{
-							returnTo = this.getRandomElement(adjscs);
-							occupied.remove(u.location);
-							occupied.add(returnTo.province);
-							queue.add(new Retreat(u, returnTo));
-						}
-						else if(other.size() != 0) // Any other province
-						{
-							returnTo = this.getRandomElement(other);
-							occupied.remove(u.location);
-							occupied.add(returnTo.province);
-							queue.add(new Retreat(u, returnTo));
-						}
-						else // no other possibility
-							continue;
+				if(u.mustRetreat) {
+					// No place to retreat to, so we must disband. 
+					if(u.retreatTo.size() == 0) queue.add(new Disband(u)); 
+					else {
+						//Try to move to a supply center
+						Node destination = moveToCommandCenter(u, u.retreatTo, occupied);
+						occupied.remove(u.location.province); 
+						occupied.add(destination.province);
+						System.out.println(power.getName() + " : " + "I want toretreat " + u.location.daide() + " to " + destination.daide()); 
+						queue.add(new Retreat(u, destination)); 
 					}
 				}
 			}
-		}*/ else if (map.getPhase() == Phase.WIN) { 
+		} else if (map.getPhase() == Phase.WIN) { 
 			/*
 			BUILD PHASE
 			*/
