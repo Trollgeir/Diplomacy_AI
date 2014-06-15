@@ -32,7 +32,7 @@ public class Heuristics {
 			System.out.println(power.getName() + " game is standard."); 
 			Unit fleet1,fleet2,army1,army2;
 			if (power.getName().equals("AUS")) {
-				System.out.println("I am AUS!");  
+				System.out.println("Loading AUS opening heuristics!");  
 				fleet1 = map.getNode("TRI").unit;
 				army1 = map.getNode("BUD").unit;
 				army2 = map.getNode("VIE").unit;
@@ -42,6 +42,7 @@ public class Heuristics {
 				orderList.add(new Move(army2, map.getNode("TRI")));
 				
 			} else if (power.getName().equals("ENG")) {
+				System.out.println("Loading ENG opening heuristics!");  
 				army1 = map.getNode("LVP").unit;
 				fleet1 = map.getNode("EDI").unit;
 				fleet2 = map.getNode("LON").unit;
@@ -51,6 +52,7 @@ public class Heuristics {
 				orderList.add(new Move(fleet2, map.getNode("NTH")));
 				
 			} else if (power.getName().equals("FRA")) {
+				System.out.println("Loading FRA opening heuristics!");  
 				fleet1 = map.getNode("BRE").unit;
 				army1 = map.getNode("MAR").unit;
 				army2 = map.getNode("PAR").unit;
@@ -60,6 +62,7 @@ public class Heuristics {
 				orderList.add(new Move(army2, map.getNode("BUR")));
 				
 			} else if (power.getName().equals("GER")) {
+				System.out.println("Loading GER opening heuristics!");  
 				fleet1 = map.getNode("KIE").unit;
 				army1 = map.getNode("BER").unit;
 				army2 = map.getNode("MUN").unit;
@@ -75,6 +78,7 @@ public class Heuristics {
 				//orderList.add(new Move(fleet1, map.getNode("HOL")));
 				
 			} else if (power.getName().equals("ITA")) {
+				System.out.println("Loading ITA opening heuristics!");  
 				fleet1 = map.getNode("NAP").unit;
 				army1 = map.getNode("ROM").unit;
 				army2 = map.getNode("VEN").unit;				
@@ -91,6 +95,7 @@ public class Heuristics {
 				//orderList.add(new Move(army2, map.getNode("TYR")));			
 				
 			} else if (power.getName().equals("RUS")) {
+				System.out.println("Loading RUS opening heuristics!");  
 				fleet1 = map.getNode("STP","SCS").unit;
 				fleet2 = map.getNode("SEV").unit;
 				army1 = map.getNode("MOS").unit;
@@ -109,6 +114,7 @@ public class Heuristics {
 				
 				
 			} else if (power.getName().equals("TUR")) {
+				System.out.println("Loading TUR opening heuristics!");  
 				fleet1 = map.getNode("ANK").unit;
 				army1 = map.getNode("CON").unit;
 				army2 = map.getNode("SMY").unit;

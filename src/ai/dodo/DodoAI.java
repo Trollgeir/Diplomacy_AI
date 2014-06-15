@@ -221,6 +221,10 @@ public class DodoAI extends AI {
 
 	public void newTurn()
 	{
+		System.out.println();
+		System.out.println("New turn:");
+		System.out.println("Year: " + map.getYear() + "--" + map.getPhase()); 
+		
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
 		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
@@ -229,6 +233,7 @@ public class DodoAI extends AI {
 			/*
 			Opening moves
 			*/
+			System.out.println("Performing opening moves...");
 			queue = Heuristics.getOpeningMovesSpring(this.getPower(), map.getStandard(), map);
 		} else if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
 			/*
@@ -276,6 +281,7 @@ public class DodoAI extends AI {
 				ArrayList<Province> scs = filterProvinces(map.getProvincesByOwner(power), built, units);
 
 				if (scs.size() == 0) { 
+					System.out.println("No (more) building or removing needed, waiving..");
 					queue.add(new WaiveBuild(power));
 				} else {
 					int idx = (int)(Math.random() * scs.size());
@@ -290,7 +296,6 @@ public class DodoAI extends AI {
 
 		if (key_to_send) {
 			try {
-				System.out.println(""+map.getPhase()); 
 				System.out.println("Press enter to continue.");
 				System.in.read(); 
 			} catch (IOException e) {
