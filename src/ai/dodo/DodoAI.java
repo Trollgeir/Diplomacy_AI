@@ -224,30 +224,6 @@ public class DodoAI extends AI {
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
 		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
-/*
-		this.adjacencyList = new ArrayList<ArrayList<Node>>();
-		findAdjacent();
-
-		double d = Math.random();
-		
-		for(int i = 0; i < units.size(); i++)
-			visitedProvinces.add(units.get(i).location.province);
-		
-		for(int i = 0; i < units.size(); i++)
-		{
-			d = Math.random();
-			if(d <= 1) {
-				queue.add(this.offensiveMove(i));
-				//TODO - replace unit with army or fleet
-				System.out.println("A unit is going offensive...");
-			}
-			else {
-				queue.add(this.defensiveMove(i));
-				//TODO - replace unit with army or fleet
-				System.out.println("A unit is going defensive...");
-			}
-		}*/
-
 			
 		if (map.getYear() == 1901 && map.getPhase() == Phase.SPR) {
 			/*
@@ -261,7 +237,7 @@ public class DodoAI extends AI {
 			//Keep track of where units are and are sent
 			ArrayList<Province> occupied = new ArrayList<Province>();
 			for (Unit u : units) occupied.add(u.location.province);
-
+			
 			for (Unit u : units) {
 				ArrayList<Node> nbh = filterNeighbours(map.getValidNeighbours(u), occupied);
 				if (nbh.size() == 0) {
@@ -273,6 +249,12 @@ public class DodoAI extends AI {
 					occupied.add(destination.province);
 					System.out.println(power.getName() + " : " + "I want " + u.location.daide() + " to move to " + destination.daide()); 
 					queue.add(new Move(u, destination)); 				}
+			}
+		} else if(map.getPhase() == Phase.SUM || map.getPhase() == Phase.SPR)
+		{
+			for(Unit u : units)
+			{
+				
 			}
 		} else if (map.getPhase() == Phase.WIN) { 
 			/*
