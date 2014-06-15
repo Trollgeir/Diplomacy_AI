@@ -224,10 +224,8 @@ public class DodoAI extends AI {
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
 		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
-		ArrayList<Province> scs = map.getSupplyCenters(this.getPower());
-		
-		System.out.println("MY SUPPLY CENTERS: " + scs.size());
-		/*
+		ArrayList<Province> supplyCenters = map.getSupplyCenters(this.getPower());
+/*
 		this.adjacencyList = new ArrayList<ArrayList<Node>>();
 		findAdjacent();
 
@@ -282,10 +280,7 @@ public class DodoAI extends AI {
 			BUILD PHASE
 			*/
 			ArrayList<Province> built = new ArrayList<Province>(); 
-			
-			System.out.println(scs.size());
-			
-			int error = units.size() - scs.size(); 
+			int error = units.size() - supplyCenters.size(); 
 			// error > 0 means more units then provinces so REMOVE
 			// error < 0 means more provinces then units so  BUILD
 			while (error > 0) {
@@ -296,10 +291,17 @@ public class DodoAI extends AI {
 				error--; 
 			}
 			while (error < 0) {
-				//BUILD				
-				int idx = (int)(Math.random() * scs.size());
-				queue.add(new Build(new Army(power, scs.get(idx).getCentralNode())));
-				built.add(scs.get(idx));
+				//BUILD
+				ArrayList<Province> scs = filterProvinces(map.getProvincesByOwner(power), built, units);
+
+				if (scs.size() == 0) { 
+					queue.add(new WaiveBuild(power));
+				} else {
+					int idx = (int)(Math.random() * scs.size());
+					queue.add(new Build(new Army(power, scs.get(idx).getCentralNode())));
+					built.add(scs.get(idx));
+				}
+				
 				error++; 
 			}
 		}
