@@ -33,7 +33,6 @@ public class DodoAI extends AI {
 	boolean key_to_send = false; 
 	Names names = null; 
 	ArrayList<Province> visitedProvinces = new ArrayList<Province>();
-
 	public DodoAI(Map map) {
 		super("DodoAI", "0.0.0.0.1", map);
 	}
@@ -222,8 +221,8 @@ public class DodoAI extends AI {
 	public void newTurn()
 	{
 		System.out.println();
-		System.out.println("New turn:");
-		System.out.println("Year: " + map.getYear() + "--" + map.getPhase()); 
+		System.out.println("New turn for " + power.getName());
+		System.out.println("Year: " + map.getYear() + " -- Phase: " + map.getPhase()); 
 		
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
@@ -237,13 +236,13 @@ public class DodoAI extends AI {
 			/*
 			Opening moves
 			*/
-			System.out.println("Performing opening moves...");
+			System.out.println("Game is Standard, checking if our power has heuristics...");
 			queue = Heuristics.getOpeningMovesSpring(this.getPower(), map.getStandard(), map);
 		} else if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
 			/*
 			MOVEMENT PHASES
 			*/
-			
+			System.out.println("------------- ORDERS -------------");
 			for (Unit u : units) {
 				ArrayList<Node> nbh = filterNeighbours(map.getValidNeighbours(u), occupied);
 				if (nbh.size() == 0) {
@@ -253,9 +252,10 @@ public class DodoAI extends AI {
 					Node destination = moveToCommandCenter(u, nbh, occupied);
 					occupied.remove(u.location.province); 
 					occupied.add(destination.province);
-					System.out.println(power.getName() + " : " + "I want " + u.location.daide() + " to move to " + destination.daide()); 
+					System.out.println("Unit in " + u.location.daide() + " -> " + destination.daide()); 
 					queue.add(new Move(u, destination)); 				}
 			}
+			
 		} else if(map.getPhase() == Phase.SUM || map.getPhase() == Phase.AUT){
 			for(Unit u : units)
 			{
@@ -267,7 +267,7 @@ public class DodoAI extends AI {
 						Node destination = moveToCommandCenter(u, u.retreatTo, occupied);
 						occupied.remove(u.location.province); 
 						occupied.add(destination.province);
-						System.out.println(power.getName() + " : " + "I want toretreat " + u.location.daide() + " to " + destination.daide()); 
+						System.out.println(power.getName() + " : " + "I want to retreat " + u.location.daide() + " to " + destination.daide()); 
 						queue.add(new Retreat(u, destination)); 
 					}
 				}
@@ -276,15 +276,19 @@ public class DodoAI extends AI {
 			/*
 			BUILD PHASE
 			*/
+			System.out.println("---------- BUILD/REMOVE ----------");
 			ArrayList<Province> built = new ArrayList<Province>(); 
 			int error = units.size() - provinces.size(); 
 			// error > 0 means more units then provinces so REMOVE
 			// error < 0 means more provinces then units so  BUILD
 			while (error > 0) {
 				//REMOVE
+				
 				int idx = (int)(Math.random() * units.size());
 				queue.add(new Remove(units.get(idx)));
-				units.remove(idx); 
+				System.out.println("Removing unit in " + units.get(idx).location.daide());
+				units.remove(idx);
+				
 				error--; 
 			}
 			while (error < 0) {
@@ -292,14 +296,14 @@ public class DodoAI extends AI {
 				ArrayList<Province> scs = filterProvinces(map.getProvincesByOwner(power), built, units);
 
 				if (scs.size() == 0) { 
-					System.out.println("No (more) building or removing needed, waiving..");
+					System.out.println("No room to build! All SC's are occupied :(");
 					queue.add(new WaiveBuild(power));
 				} else {
 					int idx = (int)(Math.random() * scs.size());
 					queue.add(new Build(new Army(power, scs.get(idx).getCentralNode())));
+					System.out.println("Building unit in " + scs.get(idx).getCentralNode().daide());
 					built.add(scs.get(idx));
 				}
-				
 				error++; 
 			}
 		}
@@ -317,6 +321,9 @@ public class DodoAI extends AI {
 
 
 		handleQueue();
+		System.out.println("-----------END OF TURN -----------");
+		System.out.println("");
+		System.out.println("");
 		//System.out.println(this.getPower().getName() + " sent his order!"); 
 	}
 	
