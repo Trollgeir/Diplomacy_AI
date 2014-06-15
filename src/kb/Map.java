@@ -283,6 +283,19 @@ public class Map extends Receiver {
 		//printMap();
 	}
 	
+	public void processRetreatList(Unit u, String[] message, int start) {
+		int i = start; 
+		while (!message[i].equals(")")) {
+			if (message[i].equals("(")) {
+				u.retreatTo.add(getNode(message[i + 1], message[i + 2]));
+				i = i + 4; 
+			} else {
+				u.retreatTo.add(getNode(message[i]));
+				i = i + 1;  
+			}
+		}
+	}
+
 	public void processNOW(String[] message) {
 		units.clear();
 		for (int i = 0; i < provinces.size(); i++)
@@ -302,10 +315,14 @@ public class Map extends Receiver {
 			String uType = message[unitStart + 2];
 			Node loc = null;
 			
-			if (message[unitStart + 3].equals("("))
+			int possibleMRT = unitStart + 4; 
+
+			if (message[unitStart + 3].equals("(")) {
 				loc = getNode(message[unitStart + 4], message[unitStart + 5]);
-			else
+				possibleMRT = unitStart + 7; 
+			 } else {
 				loc = getNode(message[unitStart + 3]);
+			}
 			
 			if (loc == null)
 			{
@@ -321,15 +338,23 @@ public class Map extends Receiver {
 					System.out.println(message[i]);
 				}
 			}
-			
+
+			Unit newUnit = null; 
 			if (uType.equals("AMY"))
 			{
-				units.add(new Army(pow, loc));
+				newUnit = new Army(pow, loc);
 			}
 			else
 			{
-				units.add(new Fleet(pow, loc));
+				newUnit = new Fleet(pow, loc);
 			}
+			units.add(newUnit);
+
+			if (possibleMRT < message.length && message[possibleMRT].equals("MRT")) {
+				newUnit.mustRetreat = true; 
+				processRetreatList(newUnit, message, possibleMRT + 2); 
+			}
+
 			
 			uWord = unitEnd + 1;
 		}
@@ -539,5 +564,9 @@ public class Map extends Receiver {
 		}
 		
 		return -1;
+	}
+
+	public static void main(String[] args) {
+		new Map().processNOW(args); 
 	}
 }

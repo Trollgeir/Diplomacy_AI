@@ -17,12 +17,16 @@ public abstract class Unit implements DaideMessage {
 
 	public Power	owner;
 	public Node		location;
+	public ArrayList<Node> retreatTo; 
+	public boolean mustRetreat; 
 	
 	
 	Unit(Power owner, Node location)
 	{
 		this.owner = owner;
 		moveTo(location);
+		mustRetreat = false; 
+		retreatTo = new ArrayList<Node>(); 
 	}
 	
 	public abstract boolean isArmy();
