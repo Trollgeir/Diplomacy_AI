@@ -208,6 +208,8 @@ public abstract class AI extends Receiver {
 	protected abstract void handleHUH(String[] message);
 	
 	public abstract void newTurn();
+	
+	
 	protected abstract Order offensiveMove(int i);
 	protected abstract Order defensiveMove(int i);
 }

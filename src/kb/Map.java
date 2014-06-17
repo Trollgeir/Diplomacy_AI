@@ -16,7 +16,7 @@ import kb.unit.*;
 
 public class Map extends Receiver {
 
-	ArrayList<Province>		provinces;
+	public ArrayList<Province>		provinces;
 	public ArrayList<Power>		powers;
 	ArrayList<Unit>			units;
 	boolean					isStandard;

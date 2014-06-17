@@ -221,7 +221,7 @@ public class DodoAI extends AI {
 		}
 		return getRandomElement(neighbourhood); 
 	}
-
+	
 	public void newTurn()
 	{
 		if (!power.alive)
