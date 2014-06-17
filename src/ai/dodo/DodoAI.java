@@ -248,9 +248,12 @@ public class DodoAI extends AI {
 			for (Node n : c.n.landNeighbors) {
 				if (n.unit != null && n.unit.owner != power) {
 					c.addPower(n.unit.owner);
+					//should be c.addEnemyUnit(n.unit);
 				}
 			}
 		}
+
+
 	}
 
 	public ArrayList<AdjSupplyCenter> getTakableCenters(ArrayList<AdjSupplyCenter> centers) {
@@ -308,6 +311,22 @@ public class DodoAI extends AI {
 				}
 			}*/
 			
+
+
+			/*
+			float[] weights = Weighting.getCenterWeights(takableCenters, power);
+			for (int i = 0; i < takableCenters.size(); ++i) {
+				takableCenters.get(i).weight = weights[i];           
+			}
+
+			ArrayList<AdjSupplyCenter> centerPriority = new ArrayList<AdjSupplyCenter>();
+			centerPriority.addAll(takableCenters);			
+
+			Collections.sort(centerPriority, new CustomComparator());
+			*/					   
+
+			
+
 			ArrayList<Unit> availableUnits = new ArrayList<Unit>();
 			availableUnits.addAll(units);
 
