@@ -191,7 +191,7 @@ public class DodoAI extends AI {
 		return result; 
 	}
 
-	public Node moveToCommandCenter(Unit unit, ArrayList<Node> neighbourhood, ArrayList<Province> occupied) {
+	public Node moveToCommandCenter(Unit unit, ArrayList<Node> neighbourhood, ArrayList<Province> occupied, boolean move) {
 		ArrayList<Node> commandCenters = getCommandCenterNodes(neighbourhood); 
 		if (commandCenters.size() > 0) {
 			return getRandomElement(commandCenters);  
@@ -206,7 +206,10 @@ public class DodoAI extends AI {
 				return getRandomElement(indirectCommandCenters);
 			}
 		}
-		return getRandomElement(neighbourhood); 
+		if(move)
+			return getRandomElement(neighbourhood); 
+		else
+			return null;
 	}
 
 	public void addAdjSupplyCenter(Node n, ArrayList<AdjSupplyCenter> centers, Unit u) {
@@ -320,7 +323,7 @@ public class DodoAI extends AI {
 					//There are no possible moves so hold
 					queue.add(new Hold(u)); 
 				} else {
-					Node destination = moveToCommandCenter(u, nbh, occupied);
+					Node destination = moveToCommandCenter(u, nbh, occupied, true);
 					occupied.remove(u.location.province); 
 					occupied.add(destination.province);
 					System.out.println("Unit in " + u.location.daide() + " -> " + destination.daide()); 
@@ -337,7 +340,7 @@ public class DodoAI extends AI {
 					if(u.retreatTo.size() == 0) queue.add(new Disband(u)); 
 					else {
 						//Try to move to a supply center
-						Node destination = moveToCommandCenter(u, u.retreatTo, occupied);
+						Node destination = moveToCommandCenter(u, u.retreatTo, occupied, true);
 						occupied.remove(u.location.province); 
 						occupied.add(destination.province);
 						System.out.println(power.getName() + " : " + "I want to retreat " + u.location.daide() + " to " + destination.daide()); 
@@ -354,15 +357,30 @@ public class DodoAI extends AI {
 			int error = units.size() - provinces.size(); 
 			// error > 0 means more units then provinces so REMOVE
 			// error < 0 means more provinces then units so  BUILD
-			while (error > 0) {
-				//REMOVE
-				
-				int idx = (int)(Math.random() * units.size());
-				queue.add(new Remove(units.get(idx)));
-				System.out.println("Removing unit in " + units.get(idx).location.daide());
-				units.remove(idx);
-				
-				error--; 
+			while(error > 0)
+			{
+				Unit remove = null; int best = 0; int j = 0;
+				for(Unit u : units)
+				{
+					ArrayList<Node> nbh = filterNeighbours(map.getValidNeighbours(u), occupied);
+					Node n = moveToCommandCenter(u, nbh, occupied, false);
+					if(n.province.isSupplyCenter())
+						j = 1;
+					else if(n != null)
+						j = 2;
+					else
+						j = 3; // random move
+					if(j > best)
+					{
+						remove = u;
+						best = j;
+					}
+					else if(j == best)
+						if(Math.random() > 0.5)
+							remove = u;
+				}
+				queue.add(new Remove(remove));
+				error--;
 			}
 			while (error < 0) {
 				//BUILD
