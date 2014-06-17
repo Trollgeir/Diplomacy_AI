@@ -33,6 +33,8 @@ public class DodoAI extends AI {
 	boolean key_to_send = false; 
 	Names names = null; 
 	ArrayList<Province> visitedProvinces = new ArrayList<Province>();
+	DodoBeliefBase		belief;
+	
 	public DodoAI(Map map) {
 		super("DodoAI", "0.0.0.0.1", map);
 	}
@@ -97,6 +99,8 @@ public class DodoAI extends AI {
 		if (names != null) {
 			names.init(map);
 		}
+		
+		belief = new DodoBeliefBase(map, power);
 	}
 	@Override
 	protected void handleSLO(String[] message)
@@ -220,6 +224,8 @@ public class DodoAI extends AI {
 
 	public void newTurn()
 	{
+		belief.calcThreats();
+		
 		System.out.println();
 		System.out.println("New turn for " + power.getName());
 		System.out.println("Year: " + map.getYear() + " -- Phase: " + map.getPhase()); 
