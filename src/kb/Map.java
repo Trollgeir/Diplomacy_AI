@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import ai.AI;
 import kb.province.*;
 import game.Receiver;
+import message.DaideList;
 import message.server.*;
 import game.Game;
 import kb.unit.*;
@@ -112,45 +113,6 @@ public class Map extends Receiver {
 	{
 		return isStandard;
 	}
-	
-	public static int unBracket(String[] messageIn, int start)
-	{
-		int end = 0;
-		int bracketCount = 0;
-		
-		//Is the message even bracketed
-		if (!messageIn[start].equals("("))
-			return -1;
-		
-		//Iterate over all the words
-		for (int i = start; i < messageIn.length; i++)
-		{
-			String cWord = messageIn[i];
-			//Take care of nested brackets
-			if (cWord.equals("("))
-			{
-				bracketCount++;
-				continue;
-			}
-			
-			if (cWord.equals(")"))
-			{
-				bracketCount--;
-				if (bracketCount == 0)
-				{
-					//Stop searching if all of the nested brackets are closed
-					end = i;
-					break;
-				}
-			}
-		}
-		if (bracketCount != 0)
-			return -1;
-		
-		return end;
-	}
-	
-
 
 	public ArrayList<Unit> getUnitsByOwner(Power power)
 	{
@@ -268,7 +230,7 @@ public class Map extends Receiver {
 		while (pWord < message.length)
 		{
 			int powerStart = pWord;
-			int powerEnd = unBracket(message, powerStart);
+			int powerEnd = DaideList.unBracket(message, powerStart);
 			
 			Power power = getPower(message[powerStart + 1]);
 			
@@ -312,7 +274,7 @@ public class Map extends Receiver {
 		while (uWord < message.length)
 		{
 			int unitStart = uWord;
-			int unitEnd = unBracket(message, unitStart);
+			int unitEnd = DaideList.unBracket(message, unitStart);
 			
 			Power pow = getPower(message[unitStart + 1]);
 			pow.alive = true;
@@ -372,7 +334,7 @@ public class Map extends Receiver {
 		
 		//Powers
 		int powStart = 1;
-		int powEnd = unBracket(message, powStart);
+		int powEnd = DaideList.unBracket(message, powStart);
 		
 		for (int i = powStart + 1; i < powEnd; i++)
 		{
@@ -381,17 +343,17 @@ public class Map extends Receiver {
 
 		//Province
 		int provStart = powEnd+1;		
-		int provEnd = unBracket(message, provStart);
+		int provEnd = DaideList.unBracket(message, provStart);
 			
 			//Supply centers
 			int supStart = provStart+1;
-			int supEnd = unBracket(message, supStart);
+			int supEnd = DaideList.unBracket(message, supStart);
 			
 			int sWord = supStart + 1;
 			while (sWord < supEnd)
 			{				
 				int powSupStart = sWord;
-				int powSupEnd = unBracket(message, powSupStart);
+				int powSupEnd = DaideList.unBracket(message, powSupStart);
 				
 				Power pow = getPower(message[powSupStart + 1]);
 				
@@ -408,7 +370,7 @@ public class Map extends Receiver {
 			
 			//Non supply centers
 			int nonSupStart = supEnd+1;
-			int nonSupEnd = unBracket(message, nonSupStart);
+			int nonSupEnd = DaideList.unBracket(message, nonSupStart);
 		
 			for (int n = nonSupStart + 1; n < nonSupEnd; n++)
 			{
@@ -417,13 +379,13 @@ public class Map extends Receiver {
 			
 		//Adjacencies
 		int adjStart = provEnd+1;
-		int adjEnd = unBracket(message, adjStart);
+		int adjEnd = DaideList.unBracket(message, adjStart);
 		
 		int cWord = adjStart + 1;
 		while (cWord < adjEnd)
 		{
 			int provAdjStart = cWord;
-			int provAdjEnd = unBracket(message, provAdjStart);
+			int provAdjEnd = DaideList.unBracket(message, provAdjStart);
 			
 			Province province = getProvince(message[provAdjStart+1]);
 			
@@ -431,7 +393,7 @@ public class Map extends Receiver {
 			while (uWord < provAdjEnd)
 			{
 				int unitAdjStart = uWord;
-				int unitAdjEnd = unBracket(message, unitAdjStart);
+				int unitAdjEnd = DaideList.unBracket(message, unitAdjStart);
 				
 				String uType = message[unitAdjStart+1];
 				

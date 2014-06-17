@@ -7,7 +7,7 @@ package message.server;
 import message.DaideList;
 import message.DaideMessage;
 
-public class Now implements DaideMessage {
+public class Now extends DaideMessage {
 	public Now()
 	{
 		// No parameters are needed

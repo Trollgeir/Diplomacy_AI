@@ -4,7 +4,7 @@ import kb.Power;
 import message.DaideList;
 import message.DaideMessage;
 
-public class Send implements DaideMessage {
+public class Send extends DaideMessage {
 
 	Power[] recipients;
 	DaideMessage message;
@@ -25,6 +25,10 @@ public class Send implements DaideMessage {
 		ret.add(")");
 		
 		return ret;
+	}
+
+	public static int pressLevel() {
+		return 10;
 	}
 
 }

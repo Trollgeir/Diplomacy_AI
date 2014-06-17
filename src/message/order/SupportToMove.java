@@ -10,7 +10,7 @@ import kb.unit.Unit;
  *
  */
 
-public class SupportToMove implements Order {
+public class SupportToMove extends Order {
 
 	Unit		unit, supportedUnit;
 	Node		movingTo;

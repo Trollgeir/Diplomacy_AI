@@ -9,7 +9,7 @@ import message.DaideList;
  *
  */
 
-public class Disband implements Order {
+public class Disband extends Order {
 
 	Unit 		unit;
 	

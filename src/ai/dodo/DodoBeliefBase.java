@@ -97,7 +97,7 @@ public class DodoBeliefBase {
 	{		
 		for (Province p : map.provinces)
 		{
-			if (!p.getOwner().equals(self))
+			if (!self.equals(p.getOwner()))
 			{
 				provinceInfo.put(p, new ProvinceInfo());
 			}

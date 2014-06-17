@@ -9,7 +9,7 @@ import kb.Power;
  *
  */
 
-public class WaiveBuild implements Order {
+public class WaiveBuild extends Order {
 
 	Power		power;
 	

@@ -9,7 +9,7 @@ import message.DaideMessage;
 import message.order.Order;
 import message.server.TurnHistory;
 
-public class Submit implements DaideMessage{
+public class Submit extends DaideMessage{
 
 	Order[] orders = null;
 	TurnHistory turn  = null; 

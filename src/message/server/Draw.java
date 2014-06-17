@@ -7,7 +7,7 @@ package message.server;
 import message.DaideList;
 import message.DaideMessage;
 
-public class Draw implements DaideMessage{
+public class Draw extends DaideMessage{
 
 	String[] powers = null;
 	public Draw()

@@ -9,7 +9,7 @@ import kb.unit.Unit;
  *
  */
 
-public class Hold implements Order {
+public class Hold extends Order {
 
 	Unit 		unit;
 	

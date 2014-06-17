@@ -3,7 +3,7 @@ package message.server;
 import message.DaideList;
 import message.DaideMessage;
 
-public class RequestDeadlineNotification implements DaideMessage {
+public class RequestDeadlineNotification extends DaideMessage {
 
 	/**
 		Message class to request a deadline notification at the requested number of seconds

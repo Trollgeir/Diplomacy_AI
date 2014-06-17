@@ -3,7 +3,7 @@ package message.server;
 import message.DaideList;
 import message.DaideMessage;
 
-public class Not implements DaideMessage {
+public class Not extends DaideMessage {
 
 	/**
 		Message class to un-confirm messages

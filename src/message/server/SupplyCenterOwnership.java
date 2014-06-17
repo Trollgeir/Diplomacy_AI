@@ -7,7 +7,7 @@ package message.server;
 import message.DaideList;
 import message.DaideMessage;
 
-public class SupplyCenterOwnership implements DaideMessage {
+public class SupplyCenterOwnership extends DaideMessage {
 	public SupplyCenterOwnership()
 	{
 		// No parameters are needed

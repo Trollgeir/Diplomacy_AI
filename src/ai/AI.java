@@ -9,6 +9,7 @@ import kb.Power;
 import kb.province.Province;
 import kb.unit.Unit;
 import communication.LogReader;
+import message.DaideList;
 import message.order.Hold;
 import message.order.Order;
 import message.server.Submit;
@@ -132,40 +133,29 @@ public abstract class AI extends Receiver {
 			o += p + " ";
 		System.out.println(o);
 		
-		String[] newMessage = new String[1024];
-		int j = 0;
-		for(int i = 0; i < message.length; i++)
-		{
-			if(!message[i].equals(")") && !message[i].equals("("))
-			{
-				newMessage[j] = message[i];
-				j++;
-			}
-		}		
-		
 		if (message[0].equals ("HLO")) {
-			handleHLO(newMessage);
+			handleHLO(message);
 		}
 		if (message[0].equals("SLO")) {
-			handleSLO(newMessage);
+			handleSLO(message);
 		}
 		if (message[0].equals("FRM")){
-			handleFRM(newMessage);
+			handleFRM(message);
 		}
 		if (message[0].equals("SMR")){
-			handleSMR(newMessage);
+			handleSMR(message);
 		}
 		if (message[0].equals("THX")){
-			handleTHX(newMessage);
+			handleTHX(message);
 		}
 		if (message[0].equals("YES")){
-			handleYES(newMessage);
+			handleYES(message);
 		}
 		if (message[0].equals("REJ")){
-			handleREJ(newMessage);
+			handleREJ(message);
 		}
 		if (message[0].equals("HUH")){
-			handleHUH(newMessage);
+			handleHUH(message);
 		}
 		
 		/*TODO*/

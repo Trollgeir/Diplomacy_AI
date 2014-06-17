@@ -3,7 +3,7 @@ package message.server;
 import message.DaideList;
 import message.DaideMessage;
 
-public class MissedOrders implements DaideMessage {
+public class MissedOrders extends DaideMessage {
 
 /**
 	Message class to request the missed orders

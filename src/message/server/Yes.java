@@ -3,7 +3,7 @@ package message.server;
 import message.DaideList;
 import message.DaideMessage;
 
-public class Yes implements DaideMessage {
+public class Yes extends DaideMessage {
 
 	/**
 		Message class to confirm messages

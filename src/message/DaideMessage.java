@@ -1,11 +1,16 @@
 package message;
 
-public interface DaideMessage {
+public abstract class DaideMessage {
 
 	/**
 	 * 
 	 * @return The DAIDE syntax representation of this object.
 	 */
-	public DaideList daide();
+	public abstract DaideList daide();
 	
+	
+	public static int pressLevel()
+	{
+		return 0;
+	}
 }
