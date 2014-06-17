@@ -180,8 +180,8 @@ public class DodoAI extends AI {
 		return result;
 	};
 
-	public ArrayList<Node> getCommandCenterNodes(ArrayList<Node> nodes, boolean ours) {
-		//only return those nodes which are in a province with command center which are NOT ours!
+	public ArrayList<Node> getSupplyCenterNodes(ArrayList<Node> nodes, boolean ours) {
+		//only return those nodes which are in a province with supply center which are NOT ours!
 		ArrayList<Node> result = new ArrayList<Node>(); 
 		for (Node n : nodes) {
 			if (n.province.isSupplyCenter()) {
@@ -195,19 +195,19 @@ public class DodoAI extends AI {
 		return result; 
 	}
 
-	public Node moveToCommandCenter(Unit unit, ArrayList<Node> neighbourhood, ArrayList<Province> occupied, boolean move, boolean ours) {
-		ArrayList<Node> commandCenters = getCommandCenterNodes(neighbourhood, ours); 
-		if (commandCenters.size() > 0) {
-			return getRandomElement(commandCenters);  
+	public Node moveToSupplyCenter(Unit unit, ArrayList<Node> neighbourhood, ArrayList<Province> occupied, boolean move, boolean ours) {
+		ArrayList<Node> supplyCenters = getSupplyCenterNodes(neighbourhood, ours); 
+		if (supplyCenters.size() > 0) {
+			return getRandomElement(supplyCenters);  
 		} else {
-			ArrayList<Node> indirectCommandCenters = new ArrayList<Node>(); 
+			ArrayList<Node> indirectSupplyCenters = new ArrayList<Node>(); 
 			for (Node node : neighbourhood) {
 				ArrayList<Node> n_neigbourhood = filterNeighbours(map.getValidNeighbours(unit, node), occupied);
-				ArrayList<Node> n_commandCenters = getCommandCenterNodes(n_neigbourhood, ours);
-				if (n_commandCenters.size() > 0) indirectCommandCenters.add(node); 
+				ArrayList<Node> n_supplyCenters = getSupplyCenterNodes(n_neigbourhood, ours);
+				if (n_supplyCenters.size() > 0) indirectSupplyCenters.add(node); 
 			}
-			if (indirectCommandCenters.size() > 0) {
-				return getRandomElement(indirectCommandCenters);
+			if (indirectSupplyCenters.size() > 0) {
+				return getRandomElement(indirectSupplyCenters);
 			}
 		}
 		if(move)
@@ -271,7 +271,7 @@ public class DodoAI extends AI {
 		
 		System.out.println();
 		System.out.println("New turn for " + power.getName());
-		System.out.println("Year: " + map.getYear() + " -- Phase: " + map.getPhase()); 
+		System.out.println("Year: " + map.getYear() + " -----------  Phase: " + map.getPhase()); 
 		
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
@@ -374,7 +374,7 @@ public class DodoAI extends AI {
 					//There are no possible moves so hold
 					queue.add(new Hold(u)); 
 				} else {
-					Node destination = moveToCommandCenter(u, nbh, occupied, true, false);
+					Node destination = moveToSupplyCenter(u, nbh, occupied, true, false);
 					occupied.remove(u.location.province); 
 					occupied.add(destination.province);
 					System.out.println("Unit in " + u.location.daide() + " -> " + destination.daide()); 
@@ -391,7 +391,7 @@ public class DodoAI extends AI {
 					if(u.retreatTo.size() == 0) queue.add(new Disband(u)); 
 					else {
 						//Try to move to a supply center
-						Node destination = moveToCommandCenter(u, u.retreatTo, occupied, true, false);
+						Node destination = moveToSupplyCenter(u, u.retreatTo, occupied, true, false);
 						occupied.remove(u.location.province); 
 						occupied.add(destination.province);
 						System.out.println(power.getName() + " : " + "I want to retreat " + u.location.daide() + " to " + destination.daide()); 
@@ -419,7 +419,7 @@ public class DodoAI extends AI {
 						j = 0;
 					} else {
 						ArrayList<Node> nbh = filterNeighbours(map.getValidNeighbours(u), occupied);
-						Node n = moveToCommandCenter(u, nbh, occupied, false, true);
+						Node n = moveToSupplyCenter(u, nbh, occupied, false, true);
 						if (n == null) {
 							j = 3;
 						} else if (n.province.isSupplyCenter()) {
