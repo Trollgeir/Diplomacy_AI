@@ -16,9 +16,11 @@ public class Power implements DaideMessage{
 
 	String						name;
 	public ArrayList<Province>	homeProvinces;
+	public boolean				alive;
 	
 	Power(String name)
 	{
+		this.alive = true;
 		this.name = name;
 		this.homeProvinces = new ArrayList<Province>();
 	}

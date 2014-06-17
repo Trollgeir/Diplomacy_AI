@@ -304,6 +304,9 @@ public class Map extends Receiver {
 		phase = Phase.valueOf(message[2]);
 		year = Integer.parseInt(message[3]);
 		
+		for (Power p : powers)
+			p.alive = false;
+		
 		int uWord = 5;
 		
 		while (uWord < message.length)
@@ -312,6 +315,7 @@ public class Map extends Receiver {
 			int unitEnd = unBracket(message, unitStart);
 			
 			Power pow = getPower(message[unitStart + 1]);
+			pow.alive = true;
 			String uType = message[unitStart + 2];
 			Node loc = null;
 			

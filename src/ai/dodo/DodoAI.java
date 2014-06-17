@@ -224,6 +224,9 @@ public class DodoAI extends AI {
 
 	public void newTurn()
 	{
+		if (!power.alive)
+			return;
+		
 		belief.calcThreats();
 		
 		System.out.println();

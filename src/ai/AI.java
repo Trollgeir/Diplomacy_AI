@@ -127,6 +127,11 @@ public abstract class AI extends Receiver {
 	@Override
 	public void onMessage(String[] message) {
 		
+		String o  = "Message received: ";
+		for (String p : message)
+			o += p + " ";
+		System.out.println(o);
+		
 		String[] newMessage = new String[1024];
 		int j = 0;
 		for(int i = 0; i < message.length; i++)
