@@ -43,7 +43,10 @@ public class Game extends Receiver {
 		} catch (ArrayIndexOutOfBoundsException e) {
 			printUsage(ai);
 			System.exit(-1);
-		} catch (IOException | DisconnectedException e) {
+		} catch (IOException e) {
+			/*TODO handle exceptions*/ 
+			e.printStackTrace();
+		} catch (DisconnectedException e) {
 			/*TODO handle exceptions*/ 
 			e.printStackTrace();
 		} 

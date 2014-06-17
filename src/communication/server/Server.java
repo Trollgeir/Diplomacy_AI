@@ -120,7 +120,10 @@ public class Server implements DiplomaticMessageListener {
         }
         try {
             send(strmessage);
-        } catch (UnknownTokenException | DisconnectedException e) {
+        } catch (UnknownTokenException e) {
+            System.out.println("Error sending message :(");
+            e.printStackTrace();  
+        } catch (DisconnectedException e) {
             System.out.println("Error sending message :(");
             e.printStackTrace();  
         }
