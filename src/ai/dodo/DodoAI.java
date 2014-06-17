@@ -222,6 +222,54 @@ public class DodoAI extends AI {
 		return getRandomElement(neighbourhood); 
 	}
 
+	public void addAdjSupplyCenter(Node n, ArrayList<AdjSupplyCenter> centers, Unit u) {
+		for (AdjSupplyCenter c : centers) {
+			if (c.n == n) {
+				c.adjUnits.add(u);
+				return;
+			} 
+		}
+
+		centers.add(new AdjSupplyCenter(n, u, map.powers));
+	}
+
+	public ArrayList<AdjSupplyCenter> getAdjSupplyCenters(ArrayList<Unit> units) {
+		ArrayList<AdjSupplyCenter> adjCenters =  new ArrayList<AdjSupplyCenter>();
+
+		for (Unit u : units) {
+			//TODO: think about fleets.
+			if (u.isFleet()) continue; 
+			ArrayList<Node> adj = map.getValidNeighbours(u);
+			for (Node n : adj) {
+				if (n.province.isSupplyCenter()) {
+					addAdjSupplyCenter(n, adjCenters, u);	
+				}
+			}
+
+		}
+
+		return adjCenters; 
+	}
+
+	public void determineResistance(ArrayList<AdjSupplyCenter> centers) {
+		for (AdjSupplyCenter c : centers) {
+			for (Node n : c.n.landNeighbors) {
+				if (n.unit != null && n.unit.owner != power) {
+					c.addPower(n.unit.owner);
+				}
+			}
+		}
+	}
+
+	public ArrayList<AdjSupplyCenter> getTakableCenters(ArrayList<AdjSupplyCenter> centers) {
+		ArrayList<AdjSupplyCenter> result = new ArrayList<AdjSupplyCenter>();
+		for (AdjSupplyCenter c : centers) {
+			if (c.isTakable(power)) result.add(c);
+		}
+
+		return result; 
+	} 
+
 	public void newTurn()
 	{
 		belief.calcThreats();
@@ -248,6 +296,33 @@ public class DodoAI extends AI {
 			/*
 			MOVEMENT PHASES
 			*/
+
+			System.out.println("Power: " + power.daide());
+			ArrayList<AdjSupplyCenter> adjCenters = getAdjSupplyCenters(units);	
+			System.out.println("num adj: " + adjCenters.size());
+
+			determineResistance(adjCenters);
+			for (AdjSupplyCenter c : adjCenters) {
+				System.out.println("\t" + c.n.daide() + ": "+ c.supportNeeded + " - " + c.adjUnits.size());
+
+			}
+
+			ArrayList<AdjSupplyCenter> takableCenters = getTakableCenters(adjCenters);
+
+
+			
+
+			for (AdjSupplyCenter c : takableCenters) {
+				System.out.println("Center: " + c.n.daide() + "can be taken by (" + c.adjUnits.size() + 
+					" / " + c.supportNeeded +"): ");
+				for (Unit u : c.adjUnits) {
+					System.out.println("\t" + u.location.daide());
+				}
+			}
+
+			
+
+			
 			System.out.println("------------- ORDERS -------------");
 			for (Unit u : units) {
 				ArrayList<Node> nbh = filterNeighbours(map.getValidNeighbours(u), occupied);
@@ -261,6 +336,8 @@ public class DodoAI extends AI {
 					System.out.println("Unit in " + u.location.daide() + " -> " + destination.daide()); 
 					queue.add(new Move(u, destination)); 				}
 			}
+			
+
 			
 		} else if(map.getPhase() == Phase.SUM || map.getPhase() == Phase.AUT){
 			for(Unit u : units)

@@ -38,7 +38,7 @@ public class Map extends Receiver {
 		
 		ai = null;
 	}
-	
+
 	public void setAI(AI ai)
 	{
 		this.ai = ai;
@@ -295,6 +295,8 @@ public class Map extends Receiver {
 			}
 		}
 	}
+
+
 
 	public void processNOW(String[] message) {
 		units.clear();
