@@ -24,6 +24,12 @@ public class DodoBeliefBase {
 		threat = new java.util.HashMap<Province, Double>();
 		threatChange = new java.util.HashMap<Province, Double>();
 		trust = new java.util.HashMap<Power, Double>();
+		
+		for (Power p : map.powers)
+		{
+			if (!p.equals(self))
+				trust.put(p, 0.5);
+		}
 	}
 	
 	public int distance(Node start, Node goal)
@@ -38,17 +44,19 @@ public class DodoBeliefBase {
 		for (int j = 0; j < addedList.size(); j++)
 		{
 			Node cNode = addedList.get(j);
+			ArrayList<Node> neighbors = cNode.allNeighbors();
 			
-			for (int i = 0; i < cNode.landNeighbors.size(); i++)
+			for (int i = 0; i < neighbors.size(); i++)
 			{
-				Node adjNode = cNode.landNeighbors.get(i);
+				Node adjNode = neighbors.get(i);
+				int adjDist = distanceList.get(cNode) + 1;
 				
 				if (adjNode.equals(goal))
-					return distanceList.get(cNode) + 1;
+					return adjDist;
 				
 				if (!distanceList.containsKey(adjNode))
 				{
-					distanceList.put(adjNode, distanceList.get(cNode) + 1);
+					distanceList.put(adjNode, adjDist);
 					addedList.add(adjNode);
 				}
 			}
@@ -96,8 +104,7 @@ public class DodoBeliefBase {
 				
 				for (int u = 0; u < threatUnits.size(); u++)
 				{
-					//double trustFactor = 1.0 - trust.get(cPow);
-					double trustFactor = 1.0;
+					double trustFactor = 1.0 - trust.get(cPow);
 					int dist = distance(cProv.getCentralNode(), threatUnits.get(u).location);
 					
 					double threatFromUnit;

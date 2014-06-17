@@ -72,6 +72,19 @@ public class Node implements DaideMessage{
 		return ret;
 	}
 	
+	public ArrayList<Node> allNeighbors()
+	{
+		ArrayList<Node> ret = new ArrayList<Node>();
+		
+		ret.addAll(landNeighbors);
+		
+		for (Node s : seaNeighbors)
+			if (!landNeighbors.contains(s))
+				ret.add(s);
+		
+		return ret;
+	}
+	
 	public boolean occupied()
 	{
 		return unit != null;
