@@ -10,7 +10,7 @@ import kb.unit.Unit;
  *
  */
 
-public class Convoy implements Order {
+public class Convoy extends Order {
 
 	Unit		carrier, carrying;
 	Node		carryTo;

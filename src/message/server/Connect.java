@@ -3,7 +3,7 @@ package message.server;
 import message.DaideList;
 import message.DaideMessage;
 
-public class Connect implements DaideMessage {
+public class Connect extends DaideMessage {
 
 	/**
 		Message class to request connection to a server

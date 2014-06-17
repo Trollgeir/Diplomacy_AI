@@ -1,7 +1,5 @@
 package kb.unit;
 
-import java.util.ArrayList;
-
 import message.DaideList;
 import kb.Power;
 import kb.Node;

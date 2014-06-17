@@ -4,7 +4,7 @@ import kb.Power;
 import message.DaideList;
 import message.DaideMessage;
 
-public class Reconnect implements DaideMessage {
+public class Reconnect extends DaideMessage {
 
 	/**
 		Message class to ask the server to rejoin the game after connection loss (IAM)

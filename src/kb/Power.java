@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import kb.province.Province;
 import message.DaideList;
-import message.DaideMessage;
 
 /**
  * One of the powers (players) in the game.
@@ -12,13 +11,15 @@ import message.DaideMessage;
  *
  */
 
-public class Power implements DaideMessage{
+public class Power{
 
 	String						name;
 	public ArrayList<Province>	homeProvinces;
+	public boolean				alive;
 	
 	Power(String name)
 	{
+		this.alive = true;
 		this.name = name;
 		this.homeProvinces = new ArrayList<Province>();
 	}

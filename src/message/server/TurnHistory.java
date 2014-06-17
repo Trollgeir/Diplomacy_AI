@@ -3,7 +3,7 @@ package message.server;
 import message.DaideList;
 import message.DaideMessage;
 
-public class TurnHistory implements DaideMessage {
+public class TurnHistory extends DaideMessage {
 
 	/**
 		Message class to retrieve the results from any previous turn

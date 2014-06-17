@@ -1,26 +1,13 @@
 package ai.dodo;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import kb.Map;
 import kb.unit.*;
 import kb.Node;
 import kb.province.Province;
 import kb.unit.Unit;
-import negotiator.Negotiator;
 import message.order.*;
-import message.server.Connect;
-import message.server.MapDefinition;
-import message.server.Submit;
-import message.server.Yes;
-import communication.server.DisconnectedException;
-import communication.server.Server;
-import communication.server.UnknownTokenException;
 import ai.AI;
 import ai.Heuristics;
 import game.Game;
@@ -93,9 +80,9 @@ public class DodoAI extends AI {
 	@Override
 	protected void handleHLO(String[] message)
 	{
-		this.power =  map.getPower(message[1]);
-		this.passcode = message[2];
-		this.lvl = message[4];
+		this.power =  map.getPower(message[2]);
+		this.passcode = message[5];
+		this.lvl = message[10];
 		if (names != null) {
 			names.init(map);
 		}
@@ -105,7 +92,7 @@ public class DodoAI extends AI {
 	@Override
 	protected void handleSLO(String[] message)
 	{
-		if (message[1].equals(getPower().getName())) {
+		if (message[2].equals(getPower().getName())) {
 			System.out.println("I won!"); 
 		} else {
 			System.out.println("I lost."); 
@@ -272,6 +259,9 @@ public class DodoAI extends AI {
 
 	public void newTurn()
 	{
+		if (!power.alive)
+			return;
+		
 		belief.calcThreats();
 		
 		System.out.println();
@@ -401,8 +391,7 @@ public class DodoAI extends AI {
 				e.printStackTrace(); 
 			}
 		}
-
-
+		
 		handleQueue();
 		System.out.println("-----------END OF TURN -----------");
 		System.out.println("");

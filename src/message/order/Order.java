@@ -9,13 +9,12 @@ import message.DaideMessage;
  *
  */
 
-public interface Order extends DaideMessage {
+public abstract class Order extends DaideMessage {
 
 	
 	/**
 	 * Get the DAIDE message syntax representation of this order.
 	 * @return The DAIDE version of this order.
 	 */
-	DaideList daide();
-	
+	public abstract DaideList daide();
 }

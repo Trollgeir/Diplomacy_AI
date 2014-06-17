@@ -8,27 +8,54 @@ import kb.Power;
 import kb.province.Province;
 import kb.unit.Unit;
 
+class PowerInfo
+{
+	public PowerInfo()
+	{
+		alliance = false;
+		trust = 0.5;
+	}
+	
+	public boolean alliance;
+	public double trust;
+}
+
+class ProvinceInfo
+{
+	public ProvinceInfo()
+	{
+		threat = 0.0;
+		threatChange = 0.0;
+	}
+	public double threat;
+	public double threatChange;
+}
+
 public class DodoBeliefBase {
 	Map		map;
 	Power	self;
 	
-	public java.util.Map<Province, Double>		threat;
-	public java.util.Map<Province, Double>		threatChange;
-	public java.util.Map<Power, Double>			trust;
-		
+	public java.util.Map<Province, ProvinceInfo>	provinceInfo;
+	public java.util.Map<Power, PowerInfo>			powerInfo;
+	
+	
 	public DodoBeliefBase(Map map, Power self)
 	{
 		this.map = map;
 		this.self = self;
 		
-		threat = new java.util.HashMap<Province, Double>();
-		threatChange = new java.util.HashMap<Province, Double>();
-		trust = new java.util.HashMap<Power, Double>();
+		provinceInfo = new java.util.HashMap<Province, ProvinceInfo>();
+		powerInfo = new java.util.HashMap<Power, PowerInfo>();
 		
 		for (Power p : map.powers)
 		{
 			if (!p.equals(self))
-				trust.put(p, 0.5);
+				powerInfo.put(p, new PowerInfo());
+		}
+		
+		for (Province p : map.provinces)
+		{
+			provinceInfo.put(p, new ProvinceInfo());
 		}
 	}
 	
@@ -67,64 +94,48 @@ public class DodoBeliefBase {
 	}
 	
 	public void calcThreats()
-	{
-		threatChange.clear();
-		
-		ArrayList<Province> ownedProvinces = map.getProvincesByOwner(self);
-		
-		java.util.HashMap<Province, Double> nThreat = new java.util.HashMap<Province, Double>();
-		for (int t = 0; t < ownedProvinces.size(); t++)
+	{		
+		for (Province p : map.provinces)
 		{
-			if (threat.containsKey(ownedProvinces.get(t)))
+			if (!self.equals(p.getOwner()))
 			{
-				nThreat.put(ownedProvinces.get(t), threat.get(ownedProvinces.get(t)));
+				provinceInfo.put(p, new ProvinceInfo());
 			}
-		}
-		threat = nThreat;
-		
-		for (int p = 0; p < ownedProvinces.size(); p++)
-		{
-			Province cProv = ownedProvinces.get(p);
-			
-			double prevThreat;
-			if (threat.containsKey(cProv))
-				prevThreat = threat.get(cProv);
 			else
-				prevThreat = -1.0;
-				
-			double threatVal = 0.0;
-			
-			for (int pow = 0; pow < map.powers.size(); pow++)
 			{
-				Power cPow = map.powers.get(pow);
-				if (cPow.equals(self))
-					continue;
+				double prevThreat = provinceInfo.get(p).threat;
+				double threatVal = 0.0;
 				
-				ArrayList<Unit> threatUnits = map.getUnitsByOwner(cPow);
-				
-				for (int u = 0; u < threatUnits.size(); u++)
+				for (int pow = 0; pow < map.powers.size(); pow++)
 				{
-					double trustFactor = 1.0 - trust.get(cPow);
-					int dist = distance(cProv.getCentralNode(), threatUnits.get(u).location);
+					Power cPow = map.powers.get(pow);
+					if (cPow.equals(self))
+						continue;
 					
-					double threatFromUnit;
+					ArrayList<Unit> threatUnits = map.getUnitsByOwner(cPow);
 					
-					if (dist != -1)
-						threatFromUnit = trustFactor * Math.pow(0.5, dist);
-					else
-						threatFromUnit = 0.0;
-					
-					threatVal += threatFromUnit;
+					for (int u = 0; u < threatUnits.size(); u++)
+					{
+						double trustFactor = 1.0 - powerInfo.get(cPow).trust;
+						int dist = distance(p.getCentralNode(), threatUnits.get(u).location);
+						
+						double threatFromUnit;
+						
+						if (dist != -1)
+							threatFromUnit = trustFactor * Math.pow(0.5, dist);
+						else
+							threatFromUnit = 0.0;
+						
+						threatVal += threatFromUnit;
+					}
 				}
+				provinceInfo.get(p).threat = threatVal;
+				if (prevThreat != -1.0)
+					provinceInfo.get(p).threatChange = threatVal - prevThreat;
+				else
+					provinceInfo.get(p).threatChange = 0.0;
 			}
-			threat.put(cProv, threatVal);
-			if (prevThreat != -1.0)
-				threatChange.put(cProv, threatVal - prevThreat);
-			else
-				threatChange.put(cProv, 0.0);
 		}
-		
-		System.out.println(threat);
 	}
 	
 	

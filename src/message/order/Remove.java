@@ -9,7 +9,7 @@ import kb.unit.Unit;
  *
  */
 
-public class Remove implements Order {
+public class Remove extends Order {
 
 	Unit		unit;
 	

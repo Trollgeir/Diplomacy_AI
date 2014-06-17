@@ -9,7 +9,7 @@ import kb.unit.Unit;
  *
  */
 
-public class Build implements Order {
+public class Build extends Order {
 
 	Unit		unit;
 	

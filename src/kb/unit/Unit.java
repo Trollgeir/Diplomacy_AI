@@ -3,7 +3,6 @@ package kb.unit;
 import java.util.ArrayList;
 
 import message.DaideList;
-import message.DaideMessage;
 import message.order.*;
 import kb.Node;
 import kb.Power;
@@ -13,7 +12,7 @@ import kb.Power;
  * @author Koen
  *
  */
-public abstract class Unit implements DaideMessage {
+public abstract class Unit {
 
 	public Power	owner;
 	public Node		location;

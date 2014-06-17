@@ -3,7 +3,6 @@ package kb;
 import java.util.ArrayList;
 
 import message.DaideList;
-import message.DaideMessage;
 import kb.province.Province;
 import kb.unit.Unit;
 
@@ -14,7 +13,7 @@ import kb.unit.Unit;
  *
  */
 
-public class Node implements DaideMessage{
+public class Node {
 
 	public Province			province;
 	boolean					coastal;

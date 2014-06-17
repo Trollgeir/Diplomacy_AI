@@ -139,14 +139,14 @@ public class Heuristics {
 		
 		if (isStandard) {
 			Unit fleet1,fleet2,army1,army2;
-			if (power.getName() == "AUS") {
+			if (power.getName().equals("AUS")) {
 				fleet1 = map.getNode("ALB").unit;
 				army1 = map.getNode("SER").unit;
 				
 				orderList.add(new Move(fleet1, map.getNode("GRE")));
 				orderList.add(new SupportToMove(army1, fleet1, map.getNode("GRE")));
 				
-			} else if (power.getName() == "ENG") {
+			} else if (power.getName().equals("ENG")) {
 				army1 = map.getNode("EDI").unit;
 				fleet1 = map.getNode("NWG").unit;
 				fleet2 = map.getNode("NTH").unit;
@@ -155,7 +155,7 @@ public class Heuristics {
 				orderList.add(new Move(fleet1, map.getNode("BAR")));
 				orderList.add(new Convoy(fleet2, army1, map.getNode("NOR")));
 				
-			} else if (power.getName() == "FRA") {
+			} else if (power.getName().equals("FRA")) {
 				fleet1 = map.getNode("MAO").unit;
 				army1 = map.getNode("MAR").unit;
 				army2 = map.getNode("BUR").unit;
@@ -164,21 +164,63 @@ public class Heuristics {
 				orderList.add(new Move(army1, map.getNode("SPA")));
 				orderList.add(new Move(army2, map.getNode("BEL")));
 				
-			} else if (power.getName() == "GER") {
+			} else if (power.getName().equals("GER")) {
 				// openings depend too much on alliances
 			
-			} else if (power.getName() == "ITA") {
+			} else if (power.getName().equals("ITA")) {
 				// openings depend too much on alliances
 				
-			} else if (power.getName() == "RUS") {
+			} else if (power.getName().equals("RUS")) {
 				// openings depend too much on alliances
 				
-			} else if (power.getName() == "TUR") {
+			} else if (power.getName().equals("TUR")) {
 				// openings depend too much on alliances
 			} 
 		}
 		
 		return orderList; 
+	}
+	public Power preferredAlliance(Power power, boolean isStandard, Map map) {
+		Power preferred = null;
+		if (isStandard) {
+			if (power.getName().equals("AUS")) {
+				preferred = map.getPower("ITA"); // confirmed
+			} else if (power.getName().equals("ENG")) {
+				preferred = map.getPower("FRA"); // confirmed
+			} else if (power.getName().equals("FRA")) {
+				preferred = map.getPower("ENG"); // confirmed
+			} else if (power.getName().equals("GER")) {
+				preferred = map.getPower("ENG"); // confirmed
+			} else if (power.getName().equals("ITA")) {
+				preferred = map.getPower("AUS"); // confirmed
+			} else if (power.getName().equals("RUS")) {
+				preferred = map.getPower("TUR"); // confirmed
+			} else if (power.getName().equals("TUR")) {
+				preferred = map.getPower("RUS");
+			} 
+		}
+		return preferred;
+	}
+	public Power secondPreferredAlliance(Power power, boolean isStandard, Map map) {
+		Power preferred = null;
+		if (isStandard) {
+			if (power.getName().equals("AUS")) {
+				preferred = map.getPower("RUS"); // confirmed
+			} else if (power.getName().equals("ENG")) {
+				preferred = map.getPower("GER"); // confirmed
+			} else if (power.getName().equals("FRA")) {
+				preferred = map.getPower("GER"); // confirmed
+			} else if (power.getName().equals("GER")) {
+				preferred = map.getPower("FRA"); // confirmed
+			} else if (power.getName().equals("ITA")) {
+				preferred = map.getPower("RUS"); // confirmed
+			} else if (power.getName().equals("RUS")) {
+				preferred = map.getPower("AUS"); // confirmed
+			} else if (power.getName().equals("TUR")) {
+				preferred = map.getPower("ITA"); // confirmed
+			} 
+		}
+		return preferred;
 	}
 	
 }

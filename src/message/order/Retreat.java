@@ -10,7 +10,7 @@ import kb.unit.Unit;
  *
  */
 
-public class Retreat implements Order {
+public class Retreat extends Order {
 
 	Unit 		unit;
 	Node		retreatTo;

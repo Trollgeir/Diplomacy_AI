@@ -1,7 +1,5 @@
 package message.order;
 
-import java.util.ArrayList;
-
 import message.DaideList;
 import kb.Node;
 import kb.unit.Unit;
@@ -12,7 +10,7 @@ import kb.unit.Unit;
  *
  */
 
-public class MoveByConvoy implements Order {
+public class MoveByConvoy extends Order {
 
 	Unit		unit;
 	Node		destination;
