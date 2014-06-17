@@ -262,8 +262,6 @@ public class DodoAI extends AI {
 		return result; 
 	} 
 
-
-
 	public void newTurn()
 	{
 		if (!power.alive)
@@ -332,24 +330,32 @@ public class DodoAI extends AI {
 						else aaUnits_free.add(unit);
 					}
 				}
-				if (aaUnits_free.size() + aaUnits_occ.size() >= c.supportNeeded) { 
-					int free_needed = Math.min(aaUnits_free.size(), c.supportNeeded);
-					int occ_needed = c.supportNeeded - free_needed;
-					System.out.println(power.daide() + " Numbers: " + free_needed + ", " + occ_needed);
-					for (int x = 0; x < free_needed; ++x ) {
-						assigned.add(aaUnits_free.get(x)); 
-						availableUnits.remove(aaUnits_free.get(x));
-					} 
-					for (int x = 0; x < occ_needed; ++x) {
-						assigned.add(aaUnits_occ.get(x));
-						availableUnits.remove(aaUnits_occ.get(x));
-					}
+
+				int numberToAssign = 0; 
+				if (aaUnits_free.size() + aaUnits_occ.size() > c.supportNeeded) {
+					numberToAssign = c.supportNeeded + 1; 
+				} else if (aaUnits_free.size() + aaUnits_occ.size() == c.supportNeeded) {
+					numberToAssign = c.supportNeeded; 
+				}
+
+				int free_needed = Math.min(aaUnits_free.size(), numberToAssign);
+				int occ_needed = numberToAssign - free_needed;
+				System.out.println(power.daide() + " Numbers: " + free_needed + ", " + occ_needed);
+				for (int x = 0; x < free_needed; ++x ) {
+					assigned.add(aaUnits_free.get(x)); 
+					availableUnits.remove(aaUnits_free.get(x));
+				} 
+				for (int x = 0; x < occ_needed; ++x) {
+					assigned.add(aaUnits_occ.get(x));
+					availableUnits.remove(aaUnits_occ.get(x));
 				}
 				for (int x = 0; x < assigned.size(); ++x) {
 					if (x == 0) {
-						//queue.add(new Move(assigned.get(x), c.n)); 
+						occupied.remove(assigned.get(x).location.province);
+						occupied.add(c.n.province);
+						queue.add(new Move(assigned.get(x), c.n)); 
 					} else {
-						//queue.add(new SupportToMove(assigned.get(x), assigned.get(0), c.n));
+						queue.add(new SupportToMove(assigned.get(x), assigned.get(0), c.n));
 					}
 				}
 				System.out.println("I will invade " + c.n.daide() + " with ");
@@ -362,7 +368,7 @@ public class DodoAI extends AI {
 
 
 			System.out.println("------------- ORDERS -------------");
-			for (Unit u : units) {
+			for (Unit u : availableUnits) {
 				ArrayList<Node> nbh = filterNeighbours(map.getValidNeighbours(u), occupied);
 				if (nbh.size() == 0) {
 					//There are no possible moves so hold
