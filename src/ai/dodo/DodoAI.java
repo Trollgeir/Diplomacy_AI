@@ -50,33 +50,11 @@ public class DodoAI extends AI {
 
 	public void findGains()
 	{}
-		
-	@Override
-	protected Order offensiveMove(int i)
-	{	
-		int[] shuffled = shuffle(this.adjacencyList.get(i).size());
-		ArrayList<Unit> units = map.getUnitsByOwner(this.power);
-		
-		for(int j = 0; j < shuffled.length; j++)
-		{
-			Province p = this.adjacencyList.get(i).get(shuffled[j]).province;
-			if(!visitedProvinces.contains(p))
-			{
-				visitedProvinces.remove(units.get(i).location.province);
-				visitedProvinces.add(p);
-				return new Move(units.get(i), this.adjacencyList.get(i).get(j));
-			}
-		}
-		return new Hold(units.get(i));
-	}
 	
-	@Override
-	protected Order defensiveMove(int i)
-	{
-		ArrayList<Unit> units = map.getUnitsByOwner(this.power); 
-		return new Hold(units.get(i));
+	public <T> T getRandomElement(ArrayList<T> list) {
+		return list.get((int)(Math.random() * list.size())); 
 	}
-	
+
 	@Override
 	protected void handleHLO(String[] message)
 	{
@@ -150,10 +128,6 @@ public class DodoAI extends AI {
 		AI ai = new DodoAI(map);
 		new Game(ai, map, args);
 	}
-	
-	public <T> T getRandomElement(ArrayList<T> list) {
-		return list.get((int)(Math.random() * list.size())); 
-	} 
 
 	public ArrayList<Node> filterNeighbours(ArrayList<Node> neighbours, ArrayList<Province> occupied) {
 		ArrayList<Node> result = new ArrayList<Node>();

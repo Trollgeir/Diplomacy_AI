@@ -199,7 +199,4 @@ public abstract class AI extends Receiver {
 	
 	public abstract void newTurn();
 	
-	
-	protected abstract Order offensiveMove(int i);
-	protected abstract Order defensiveMove(int i);
 }
