@@ -9,17 +9,17 @@ import kb.province.Province;
 
 public class ProvinceData {
 
-	public static float c_supply;
-	public static float c_adjSupply;
-	public static float c_shared;
-	public static float c_enemy;
-	public static float risk; 
-	public float sharedRisk;
-	public static float defence; 
+	public static float c_supply = 2.0f;
+	public static float c_adjSupply = 1.0f;
+	public static float c_shared = 0.75f;
+	public static float risk = 0.75f; 
+	public static float sharedRisk = 0.5f;
+	public static float defence = 0.0f; 
 
 	public int supplyType; 
 	public int neighborSupply; 
 
+	public Power power; 
 	public Province province;
 	public ArrayList<Power> powers;
 
@@ -35,32 +35,62 @@ public class ProvinceData {
 	public float weight; 
 	public float gains; 
 
-	public ProvinceData(Province province, ArrayList<Power> powers) {
+	public ProvinceData(Power power, Province province, ArrayList<Power> powers) {
 		//TODO set supply type
 
+		this.power = power; 
 		this.province = province;
 		this.powers = powers; 
 
 		adjProvinces = new ArrayList<Province>();
-
 		nearUnits = new ArrayList<ArrayList<Unit>>();
 		for (int i = 0; i < powers.size(); ++i) nearUnits.add(new ArrayList<Unit>());	
+		shared = new int[powers.size()];
 
-		shared = new int[powers.size()];		
+		computeAdjProvinces();	
+		addNearUnit(province);
+		for (Province p : adjProvinces) addNearUnit(p);
+
+		computeGains(power);
 	}
 
-	public void computeAdjProvinces() {
-		//TODO
+	//be sure that determineSharedUnits() is already called.
+	public void computeWeight() {
+		computeSupport(power);
+		computeNegSupport(power);
+		computeWeight(power);
 	}
 
-	public void computeNeighborSupply() {
-		neighborSupply =  0;
-		for (Province p : adjProvinces) {
-			if (p.isSupplyCenter()) neighborSupply++; 
+	public boolean isTakeable() {
+		return support > risk * (maxNegSupport - shared[mainEnemy]) + sharedRisk * shared[mainEnemy]; 
+	}
+
+
+	private void computeAdjProvinces() {
+		ArrayList<Node> nodes = new ArrayList<Node>();
+		nodes.add(province.getCentralNode());
+		nodes.addAll(province.coastLine);
+
+		for (Node node : nodes) {
+			computeAdjProvinces(node);
 		}
 	}
 
-	public void computeNegSupport(Power power) {
+	private void computeAdjProvinces(Node node) {
+		ArrayList<Node> nodes = new ArrayList<Node>();
+		nodes.addAll(node.landNeighbors);
+		nodes.addAll(node.seaNeighbors);
+
+	 	for (Node n : nodes) {
+			Province adjProv = n.province;
+			if (adjProv != province && !adjProvinces.contains(adjProv)) {
+				adjProvinces.add(adjProv); 
+			}
+		}
+	}
+
+
+	private void computeNegSupport(Power power) {
 		maxNegSupport = 0;
 		mainEnemy = -1;
 
@@ -72,7 +102,7 @@ public class ProvinceData {
 		}
 	}
 
-	public void computeSupport(Power power) {
+	private void computeSupport(Power power) {
 		for (int i = 0; i < powers.size(); ++i) {
 			if (power == powers.get(i)) {
 				support = nearUnits.get(i).size();
@@ -80,18 +110,29 @@ public class ProvinceData {
 		}
 	}
 
-	public void addAdjUnit(Unit unit, Node node) {
-		Power p = unit.owner; 
-		for (int i = 0; i < powers.size(); ++i) {
-			if (p == powers.get(i) && !nearUnits.get(i).contains(unit)) {
-				nearUnits.get(i).add(unit);
-				unitNodes.get(i).add(node);
-				return;
+	private void addNearUnit(Province province) {
+		ArrayList<Node> nodes = new ArrayList<Node>();
+		nodes.add(province.getCentralNode());
+		nodes.addAll(province.coastLine);
+		
+		for (Node node : nodes) {
+			if (node.unit != null) {
+				Unit unit = node.unit;
+				Power p = unit.owner; 
+				
+				for (int i = 0; i < powers.size(); ++i) {
+					if (p == powers.get(i) && !nearUnits.get(i).contains(unit)) {
+						nearUnits.get(i).add(unit);
+						return;
+					}
+				}
+
+				return; 
 			}
-		}
+		}		
 	}
 
-	public void computeGains(Power power) {
+	private void computeGains(Power power) {
 		gains = c_supply * getSupplyWeight(province) * isOwnCenter(province, power) * defence;
 		
 		for (Province p : adjProvinces) {
@@ -111,21 +152,19 @@ public class ProvinceData {
 		return province.getOwner() == power ? 1 : 0;  
 	}
 
-	public void computeWeight(Power power) {
+	private void computeWeight(Power power) {
 		int idx = powers.indexOf(power);
 
 		//init weight on the gains.
 		weight = gains; 
 	
-		//expected negative support
-		float expectedNeg =  risk * (maxNegSupport - shared[mainEnemy]) + sharedRisk * shared[mainEnemy];
+		if (mainEnemy != -1) {
+			//expected negative support
+			float expectedNeg =  risk * (maxNegSupport - shared[mainEnemy]) + sharedRisk * shared[mainEnemy];
 
-		//penalty for each unit that needs to support while it is shared.
-		weight -= c_shared * Math.max(expectedNeg - shared[idx], 0);			
-	}
-
-	public boolean isTakeable() {
-		return support > risk * (maxNegSupport - shared[mainEnemy]) + sharedRisk * shared[mainEnemy]; 
+			//penalty for each unit that needs to support while it is shared.
+			weight -= c_shared * Math.max(expectedNeg - shared[idx], 0);		
+		}	
 	}
 
 	public static void determineSharedUnits(ArrayList<ProvinceData> provinces) {
