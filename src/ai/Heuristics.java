@@ -180,7 +180,7 @@ public class Heuristics {
 		
 		return orderList; 
 	}
-	public Power preferredAlliance(Power power, boolean isStandard, Map map) {
+	public static Power preferredAlliance(Power power, boolean isStandard, Map map) {
 		Power preferred = null;
 		if (isStandard) {
 			if (power.getName().equals("AUS")) {
@@ -201,7 +201,7 @@ public class Heuristics {
 		}
 		return preferred;
 	}
-	public Power secondPreferredAlliance(Power power, boolean isStandard, Map map) {
+	public static Power secondPreferredAlliance(Power power, boolean isStandard, Map map) {
 		Power preferred = null;
 		if (isStandard) {
 			if (power.getName().equals("AUS")) {
@@ -218,6 +218,29 @@ public class Heuristics {
 				preferred = map.getPower("AUS"); // confirmed
 			} else if (power.getName().equals("TUR")) {
 				preferred = map.getPower("ITA"); // confirmed
+			} 
+		}
+		return preferred;
+	}
+	
+	// preferred enemy depends on the the first preferred alliances, nothing else
+	public static Power preferredEnemy(Power power, boolean isStandard, Map map) {
+		Power preferred = null;
+		if (isStandard) {
+			if (power.getName().equals("AUS")) {
+				preferred = map.getPower("TUR");
+			} else if (power.getName().equals("ENG")) {
+				preferred = map.getPower("GER"); 
+			} else if (power.getName().equals("FRA")) {
+				preferred = map.getPower("GER"); 
+			} else if (power.getName().equals("GER")) {
+				preferred = map.getPower("FRA"); 
+			} else if (power.getName().equals("ITA")) {
+				preferred = map.getPower("TUR"); 
+			} else if (power.getName().equals("RUS")) {
+				preferred = map.getPower("AUS"); 
+			} else if (power.getName().equals("TUR")) {
+				preferred = map.getPower("AUS"); 
 			} 
 		}
 		return preferred;

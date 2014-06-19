@@ -1,20 +1,21 @@
-package negotiator;
+package ai.dodo;
+
+import game.Game;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
 import message.DaideList;
 import message.press.*;
-import ai.dodo.DodoAI;
+import message.server.Reject;
 import ai.dodo.DodoBeliefBase;
+import kb.Map;
 import kb.Power;
 
 public class Negotiator {
+
 	protected LinkedBlockingQueue<String[]> queue = new LinkedBlockingQueue<String[]>();
-	
-	// OLD //
-	public Negotiator(){
-		
-	}
+	protected DodoAI dodoAI;
+	protected Map map;
 	
 	public void addProposal(String[] proposal) {
 		synchronized(queue) {
@@ -30,21 +31,41 @@ public class Negotiator {
 
 	public void handleProposal() {
 		String from;
-		String[] to;
-		int end1, end2;
+		int end1, end2, i = 0;
+		Power self = dodoAI.belief.self;
 		synchronized(queue) {
 			for (String[] s : queue) {
 				if (s[0].equals("FRM")){
 					from = s[2];
+					//ending of 'to'
 					end1 = DaideList.unBracket(s, 4);
 					if (s[end1+2].equals("PRP")) {
 						if (s[end1+4].equals("ALY")) {
-							String[] allies;
+							String[] allies = new String[16];
+							String[] enemies = new String[16];
+							
+							// end of allies
 							end2 = DaideList.unBracket(s, end1 + 5);
 							
-							for (int n = end1 + 5 ;n<end2;n++){
-								//if (s[n].equals)
+							for (int n = end1 + 5 ;n < end2;n++){
+								if (!s[n].equals(self.getName())) {
+									allies[i] = s[n];
+								}
+								i++;
 							}
+							
+							// end of enemies
+							end1 = end2+2;
+							end2 = DaideList.unBracket(s, end1);
+							
+
+							i = 0;
+							for (int n = end1;n < end2;n++){
+								enemies[i] = s[n];
+								i++;
+							}
+							
+							handleAlliance(allies, enemies);
 						}
 						
 					}
@@ -59,5 +80,10 @@ public class Negotiator {
 		}
 		
 		clear();
+	}
+	
+	public void handleAlliance(String[] allies, String[] enemies) {
+		
+		
 	}
 }

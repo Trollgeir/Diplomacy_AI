@@ -13,7 +13,7 @@ import message.DaideList;
 import message.order.Hold;
 import message.order.Order;
 import message.server.Submit;
-import negotiator.Negotiator;
+import ai.dodo.Negotiator;
 import game.Game;
 import game.Receiver;
 

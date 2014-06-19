@@ -21,5 +21,9 @@ public class Peace extends Arrangement {
 		
 		return ret;
 	}
+	
+	public static int pressLevel() {
+		return 10;
+	}
 
 }

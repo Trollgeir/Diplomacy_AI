@@ -7,4 +7,8 @@ public abstract class Arrangement extends DaideMessage {
 
 	public abstract DaideList daide();
 	
+	public static int pressLevel() {
+		return 10;
+	}
+	
 }

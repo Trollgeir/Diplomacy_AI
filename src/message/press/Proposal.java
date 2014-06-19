@@ -27,4 +27,8 @@ public abstract class Proposal extends DaideMessage{
 		
 		return ret;
 	}
+	
+	public static int pressLevel() {
+		return 10;
+	}
 }

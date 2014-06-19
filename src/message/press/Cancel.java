@@ -20,5 +20,9 @@ public abstract class Cancel extends DaideMessage {
 		
 		return ret;
 	}
+	
+	public static int pressLevel() {
+		return 10;
+	}
 
 }

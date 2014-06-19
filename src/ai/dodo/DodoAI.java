@@ -2,17 +2,25 @@ package ai.dodo;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import negotiator.Negotiator;
 import kb.Map;
 import kb.unit.*;
 import kb.Node;
 import kb.province.Province;
 import kb.unit.Unit;
+import message.DaideMessage;
 import message.order.*;
+import message.press.Alliance;
+import message.press.Arrangement;
+import message.press.Proposal;
+import message.press.Send;
 import ai.AI;
 import ai.Heuristics;
 import game.Game;
 import kb.Names; 
 import kb.Phase; 
+import kb.Power;
 
 public class DodoAI extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
@@ -24,6 +32,8 @@ public class DodoAI extends AI {
 	
 	public DodoAI(Map map) {
 		super("DodoAI", "0.0.0.0.1", map);
+		negotiator.dodoAI = this;
+		negotiator.map = map;
 	}
 
 	@Override
@@ -262,6 +272,19 @@ public class DodoAI extends AI {
 			Opening moves
 			*/
 			System.out.println("Game is Standard, checking if our power has heuristics...");
+			
+			// propose preferred alliances:
+			/*
+			Power prefer = Heuristics.preferredAlliance(this.getPower(), map.getStandard(), map);
+			Power secondPrefer = Heuristics.secondPreferredAlliance(this.getPower(), map.getStandard(), map);
+			Power enemy = Heuristics.preferredEnemy(this.getPower(), map.getStandard(), map);
+			Power[] alliance = {this.getPower(), prefer, secondPrefer};
+			Power[] against = {enemy};
+			DaideMessage propose = new Proposal(new Alliance(alliance, against)){};
+			DaideMessage send = new Send(propose,prefer);
+			
+			Game.server.send(send);
+			*/
 			queue = Heuristics.getOpeningMovesSpring(this.getPower(), map.getStandard(), map);
 		} else if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
 			/*
