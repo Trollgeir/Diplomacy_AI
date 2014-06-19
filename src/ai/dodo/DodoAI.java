@@ -50,11 +50,9 @@ public class DodoAI extends AI {
 
 	public void findGains()
 	{}
+		
 	
-	public <T> T getRandomElement(ArrayList<T> list) {
-		return list.get((int)(Math.random() * list.size())); 
-	}
-
+	
 	@Override
 	protected void handleHLO(String[] message)
 	{
@@ -128,15 +126,123 @@ public class DodoAI extends AI {
 		AI ai = new DodoAI(map);
 		new Game(ai, map, args);
 	}
+	
+	public <T> T getRandomElement(ArrayList<T> list) {
+		return list.get((int)(Math.random() * list.size())); 
+	} 
+
+	public ArrayList<Node> filterNeighbours(ArrayList<Node> neighbours, ArrayList<Province> occupied) {
+		ArrayList<Node> result = new ArrayList<Node>();
+		for (Node n : neighbours) {
+			if (!occupied.contains(n.province)) result.add(n);
+		} 
+		return result;
+	}
+
+	public ArrayList<Province> filterProvinces(ArrayList<Province> provinces, ArrayList<Province> built, ArrayList<Unit> units) {
+		ArrayList<Province> result = new ArrayList<Province>(); 
+		for (Province p : provinces) {
+			if (built.contains(p)) continue; 
+			if (!power.homeProvinces.contains(p)) continue;
+			boolean empty = true; 
+			for (Unit u : units) {
+				if (u.location.province == p) {
+					empty = false; 
+					break; 
+				} 
+			}
+			if (empty) result.add(p);
+		}
+		return result;
+	};
+
+	public ArrayList<Node> getSupplyCenterNodes(ArrayList<Node> nodes, boolean ours) {
+		//only return those nodes which are in a province with supply center which are NOT ours!
+		ArrayList<Node> result = new ArrayList<Node>(); 
+		for (Node n : nodes) {
+			if (n.province.isSupplyCenter()) {
+				if (ours && n.province.getOwner() == power) {
+					result.add(n);
+				} else if (!ours && n.province.getOwner() != power) {
+					result.add(n);
+				}
+			}
+		}
+		return result; 
+	}
+
+	public Node moveToSupplyCenter(Unit unit, ArrayList<Node> neighbourhood, ArrayList<Province> occupied, boolean move, boolean ours) {
+		ArrayList<Node> supplyCenters = getSupplyCenterNodes(neighbourhood, ours); 
+		if (supplyCenters.size() > 0) {
+			return getRandomElement(supplyCenters);  
+		} else {
+			ArrayList<Node> indirectSupplyCenters = new ArrayList<Node>(); 
+			for (Node node : neighbourhood) {
+				ArrayList<Node> n_neigbourhood = filterNeighbours(map.getValidNeighbours(unit, node), occupied);
+				ArrayList<Node> n_supplyCenters = getSupplyCenterNodes(n_neigbourhood, ours);
+				if (n_supplyCenters.size() > 0) indirectSupplyCenters.add(node); 
+			}
+			if (indirectSupplyCenters.size() > 0) {
+				return getRandomElement(indirectSupplyCenters);
+			}
+		}
+		if(move)
+			return getRandomElement(neighbourhood); 
+		else
+			return null;
+	}
+
+	public void addAdjSupplyCenter(Node n, ArrayList<AdjSupplyCenter> centers, Unit u) {
+		for (AdjSupplyCenter c : centers) {
+			if (c.n == n) {
+				c.adjUnits.add(u);
+				return;
+			} 
+		}
+
+		centers.add(new AdjSupplyCenter(n, u, map.powers));
+	}
+
+	public ArrayList<AdjSupplyCenter> getAdjSupplyCenters(ArrayList<Unit> units) {
+		ArrayList<AdjSupplyCenter> adjCenters =  new ArrayList<AdjSupplyCenter>();
+
+		for (Unit u : units) {
+			ArrayList<Node> adj = map.getValidNeighbours(u);
+			for (Node n : adj) {
+				if (n.province.isSupplyCenter()) {
+					addAdjSupplyCenter(n, adjCenters, u);	
+				}
+			}
+
+		}
+
+		return adjCenters; 
+	}
+
+	public void determineResistance(ArrayList<AdjSupplyCenter> centers) {
+		for (AdjSupplyCenter c : centers) {
+			for (Node n : c.n.landNeighbors) {
+				if (n.unit != null && n.unit.owner != power) {
+					c.addPower(n.unit.owner);
+				}
+			}
+		}
+	}
+
+	public ArrayList<AdjSupplyCenter> getTakableCenters(ArrayList<AdjSupplyCenter> centers) {
+		ArrayList<AdjSupplyCenter> result = new ArrayList<AdjSupplyCenter>();
+		for (AdjSupplyCenter c : centers) {
+			if (c.isTakable(power)) result.add(c);
+		}
+
+		return result; 
+	} 
 
 	public void newTurn()
 	{
 		if (!power.alive)
 			return;
 		
-		MapInfo info = new MapInfo(map, power);
-		ArrayList<Province> occupied = new ArrayList<Province>();
-		occupied.addAll(info.getUnits()); 
 		//belief.calcThreats();
 		
 		System.out.println();
@@ -146,6 +252,10 @@ public class DodoAI extends AI {
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
 		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
+			
+		//Keep track of where units are and are sent
+		ArrayList<Province> occupied = new ArrayList<Province>();
+		for (Unit u : units) occupied.add(u.location.province);
 		
 		if (map.getYear() == 1901 && map.getPhase() == Phase.SPR) {
 			/*
@@ -158,10 +268,95 @@ public class DodoAI extends AI {
 			MOVEMENT PHASES
 			*/
 
-			
-
 			System.out.println("Power: " + power.daide());
+			ArrayList<AdjSupplyCenter> adjCenters = getAdjSupplyCenters(units);	
 			System.out.println("num adj: " + adjCenters.size());
+
+			determineResistance(adjCenters);
+
+			ArrayList<AdjSupplyCenter> takableCenters = getTakableCenters(adjCenters);
+
+/*			for (AdjSupplyCenter c : takableCenters) {
+				System.out.println(c.n.daide() + " can be taken by (" + c.adjUnits.size() + 
+					" versus " + c.supportNeeded +"): ");
+				for (Unit u : c.adjUnits) {
+					System.out.println("\t" + u.location.daide());
+				}
+			}*/
+			
+			ArrayList<Unit> availableUnits = new ArrayList<Unit>();
+			availableUnits.addAll(units);
+
+			//TODO sort takablecenters
+			for (int i = 0; i < takableCenters.size(); ++i) {
+				AdjSupplyCenter c = takableCenters.get(i); 
+				ArrayList<Unit> aaUnits_free = new ArrayList<Unit>();
+				ArrayList<Unit> aaUnits_occ = new ArrayList<Unit>();
+				ArrayList<Unit> assigned = new ArrayList<Unit>();
+				for (Unit unit : c.adjUnits) {
+					if (availableUnits.contains(unit)) {
+						boolean occ = false;
+						for (int j = i + 1; j < takableCenters.size(); ++j) {
+							if (takableCenters.get(j).adjUnits.contains(unit)) {
+								occ = true;
+								break;
+							}
+						}
+						if (occ) aaUnits_occ.add(unit);
+						else aaUnits_free.add(unit);
+					}
+				}
+
+				int numberToAssign = 0; 
+				if (aaUnits_free.size() + aaUnits_occ.size() > c.supportNeeded) {
+					numberToAssign = c.supportNeeded + 1; 
+				} else if (aaUnits_free.size() + aaUnits_occ.size() == c.supportNeeded) {
+					numberToAssign = c.supportNeeded; 
+				}
+
+				int free_needed = Math.min(aaUnits_free.size(), numberToAssign);
+				int occ_needed = numberToAssign - free_needed;
+				System.out.println(power.daide() + " Numbers: " + free_needed + ", " + occ_needed);
+				for (int x = 0; x < free_needed; ++x ) {
+					assigned.add(aaUnits_free.get(x)); 
+					availableUnits.remove(aaUnits_free.get(x));
+				} 
+				for (int x = 0; x < occ_needed; ++x) {
+					assigned.add(aaUnits_occ.get(x));
+					availableUnits.remove(aaUnits_occ.get(x));
+				}
+				for (int x = 0; x < assigned.size(); ++x) {
+					if (x == 0) {
+						occupied.remove(assigned.get(x).location.province);
+						occupied.add(c.n.province);
+						queue.add(new Move(assigned.get(x), c.n)); 
+					} else {
+						queue.add(new SupportToMove(assigned.get(x), assigned.get(0), c.n));
+					}
+				}
+				System.out.println("I will invade " + c.n.daide() + " with ");
+				for (Unit u : assigned) {
+					System.out.println("\t" + u.daide()); 
+				} 
+
+			}
+
+
+
+			System.out.println("------------- ORDERS -------------");
+			for (Unit u : availableUnits) {
+				ArrayList<Node> nbh = filterNeighbours(map.getValidNeighbours(u), occupied);
+				if (nbh.size() == 0) {
+					//There are no possible moves so hold
+					queue.add(new Hold(u)); 
+				} else {
+					Node destination = moveToSupplyCenter(u, nbh, occupied, true, false);
+					occupied.remove(u.location.province); 
+					occupied.add(destination.province);
+					System.out.println("Unit in " + u.location.daide() + " -> " + destination.daide()); 
+					queue.add(new Move(u, destination)); 				}
+			}
+			
 
 			
 		} else if(map.getPhase() == Phase.SUM || map.getPhase() == Phase.AUT){
