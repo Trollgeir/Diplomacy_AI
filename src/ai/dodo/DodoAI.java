@@ -274,17 +274,18 @@ public class DodoAI extends AI {
 			System.out.println("Game is Standard, checking if our power has heuristics...");
 			
 			// propose preferred alliances:
-			/*
+			// uncomment if you want awesome alliance proposals to be sent the first turn
+			/* 
 			Power prefer = Heuristics.preferredAlliance(this.getPower(), map.getStandard(), map);
-			Power secondPrefer = Heuristics.secondPreferredAlliance(this.getPower(), map.getStandard(), map);
 			Power enemy = Heuristics.preferredEnemy(this.getPower(), map.getStandard(), map);
-			Power[] alliance = {this.getPower(), prefer, secondPrefer};
+			Power[] alliance = {this.getPower(), prefer};
 			Power[] against = {enemy};
 			DaideMessage propose = new Proposal(new Alliance(alliance, against)){};
 			DaideMessage send = new Send(propose,prefer);
 			
 			Game.server.send(send);
 			*/
+			
 			queue = Heuristics.getOpeningMovesSpring(this.getPower(), map.getStandard(), map);
 		} else if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
 			/*
