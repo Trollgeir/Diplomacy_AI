@@ -226,8 +226,6 @@ public class DodoAI extends AI {
 				}
 			}
 		}
-
-
 	}
 
 	public ArrayList<AdjSupplyCenter> getTakableCenters(ArrayList<AdjSupplyCenter> centers) {

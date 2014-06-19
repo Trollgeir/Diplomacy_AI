@@ -25,6 +25,7 @@ public class ProvinceData {
 
 	public ArrayList<Province> adjProvinces; 
 	public ArrayList<ArrayList<Unit>> nearUnits;
+	public ArrayList<ArrayList<Node>> unitNodes;
 	public int[] shared;  
 
 	public int support; 
@@ -79,11 +80,12 @@ public class ProvinceData {
 		}
 	}
 
-	public void addAdjUnit(Unit unit) {
+	public void addAdjUnit(Unit unit, Node node) {
 		Power p = unit.owner; 
 		for (int i = 0; i < powers.size(); ++i) {
 			if (p == powers.get(i) && !nearUnits.get(i).contains(unit)) {
 				nearUnits.get(i).add(unit);
+				unitNodes.get(i).add(node);
 				return;
 			}
 		}
