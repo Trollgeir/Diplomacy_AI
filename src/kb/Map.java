@@ -18,6 +18,7 @@ import kb.unit.*;
 public class Map extends Receiver {
 
 	public ArrayList<Province>		provinces;
+	public ArrayList<Results>		results;
 	public ArrayList<Power>		powers;
 	ArrayList<Unit>			units;
 	boolean					isStandard;
@@ -32,6 +33,7 @@ public class Map extends Receiver {
 		powers = new ArrayList<Power>();
 		provinces = new ArrayList<Province>();
 		units = new ArrayList<Unit>();
+		results = new ArrayList<Results>();
 
 		isStandard = false;
 		phase = Phase.SUM;
@@ -224,7 +226,14 @@ public class Map extends Receiver {
 	}
 	public void processORD(String[] message)
 	{
-			//TODO - handle ORD and filter out orders from yourself.
+		//TODO - handle ORD. Might be some problems regarding the fact that ORD comes before NOW.
+		
+		results.clear();
+	
+		if (getPhase() == Phase.SUM || getPhase() == Phase.AUT){
+			//We're only interested in processing results after a movement phase. Parser needed!
+		}
+		
 	}
 	public void processSCO(String[] message)
 	{

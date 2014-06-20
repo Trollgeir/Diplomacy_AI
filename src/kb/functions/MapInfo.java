@@ -23,7 +23,7 @@ public class MapInfo {
 	ArrayList<Node> nodesInReach; 
 	ArrayList<ProvinceData> provinceData; 
 
-	public MapInfo(Map map, Power p) {
+	public MapInfo(Map map, Power p, Power power) {
 		this.map = map; 
 		this.power = power; 
 		units = map.getUnitsByOwner(power);
