@@ -5,7 +5,9 @@ import kb.unit.*;
 import kb.province.*;
 import java.util.ArrayList;
 import ai.dodo.ProvinceData;
-
+import java.util.Comparator;
+import java.util.Collections;
+import java.lang.Comparable;
 
 public class MapInfo {
 
@@ -20,14 +22,54 @@ public class MapInfo {
 	Map map; 
 	Power power;
 	ArrayList<Unit> units;
-	ArrayList<Node> nodesInReach; 
 	ArrayList<ProvinceData> provinceData; 
 
-	public MapInfo(Map map, Power p, Power power) {
+	public MapInfo(Map map, Power p) {
 		this.map = map; 
-		this.power = power; 
+		this.power = p; 
 		units = map.getUnitsByOwner(power);
+
+
+		provinceData = new ArrayList<ProvinceData>();
+
+		System.out.println("initProvinceDataList");
 		initProvinceDataList();
+	}
+
+	public ArrayList<ProvinceData> getSortedTargets() {
+		ArrayList<ProvinceData> sortedList = new ArrayList<ProvinceData>();
+		sortedList.addAll(provinceData);
+
+		//sort in descending order.
+		Collections.sort(sortedList,
+			new Comparator<ProvinceData>(){
+					public int compare(ProvinceData p1, ProvinceData p0) {
+					return (int)(100 * Math.abs(p0.weight) -  100 * Math.abs(p1.weight));
+				}
+			});
+
+		return sortedList;
+	}
+
+	public ArrayList<Unit> getSortedUnits(ProvinceData target) {
+		return target.getAvailebleUnits();
+	}
+
+	public void updateByMove(ArrayList<Unit> usedUnits, ArrayList<ProvinceData> movedTo) {
+		//for each province, remove the units that are used in the attack.
+		for (ProvinceData p : provinceData){
+			//the provinces to which is moved don't need to be updated, since those will be removed.
+			if (!movedTo.contains(p)) p.update(usedUnits);
+		}
+
+		//remove the provinces to which is moved. 
+		provinceData.removeAll(movedTo);
+
+		//recompute the weights for the provinces left.
+		//the gains will remain the same. 
+		for (ProvinceData p : provinceData) p.computeWeight();
+
+		//dont't call the determineSharedUnits, since the near units are locally updated during the p.update() call.   
 	}
 
 	public ArrayList<Unit> getUnits() {
@@ -61,7 +103,9 @@ public class MapInfo {
 				addProvinceData(u, n);
 			}
 		}
-		ProvinceData.determineSharedUnits(provinceData);
+	
+		for (ProvinceData p : provinceData) p.determineSharedUnits(provinceData);
+
 		for (ProvinceData p : provinceData) {
 			p.computeWeight();
 		}
