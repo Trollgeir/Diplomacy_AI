@@ -222,7 +222,10 @@ public class Map extends Receiver {
 		
 		System.out.println("====================");
 	}
-	
+	public void processORD(String[] message)
+	{
+			//TODO - handle ORD and filter out orders from yourself.
+	}
 	public void processSCO(String[] message)
 	{
 		int pWord = 1;
@@ -493,6 +496,8 @@ public class Map extends Receiver {
 		{
 			processSCO(message);
 		}
+		else if (message[0].equals("ORD"))
+			processORD(message);
 	}
 
 	public static void main(String[] args) {

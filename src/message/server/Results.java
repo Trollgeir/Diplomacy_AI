@@ -1,19 +1,15 @@
-/*
- * Says we accept a draw at the current time
- */
-
 package message.server;
 
 import message.DaideList;
 import message.DaideMessage;
 import message.order.Order;
 
-public class Submit extends DaideMessage{
+public class Results extends DaideMessage{
 
 	Order[] orders = null;
 
 
-	public Submit(Order ... orders) {
+	public Results(Order ... orders) {
 		this.orders = orders;
 	}
 
@@ -21,7 +17,7 @@ public class Submit extends DaideMessage{
 	public DaideList daide() {
 		DaideList result = new DaideList();
 
-		result.add("SUB");
+		result.add("ORD");
 		if (orders != null) {
 			for (Order o : orders) {
 				result.add("(");
@@ -33,4 +29,3 @@ public class Submit extends DaideMessage{
 		return result;
 	}
 }
-
