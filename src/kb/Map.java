@@ -226,9 +226,22 @@ public class Map extends Receiver {
 	}
 	public void processORD(String[] message)
 	{
-		//TODO - handle ORD. Might be some problems regarding the fact that ORD comes before NOW.
 		
-		results.clear();
+		Power from = getPower(message[7]);
+		String orderType = message[11];
+		String Target = "";
+		Power supportPower;
+		
+		if (orderType.equals("MTO")) {
+			Target = message[12];
+			//System.out.println("" + from.getName() + " " + orderType + " " + Target);
+		} else if (orderType.equals("SUP")) {
+			supportPower = getPower(message[13]);
+			Target = message[18];
+			//System.out.println("" + from.getName() + " " + orderType + " " + supportPower.getName() + " in " + Target );
+		}
+		
+		// TODO: throw the acquired intel to a function that determines defects of allies
 	
 		if (getPhase() == Phase.SUM || getPhase() == Phase.AUT){
 			//We're only interested in processing results after a movement phase. Parser needed!
