@@ -47,7 +47,7 @@ public class Negotiator {
 						
 						// end bracket of PRP
 						end2 = DaideList.unBracket(s, end1+3);
-						String[] prop = new String[(end2+1)-(end1+1)];
+						String[] prop = new String[(end2)-(end1+1)];
 						i = 0;
 						for (int n = end1+2;n<=end2;n++) {
 							prop[i] = s[n];
@@ -80,7 +80,6 @@ public class Negotiator {
 								enemies[i] = s[n];
 								i++;
 							}
-							
 							if (acceptAlliance(allies, enemies)) {
 								Game.server.send(new Send(new Yes(prop), map.getPower(from)));
 							} else {
@@ -107,61 +106,91 @@ public class Negotiator {
 							} else {
 								Game.server.send(new Send(new Reject(prop), map.getPower(from)));
 							}
+						} else if (s[end1+4].equals("XDO")) {
+							// TODO: parse incoming order proposal
+						} else if (s[end1+4].equals("DMZ")) {
+							// TODO: parse incoming DMZ proposal
 						}
 						
-					}
-				} else if (s[0].equals("YES")) {
-					if (s[2].equals("PRP")){
-						if (s[4].equals("ALY")) {
-							// first bracket of allies
-							end1 = 5;
-							// last bracket of allies
-							end2 = DaideList.unBracket(s, end1);
-							
-							for (int n = end1 + 1 ;n < end2;n++){
-								// TODO: fill in belief base that the power is now your ally
+					} else if (s[end1+2].equals("YES")) {
+						if (s[end1+4].equals("PRP")){
+							if (s[end1+6].equals("ALY")) {
+								// first bracket of allies
+								end1 = end1+7;
+								// last bracket of allies
+								end2 = DaideList.unBracket(s, end1);
+								
+								for (int n = end1 + 1 ;n < end2;n++){
+									// TODO: fill in belief base that the power is now your ally
+								}
+								
+								// first bracket of enemies
+								end1 = end2+2;
+								// last bracket of enemies
+								end2 = DaideList.unBracket(s, end1);
+								
+								for (int n = end1 + 1;n < end2;n++){
+									// TODO: fill in belief base that the power is now your enemy
+								}
+							} else if (s[end1+6].equals("PCE")){
+								
+								// first bracket of peace members
+								end1 = end1+7;
+								// last bracket of peace members
+								end2 = DaideList.unBracket(s, end1);
+								
+								for (int n = end1 + 1 ;n < end2;n++){
+									// TODO: fill in belief base that the power is now at peace with you
+								}
+							} else if (s[end1+6].equals("XDO")) {
+								// TODO: handle accepted order proposal
+							} else if (s[end1+6].equals("DMZ")) {
+								// TODO: handle accepted DMZ proposal
 							}
-							
-							// first bracket of enemies
-							end1 = end2+2;
-							// last bracket of enemies
-							end2 = DaideList.unBracket(s, end1);
-							
-							for (int n = end1 + 1;n < end2;n++){
-								// TODO: fill in belief base that the power is now your enemy
-							}
-						} else if (s[4].equals("PCE")){
-							// TODO: handle accepted peace offer
 						}
-					}
-					
-				} else if (s[0].equals("REJ")) {
-					if (s[2].equals("PRP")){
-						if (s[4].equals("ALY")) {
-							// first bracket of allies
-							end1 = 5;
-							// last bracket of allies
-							end2 = DaideList.unBracket(s, end1);
-							
-							for (int n = end1 + 1 ;n < end2;n++){
-								// TODO: fill in belief base that the power is now your enemy
+						
+					} else if (s[end1+2].equals("REJ")) {
+						if (s[end1+4].equals("PRP")){
+							// handle rejected aly proposal:
+							if (s[end1+6].equals("ALY")) {
+								// first bracket of allies
+								end1 = end1+7;
+								// last bracket of allies
+								end2 = DaideList.unBracket(s, end1);
+								
+								for (int n = end1 + 1 ;n < end2;n++){
+									// TODO: fill in belief base that the power is now your enemy
+								}
+								
+								// first bracket of enemies
+								end1 = end2+2;
+								// last bracket of enemies
+								end2 = DaideList.unBracket(s, end1);
+								
+								for (int n = end1 + 1;n < end2;n++){
+									// TODO: fill in belief base that the power is now.... your friend? :P
+								}
+							} else if (s[end1+6].equals("PCE")){
+								
+								// first bracket of peace members
+								end1 = end1+7;
+								// last bracket of peace members
+								end2 = DaideList.unBracket(s, end1);
+								
+								for (int n = end1 + 1 ;n < end2;n++){
+									// TODO: fill in belief base that the power is now your enemy 
+								}
+							} else if (s[end1+6].equals("XDO")) {
+								// TODO handle rejected order proposal
+								
+							} else if (s[end1+6].equals("DMZ")) {
+								// TODO: handle rejected DMZ proposal
 							}
-							
-							// first bracket of enemies
-							end1 = end2+2;
-							// last bracket of enemies
-							end2 = DaideList.unBracket(s, end1);
-							
-							for (int n = end1 + 1;n < end2;n++){
-								// TODO: fill in belief base that the power is now.... your friend? :P
-							}
-						} else if (s[4].equals("PCE")){
-							//TODO: handle rejected peace offer
 						}
+					} else  {
+						// TODO: HUH
 					}
-				} else {
-					// HUH
-				}
+				} 
 			}
 		}
 		
@@ -199,10 +228,12 @@ public class Negotiator {
 			
 			if (amIncluded && acceptAllies && acceptEnemies) {
 				return true;
+			} else {
+				return false;
 			}
 		}
 		
-		// add stuff on figuring out if we want the alliance
+		// TODO: add stuff on figuring out if we want the alliance
 		
 		return false;
 		

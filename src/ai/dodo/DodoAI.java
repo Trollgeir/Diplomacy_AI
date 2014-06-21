@@ -275,7 +275,7 @@ public class DodoAI extends AI {
 			
 			// propose preferred alliances:
 			// uncomment if you want awesome alliance proposals to be sent the first turn
-			/* 
+			/*
 			Power prefer = Heuristics.preferredAlliance(this.getPower(), map.getStandard(), map);
 			Power enemy = Heuristics.preferredEnemy(this.getPower(), map.getStandard(), map);
 			Power[] alliance = {this.getPower(), prefer};
