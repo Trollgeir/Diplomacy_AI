@@ -13,6 +13,7 @@ import ai.dodo.DodoBeliefBase;
 import kb.Map;
 import kb.Phase;
 import kb.Power;
+import kb.unit.Unit;
 
 // its a bit messy & ugly but it works
 public class Negotiator {
@@ -108,8 +109,50 @@ public class Negotiator {
 							}
 						} else if (s[end1+4].equals("XDO")) {
 							// TODO: parse incoming order proposal
+							
+							// start first unit
+							end1=end1+6;
+							// end first unit
+							end2 = DaideList.unBracket(s, end1);
+							
+							if (s[end2+1].equals("SUP")) {
+								//String unit1Pow = s[end1+1];
+								//String unit1Type = s[end1+2];
+								String unit1Prov = s[end1+3];
+								
+								//start second unit
+								end1 = end2+2;
+								// end second unit
+								end2 = DaideList.unBracket(s, end1);
+								
+								//String unit2Pow = s[end1+1];
+								//String unit2Type = s[end1+2];
+								String unit2Prov = s[end1+3];
+								
+								String target = "";
+								
+								if (s[end2+1].equals("MTO")) {
+									target = s[end2+2];
+								} 
+								
+								if (acceptOrderProposal(unit1Prov, unit2Prov, target)) {
+									Game.server.send(new Send(new Yes(prop), map.getPower(from)));
+								} else {
+									Game.server.send(new Send(new Reject(prop), map.getPower(from)));
+								}
+								
+								
+								
+							} else {
+								Game.server.send(new Send(new Reject(prop), map.getPower(from)));
+							}
+							
+							
+							
 						} else if (s[end1+4].equals("DMZ")) {
-							// TODO: parse incoming DMZ proposal
+							
+							Game.server.send(new Send(new Huh(prop), map.getPower(from)));
+							
 						}
 						
 					} else if (s[end1+2].equals("YES")) {
@@ -145,7 +188,7 @@ public class Negotiator {
 							} else if (s[end1+6].equals("XDO")) {
 								// TODO: handle accepted order proposal
 							} else if (s[end1+6].equals("DMZ")) {
-								// TODO: handle accepted DMZ proposal
+								// TODO: handle accepted DMZ proposal (on hold)
 							}
 						}
 						
@@ -184,7 +227,7 @@ public class Negotiator {
 								// TODO handle rejected order proposal
 								
 							} else if (s[end1+6].equals("DMZ")) {
-								// TODO: handle rejected DMZ proposal
+								// TODO: handle rejected DMZ proposal (on hold)
 							}
 						}
 					} else  {
@@ -242,6 +285,11 @@ public class Negotiator {
 	private boolean acceptPeace(String[] members) {
 		
 		// TODO: add stuff on figuring out if we want the peace
+		return false;
+	}
+	
+	private boolean acceptOrderProposal(String ProvenceUnit1, String ProvenceUnit2, String target) {
+		// TODO: add stuff on figuring out if we accept the order proposal
 		return false;
 	}
 	
