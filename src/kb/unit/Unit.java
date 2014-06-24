@@ -42,18 +42,13 @@ public abstract class Unit {
 		node.setUnit(this);
 	}
 	
-
 	public ArrayList<Node> getAdjNodes() {
-		ArrayList<Node> nodes = new ArrayList<Node>();
-		nodes.add(location); 
+		ArrayList<Node> result = new ArrayList<Node>();
+		result.add(location);
 
-		if (isFleet()) {
-			nodes.addAll(location.seaNeighbors);
-		} else {
-			nodes.addAll(location.landNeighbors);
-		}
-
-		return nodes; 
+		if (isFleet()) result.addAll(location.seaNeighbors);
+		else result.addAll(location.landNeighbors);
+		return result; 
 	}
 
 	public ArrayList<Order> possibleOrders()

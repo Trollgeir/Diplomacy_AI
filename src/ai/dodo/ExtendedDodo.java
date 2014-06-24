@@ -14,13 +14,14 @@ import game.Game;
 import kb.Names; 
 import kb.Phase; 
 import kb.functions.MapInfo;
+import kb.functions.MapInfo.SCO_type; 
 
 public class ExtendedDodo extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
 	
 	boolean key_to_send = false; 
 	Names names = null; 
-	ArrayList<Province> visitedProvinces = new ArrayList<Province>();
+	// /ArrayList<Province> visitedProvinces = new ArrayList<Province>();
 	DodoBeliefBase		belief;
 	
 	public ExtendedDodo(Map map) {
@@ -167,17 +168,105 @@ public class ExtendedDodo extends AI {
 		}
 	}
 
+
+	/***********************************
+	||   ||     ==        =====   ||   // 
+	||   ||   //  \\     //       ||  //
+	|=====|  ||===||    ||        || //
+	||   ||  ||   ||    \\        || \\
+	||   ||  ||   ||      =====   ||  \\
+	**********************************/
+
+	public ArrayList<Node> filterNeighbours(ArrayList<Node> neighbours, ArrayList<Province> occupied) {
+		ArrayList<Node> result = new ArrayList<Node>();
+		for (Node n : neighbours) {
+			if (!occupied.contains(n.province)) result.add(n);
+		} 
+		return result;
+	}
+
+	public ArrayList<Province> filterProvinces(ArrayList<Province> provinces, ArrayList<Province> built, ArrayList<Unit> units) {
+		ArrayList<Province> result = new ArrayList<Province>(); 
+		for (Province p : provinces) {
+			if (built.contains(p)) continue; 
+			if (!power.homeProvinces.contains(p)) continue;
+			boolean empty = true; 
+			for (Unit u : units) {
+				if (u.location.province == p) {
+					empty = false; 
+					break; 
+				} 
+			}
+			if (empty) result.add(p);
+		}
+		return result;
+	};
+
+	public ArrayList<Node> getSupplyCenterNodes(ArrayList<Node> nodes, boolean ours) {
+		//only return those nodes which are in a province with supply center which are NOT ours!
+		ArrayList<Node> result = new ArrayList<Node>(); 
+		for (Node n : nodes) {
+			if (n.province.isSupplyCenter()) {
+				if (ours && n.province.getOwner() == power) {
+					result.add(n);
+				} else if (!ours && n.province.getOwner() != power) {
+					result.add(n);
+				}
+			}
+		}
+		return result; 
+	}
+
+	public Node moveToSupplyCenter(Unit unit, ArrayList<Node> neighbourhood, ArrayList<Province> occupied, boolean move, boolean ours) {
+		ArrayList<Node> supplyCenters = getSupplyCenterNodes(neighbourhood, ours); 
+		if (supplyCenters.size() > 0) {
+			return getRandomElement(supplyCenters);  
+		} else {
+			ArrayList<Node> indirectSupplyCenters = new ArrayList<Node>(); 
+			for (Node node : neighbourhood) {
+				ArrayList<Node> n_neigbourhood = filterNeighbours(map.getValidNeighbours(unit, node), occupied);
+				ArrayList<Node> n_supplyCenters = getSupplyCenterNodes(n_neigbourhood, ours);
+				if (n_supplyCenters.size() > 0) indirectSupplyCenters.add(node); 
+			}
+			if (indirectSupplyCenters.size() > 0) {
+				return getRandomElement(indirectSupplyCenters);
+			}
+		}
+		if(move)
+			return getRandomElement(neighbourhood); 
+		else
+			return null;
+	}
+
+	public <T> T getRandomElement(ArrayList<T> list) {
+		return list.get((int)(Math.random() * list.size())); 
+	}
+
+	/***********************************
+	||   ||     ==        =====   ||   // 
+	||   ||   //  \\     //       ||  //
+	|=====|  ||===||    ||        || //
+	||   ||  ||   ||    \\        || \\
+	||   ||  ||   ||      =====   ||  \\
+	***********************************/
+
+
 	public void newTurn()
 	{
 		if (!power.alive) return;
-		
+		MapInfo mapInfo = new MapInfo(map, power);
+
 		System.out.println();
 		System.out.println("The new Dodo lives!");
 		System.out.println("New turn for " + power.getName());
 		System.out.println("Year: " + map.getYear() + " -----------  Phase: " + map.getPhase()); 
 
-
+		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
+		ArrayList<Province> home = power.homeProvinces;
+		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
 		ArrayList<Province> occupied = new ArrayList<Province>();
+		for (Unit u : units) occupied.add(u.location.province);
+		//ArrayList<Province> occupied = new ArrayList<Province>();
 
 		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
 			/*
@@ -186,17 +275,18 @@ public class ExtendedDodo extends AI {
 
 			System.out.println("Init MapInfo");
 			System.out.println("power: " + power);
-			MapInfo mapInfo = new MapInfo(map, power);
 			
+			ArrayList<Unit> availableUnits = new ArrayList<Unit>(); 
+			availableUnits.addAll(units);
 
 			while (true) {
 				ArrayList<ProvinceData> targets = mapInfo.getSortedTargets(); 
 				targets = mapInfo.filterTakeable(targets);
-
+/*
 				System.out.println("Sorted targets:" + targets.size());
 				for (ProvinceData p : targets) {
 					System.out.println(p.toString()); 
-				}
+				}*/
 
 				float totalWeight = 0; 
 				for (ProvinceData target : targets) totalWeight += target.weight;
@@ -208,7 +298,7 @@ public class ExtendedDodo extends AI {
 				float targetVal = (float)Math.random() * totalWeight;
 				while ((val += targets.get(targetIdx).weight) < targetVal && targetIdx++ < targets.size());
 
-				System.out.println("attacking: " + targets.get(targetIdx).province.name);
+				//System.out.println("attacking: " + targets.get(targetIdx).province.name);
 				ArrayList<UnitData> sortedUnits = mapInfo.getSortedUnits(targets.get(targetIdx));
 				//Be sure that the unit standing on the target is always used (or do something intelligent...)
 				
@@ -217,6 +307,10 @@ public class ExtendedDodo extends AI {
 				
 				attack(targets.get(targetIdx), sortedUnits, usedUnits, usedProvinces);
 	
+				for (UnitData ud : usedUnits) {
+					availableUnits.remove(ud.unit); 
+				}
+
 				ArrayList<ProvinceData> usedProvinceData =  new ArrayList<ProvinceData>();
 
 				for (Province p0 : usedProvinces) {
@@ -237,11 +331,10 @@ public class ExtendedDodo extends AI {
 				mapInfo.updateByMove(usedUnits, usedProvinceData);
 
 			}
-			
-			
-			
+			for (Unit u : availableUnits) {
+				queue.add(new Hold(u));
+			}
 
-		
 			/*
 			for (Unit u : availableUnits) {
 				ArrayList<Node> nbh = filterNeighbours(map.getValidNeighbours(u), occupied);
@@ -259,8 +352,6 @@ public class ExtendedDodo extends AI {
 
 			
 		} else if(map.getPhase() == Phase.SUM || map.getPhase() == Phase.AUT){
-			
-			/*
 			for(Unit u : units)
 			{
 				if(u.mustRetreat) {
@@ -268,23 +359,18 @@ public class ExtendedDodo extends AI {
 					if(u.retreatTo.size() == 0) queue.add(new Disband(u)); 
 					else {
 						//Try to move to a supply center
-						
 						Node destination = moveToSupplyCenter(u, u.retreatTo, occupied, true, false);
 						occupied.remove(u.location.province); 
 						occupied.add(destination.province);
 						System.out.println(power.getName() + " : " + "I want to retreat " + u.location.daide() + " to " + destination.daide()); 
 						queue.add(new Retreat(u, destination)); 
-						
 					}
 				}
 			}
-			*/
 		} else if (map.getPhase() == Phase.WIN) { 
 			/*
 			BUILD PHASE
 			*/
-
-			/*
 			System.out.println("---------- BUILD/REMOVE ----------");
 			ArrayList<Province> built = new ArrayList<Province>();
 			ArrayList<Unit> canBeRemoved = new ArrayList<Unit>();
@@ -338,7 +424,6 @@ public class ExtendedDodo extends AI {
 				}
 				error++; 
 			}
-			*/
 		}
 		
 

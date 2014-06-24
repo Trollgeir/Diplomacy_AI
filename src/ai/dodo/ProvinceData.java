@@ -311,9 +311,9 @@ public class ProvinceData {
         			});
 		
 		for (UnitData unitData : sortedList) {
-			System.out.println("prov:   " + unitData.unit.location.province.name);
+/*			System.out.println("prov:   " + unitData.unit.location.province.name);
 			System.out.println("shared: " + unitData.shared);
-			System.out.println();
+			System.out.println();*/
 		}
 
 		return sortedList; 

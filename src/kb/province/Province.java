@@ -14,13 +14,13 @@ import kb.unit.Unit;
 
 public class Province {
 	
-	public String 				name;
+	String 				name;
 	Node				centralNode;
 	boolean				supplyCenter;
 	Power				owner;
 	
 	public ArrayList<Node>		coastLine;
-	public boolean				isLand, isSea, isCoast;
+	boolean				isLand, isSea, isCoast;
 	
 	public Province(String name, boolean hasSupply, Power owner)
 	{
@@ -29,17 +29,6 @@ public class Province {
 		centralNode = new Node(this);
 		coastLine = new ArrayList<Node>();
 		this.owner = owner;
-		isLand = isSea = isCoast = false;
-	}
-
-	public Unit getUnit() {
-		if (centralNode.unit != null) return centralNode.unit;
-
-		for (Node node : coastLine) {
-			if (node.unit != null) return node.unit;
-		}
-
-		return null; 
 	}
 	
 	public void setOwner(Power owner)
@@ -51,7 +40,7 @@ public class Province {
 	{
 		return owner;
 	}
-	
+
 	public void addCoastalNode(Node n)
 	{
 		coastLine.add(n);
@@ -70,20 +59,6 @@ public class Province {
 		isCoast = l;
 	}
 	
-	public void  setLand() {
-		if (isSea) {
-			isCoast = true;
-			isSea = false; 
-		} else isLand = false;
-	}
-
-	public void setSea() {
-		if (isLand) {
-			isLand = false;
-			isCoast = true;
-		} else isSea = true;
-	}
-
 	public int coastAmt()
 	{
 		return coastLine.size();
@@ -192,5 +167,13 @@ public class Province {
 
 	public boolean isSupplyCenter() {
 		return supplyCenter; 
+	}
+
+	public Unit getUnit() {
+		if (centralNode.unit != null) return centralNode.unit; 
+		for (Node node : coastLine) {
+			if (node.unit != null) return node.unit; 
+		}
+		return null; 
 	}
 }

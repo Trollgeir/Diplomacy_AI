@@ -185,7 +185,7 @@ public class DodoAI extends AI {
 
 	public static void main(String[] args) {
 		Map map = new Map();
-		AI ai = new DodoAI(map);
+		AI ai = new ExtendedDodo(map);
 		new Game(ai, map, args);
 	}
 	
