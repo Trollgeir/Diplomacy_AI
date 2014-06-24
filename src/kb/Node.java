@@ -28,7 +28,7 @@ public class Node {
 	public Node(Province province)
 	{
 		this.province = province;
-		this.coastal = false;
+		this.coastal = province.isCoast;
 		this.coastName = "";
 		landNeighbors = new ArrayList<Node>();
 		seaNeighbors = new ArrayList<Node>();
@@ -43,7 +43,7 @@ public class Node {
 	Node(Province province, String coastName)
 	{
 		this.province = province;
-		this.coastal = true;
+		this.coastal = province.isCoast;
 		this.coastName = coastName;
 		landNeighbors = new ArrayList<Node>();
 		seaNeighbors = new ArrayList<Node>();
@@ -75,11 +75,15 @@ public class Node {
 	{
 		ArrayList<Node> ret = new ArrayList<Node>();
 		
-		ret.addAll(landNeighbors);
-		
-		for (Node s : seaNeighbors)
-			if (!landNeighbors.contains(s))
-				ret.add(s);
+		if (isLand()) {
+			for (Node n : landNeighbors) {
+				if (!n.isCoast()) {
+					ret.add(n);
+				}
+			}
+		} else {
+			ret.addAll(seaNeighbors);
+		}
 		
 		return ret;
 	}
@@ -102,16 +106,14 @@ public class Node {
 	
 	public boolean isLand()
 	{
-		if (!coastal)
-			return province.isLand();
-		return false;
+
+		return province.isLand();
 	}
 	
 	public boolean isSea()
 	{
-		if (!coastal)
-			return province.isSea();
-		return false;
+		return province.isSea();
+		
 	}
 
 	public void setUnit(Unit unit) {	

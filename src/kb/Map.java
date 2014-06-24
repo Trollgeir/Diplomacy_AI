@@ -226,22 +226,9 @@ public class Map extends Receiver {
 	}
 	public void processORD(String[] message)
 	{
+		//TODO - handle ORD. Might be some problems regarding the fact that ORD comes before NOW.
 		
-		Power from = getPower(message[7]);
-		String orderType = message[11];
-		String Target = "";
-		Power supportPower;
-		
-		if (orderType.equals("MTO")) {
-			Target = message[12];
-			//System.out.println("" + from.getName() + " " + orderType + " " + Target);
-		} else if (orderType.equals("SUP")) {
-			supportPower = getPower(message[13]);
-			Target = message[18];
-			//System.out.println("" + from.getName() + " " + orderType + " " + supportPower.getName() + " in " + Target );
-		}
-		
-		// TODO: throw the acquired intel to a function that determines defects of allies
+		results.clear();
 	
 		if (getPhase() == Phase.SUM || getPhase() == Phase.AUT){
 			//We're only interested in processing results after a movement phase. Parser needed!
@@ -426,11 +413,13 @@ public class Map extends Receiver {
 				
 				if (uType.equals("AMY"))
 				{
+					province.setLand();
 					for (int a = unitAdjStart+2; a < unitAdjEnd; a++)
 						province.getCentralNode().landNeighbors.add(getNode(message[a]));
 				}
 				else if (uType.equals("FLT"))
 				{
+					province.setSea();
 					for (int a = unitAdjStart+2; a < unitAdjEnd; a++)
 					{
 						Node adjNode = null;

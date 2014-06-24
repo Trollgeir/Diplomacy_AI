@@ -42,6 +42,20 @@ public abstract class Unit {
 		node.setUnit(this);
 	}
 	
+
+	public ArrayList<Node> getAdjNodes() {
+		ArrayList<Node> nodes = new ArrayList<Node>();
+		nodes.add(location); 
+
+		if (isFleet()) {
+			nodes.addAll(location.seaNeighbors);
+		} else {
+			nodes.addAll(location.landNeighbors);
+		}
+
+		return nodes; 
+	}
+
 	public ArrayList<Order> possibleOrders()
 	{
 		//TODO: Convoy, move by convoy
