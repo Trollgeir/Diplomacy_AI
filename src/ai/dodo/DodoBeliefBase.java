@@ -2,6 +2,7 @@ package ai.dodo;
 
 import java.util.ArrayList;
 
+import javafx.util.Pair;
 import kb.Map;
 import kb.Node;
 import kb.Power;
@@ -10,16 +11,21 @@ import kb.unit.Unit;
 
 class PowerInfo
 {
-	public PowerInfo()
+	public PowerInfo(double initialTrust)
 	{
+		name = "";
+		trust = initialTrust;
+		peace = false;
+		peaceActuality = 1;
+		alliances = new java.util.HashMap<Power[], Pair<Double, Integer>>(); // Double is Actuality Integer is SUPFavor
 		
-		alliance = false;
-		trust = 0.5;
 	}
 	
-	public boolean alliance;
+	public boolean peace;
+	public double peaceActuality;
 	public double trust;
 	public String name;
+	public java.util.Map<Power[], Pair<Double, Integer>> alliances;
 	
 }
 
@@ -37,15 +43,17 @@ class ProvinceInfo
 public class DodoBeliefBase {
 	Map		map;
 	Power	self;
+	DodoAI 	ai;
 	
 	public java.util.Map<Province, ProvinceInfo>	provinceInfo;
 	public java.util.Map<Power, PowerInfo>			powerInfo;
 	
 	
-	public DodoBeliefBase(Map map, Power self)
+	public DodoBeliefBase(Map map, Power self, DodoAI ai)
 	{
 		this.map = map;
 		this.self = self;
+		this.ai = ai;
 		
 		provinceInfo = new java.util.HashMap<Province, ProvinceInfo>();
 		powerInfo = new java.util.HashMap<Power, PowerInfo>();
@@ -53,7 +61,7 @@ public class DodoBeliefBase {
 		for (Power p : map.powers)
 		{
 			if (!p.equals(self))
-				powerInfo.put(p, new PowerInfo());
+				powerInfo.put(p, new PowerInfo(ai.initialTrust));
 		}
 		
 		for (Province p : map.provinces)

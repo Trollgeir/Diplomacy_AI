@@ -37,7 +37,6 @@ public class DodoAI extends AI {
 	double rightesnous = 0.5;
 	double supportSteep = 0.5;
 	
-	
 	ArrayList<Province> visitedProvinces = new ArrayList<Province>();
 	DodoBeliefBase		belief;
 	
@@ -122,7 +121,7 @@ public class DodoAI extends AI {
 			names.init(map);
 		}
 		
-		belief = new DodoBeliefBase(map, power);
+		belief = new DodoBeliefBase(map, power, this);
 	}
 	@Override
 	protected void handleSLO(String[] message)

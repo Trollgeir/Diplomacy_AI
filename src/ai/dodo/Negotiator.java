@@ -5,6 +5,7 @@ import game.Game;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.ArrayList;
 
+import javafx.util.Pair;
 import message.DaideList;
 import message.press.*;
 import message.server.*;
@@ -42,6 +43,7 @@ public class Negotiator {
 			for (String[] s : queue) {
 				if (s[0].equals("FRM")){
 					from = s[2];
+					PowerInfo powerInfo = dodoAI.belief.powerInfo.get(map.getPower(from));
 					//ending of 'to'
 					end1 = DaideList.unBracket(s, 4);
 					if (s[end1+2].equals("PRP")) {
@@ -82,8 +84,16 @@ public class Negotiator {
 								i++;
 							}
 							if (acceptAlliance(allies, enemies)) {
+								for (int n = 0; n < allies.length; n++) {
+									if (!allies[n].equals(self.getName()));
+										setAlliance(allies[n], enemies, true);
+								}
 								Game.server.send(new Send(new Yes(prop), map.getPower(from)));
 							} else {
+								for (int n = 0; n < allies.length; n++) {
+									if (!allies[n].equals(self.getName()));
+										setAlliance(allies[n], enemies, false);
+								}
 								Game.server.send(new Send(new Reject(prop), map.getPower(from)));
 							}
 							
@@ -103,12 +113,24 @@ public class Negotiator {
 							}
 							
 							if (acceptPeace(members)) {
+								for (int n = 0; n<members.length;n++) {
+									if (!members[n].equals(self.getName()));
+										setPeace(members[n], true);
+								}
+								
 								Game.server.send(new Send(new Yes(prop), map.getPower(from)));
+								
 							} else {
+								
+								for (int n = 0; n<members.length;n++) {
+									if (!members[n].equals(self.getName()));
+										setPeace(members[n], false);
+								}
+								
 								Game.server.send(new Send(new Reject(prop), map.getPower(from)));
+								
 							}
 						} else if (s[end1+4].equals("XDO")) {
-							// TODO: parse incoming order proposal
 							
 							// start first unit
 							end1=end1+6;
@@ -136,8 +158,10 @@ public class Negotiator {
 								} 
 								
 								if (acceptOrderProposal(unit1Prov, unit2Prov, target)) {
+									// TODO: handle XDO
 									Game.server.send(new Send(new Yes(prop), map.getPower(from)));
 								} else {
+									// TODO: handle XDO
 									Game.server.send(new Send(new Reject(prop), map.getPower(from)));
 								}
 								
@@ -145,11 +169,10 @@ public class Negotiator {
 								Game.server.send(new Send(new Reject(prop), map.getPower(from)));
 							}
 							
-							
-							
 						} else if (s[end1+4].equals("DMZ")) {
 							
 							Game.server.send(new Send(new Huh(prop), map.getPower(from)));
+							System.out.println("Cant handle DMZ, sorry!");
 							
 						}
 						
@@ -162,6 +185,7 @@ public class Negotiator {
 								end2 = DaideList.unBracket(s, end1);
 								
 								for (int n = end1 + 1 ;n < end2;n++){
+									
 									// TODO: fill in belief base that the power is now your ally
 								}
 								
@@ -181,7 +205,8 @@ public class Negotiator {
 								end2 = DaideList.unBracket(s, end1);
 								
 								for (int n = end1 + 1 ;n < end2;n++){
-									// TODO: fill in belief base that the power is now at peace with you
+									if (!s[n].equals(self.getName()));
+										setPeace(s[n],true);
 								}
 							} else if (s[end1+6].equals("XDO")) {
 								// TODO: handle accepted order proposal
@@ -219,13 +244,14 @@ public class Negotiator {
 								end2 = DaideList.unBracket(s, end1);
 								
 								for (int n = end1 + 1 ;n < end2;n++){
-									// TODO: fill in belief base that the power is now your enemy 
+									if (!s[n].equals(self.getName()));
+										setPeace(s[n], false);
 								}
 							} else if (s[end1+6].equals("XDO")) {
 								// TODO handle rejected order proposal
 								
 							} else if (s[end1+6].equals("DMZ")) {
-								// TODO: handle rejected DMZ proposal (on hold)
+								// handle rejected DMZ proposal (on hold)
 							}
 						}
 					} else  {
@@ -291,4 +317,40 @@ public class Negotiator {
 		return false;
 	}
 	
+	private void setPeace(String power, boolean bool) {
+		
+		 PowerInfo powerInfo = dodoAI.belief.powerInfo.get(map.getPower(power));
+		 if (bool) {
+			powerInfo.peace = true;
+		 	powerInfo.peaceActuality = 1.0;
+		 } else {
+			 powerInfo.peace = false;
+			 powerInfo.peaceActuality = 0.0;
+		 }
+	}
+	
+	private void setAlliance(String ally, String[] enemies, boolean bool) {
+		PowerInfo powerInfo = dodoAI.belief.powerInfo.get(map.getPower(ally));
+		java.util.Map<Power[], Pair<Double, Integer>> alliances = powerInfo.alliances;
+		Pair<Double, Integer> allianceValuePair = new Pair<Double, Integer> (1.0,0);
+		
+		// translate the String[] enemies to Power[] enemiesP
+		Power[] enemiesP = new Power[enemies.length];
+		for (int n = 0; n<enemies.length;n++) {
+			enemiesP[n] = map.getPower(enemies[n]);
+		}
+		
+		if (bool) {
+			if (alliances.containsKey(enemiesP)) {
+				allianceValuePair = alliances.get(enemiesP);
+				powerInfo.alliances.remove(enemiesP);
+				allianceValuePair = new Pair<Double, Integer>(1.0, allianceValuePair.getValue());
+			}
+			powerInfo.alliances.put(enemiesP, allianceValuePair);
+		} else {
+			if (alliances.containsKey(enemiesP)) {
+				powerInfo.alliances.remove(enemiesP);
+			}
+		}
+	}
 }
