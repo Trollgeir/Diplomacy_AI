@@ -141,8 +141,6 @@ public class Negotiator {
 									Game.server.send(new Send(new Reject(prop), map.getPower(from)));
 								}
 								
-								
-								
 							} else {
 								Game.server.send(new Send(new Reject(prop), map.getPower(from)));
 							}

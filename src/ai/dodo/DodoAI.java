@@ -1,5 +1,8 @@
 package ai.dodo;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -27,6 +30,14 @@ public class DodoAI extends AI {
 	
 	boolean key_to_send = false; 
 	Names names = null; 
+	String fileName = "";
+	String name = "changeMe!";
+	double initialTrust = 0.5;
+	double halflife = 0.05;
+	double rightesnous = 0.5;
+	double supportSteep = 0.5;
+	
+	
 	ArrayList<Province> visitedProvinces = new ArrayList<Province>();
 	DodoBeliefBase		belief;
 	
@@ -51,11 +62,49 @@ public class DodoAI extends AI {
 				names = new Names(args[++i]); 
 			} else if (flag.equals("-k")) {
 				key_to_send = true; 
+			} else if (flag.equals("-f")) {
+				fileName = args[++i];
 			} else  {
 				//hack to throw outofboundexception
 				String error = args[-20]; 
 			}
 		}
+	}
+	public void parseTextFile(String fileName) {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			try {
+				String line = br.readLine();
+				int index = 0;
+				String result = "";
+				while (line != null) {
+					index = line.lastIndexOf("=");
+					result = line.substring(index+1);
+					if (result.startsWith(" ")) {
+						result = result.substring(1);
+					}
+					if (line.startsWith("name")) {
+						name = result;
+					} else if (line.startsWith("initialTrust")) {
+						initialTrust = Double.parseDouble(result);
+					} else if (line.startsWith("halflife")) {
+						halflife = Double.parseDouble(result);
+					} else if (line.startsWith("rightesnous")) {
+						rightesnous = Double.parseDouble(result);
+					} else if (line.startsWith("supportSteep")) {
+						supportSteep = Double.parseDouble(result);
+					}
+					line = br.readLine();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		} catch (FileNotFoundException e) {
+			
+			e.printStackTrace();
+		}
+		System.out.println("name: " + name + " initialTrust: " + initialTrust + " halflife: " + halflife + " rightesnous: " + rightesnous + " supportSteep: " + supportSteep );
 	}
 
 	public void findGains()
@@ -129,6 +178,9 @@ public class DodoAI extends AI {
 	@Override
 	public void init(String[] args) throws ArrayIndexOutOfBoundsException {
 		parseCommandLineArguments(args);
+		if (!fileName.equals("")) {
+			parseTextFile(fileName);
+		}
 	}
 
 	public static void main(String[] args) {

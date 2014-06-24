@@ -12,12 +12,15 @@ class PowerInfo
 {
 	public PowerInfo()
 	{
+		
 		alliance = false;
 		trust = 0.5;
 	}
 	
 	public boolean alliance;
 	public double trust;
+	public String name;
+	
 }
 
 class ProvinceInfo
