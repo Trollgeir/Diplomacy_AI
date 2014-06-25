@@ -3,7 +3,7 @@ package message.order;
 import message.DaideList;
 import kb.Node;
 import kb.unit.Unit;
-
+import kb.province.Province;
 /**
  * The order for a unit to support an adjacent unit with its movement to an adjacent node.
  * @author Koen
@@ -13,9 +13,9 @@ import kb.unit.Unit;
 public class SupportToMove extends Order {
 
 	Unit		unit, supportedUnit;
-	Node		movingTo;
+	Province		movingTo;
 	
-	public SupportToMove(Unit unit, Unit supportedUnit, Node movingTo)
+	public SupportToMove(Unit unit, Unit supportedUnit, Province movingTo)
 	{
 		this.unit = unit;
 		this.supportedUnit = supportedUnit;
@@ -31,7 +31,7 @@ public class SupportToMove extends Order {
 		ret.add2(")", "SUP", "(");
 		ret.addAll(supportedUnit.daide());
 		ret.add2(")", "MTO");
-		ret.addAll(movingTo.daide());
+		ret.add(movingTo.daide());
 		
 		return ret;
 	}

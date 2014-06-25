@@ -94,7 +94,7 @@ public class Map extends Receiver {
 		for (int i = 0; i < provinces.size(); i++)
 		{
 			Province ret = provinces.get(i);
-			if (ret.getName() == name)
+			if (ret.getName().equals(name))
 			{
 				return ret;
 			}

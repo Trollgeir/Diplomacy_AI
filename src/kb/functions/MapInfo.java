@@ -30,7 +30,6 @@ public class MapInfo {
 		this.power = power; 
 		units = map.getUnitsByOwner(power);
 
-
 		provinceData = new ArrayList<ProvinceData>();
 
 		System.out.println("initProvinceDataList");

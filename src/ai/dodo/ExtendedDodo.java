@@ -157,7 +157,7 @@ public class ExtendedDodo extends AI {
 		while (used < needed - 1) {
 			UnitData supportUnit = units.get(used); 
 			if (holdingUnit == null) {
-				queue.add(new SupportToMove(supportUnit.unit, movingUnit.unit, movingUnit.destNode));
+				queue.add(new SupportToMove(supportUnit.unit, movingUnit.unit, movingUnit.destNode.province));
 			} else {
 				queue.add(new SupportToHold(supportUnit.unit, holdingUnit.unit));
 			}
@@ -253,6 +253,17 @@ public class ExtendedDodo extends AI {
 
 	public void newTurn()
 	{
+		
+		Province test = map.getProvince("STP");
+		System.out.println("All nodes!");
+		for (Province p : map.provinces) {
+			System.out.println("\t" + p.getCentralNode().daide() + " " + p.getCentralNode().unit);
+			for (Node n : p.coastLine) {
+				System.out.println("\t" + n.daide() + " " + n.unit);
+			} 
+		}
+
+
 		if (!power.alive) return;
 		MapInfo mapInfo = new MapInfo(map, power);
 
@@ -300,6 +311,7 @@ public class ExtendedDodo extends AI {
 
 				//System.out.println("attacking: " + targets.get(targetIdx).province.name);
 				ArrayList<UnitData> sortedUnits = mapInfo.getSortedUnits(targets.get(targetIdx));
+
 				//Be sure that the unit standing on the target is always used (or do something intelligent...)
 				
 				ArrayList<UnitData> usedUnits = new ArrayList<UnitData>();

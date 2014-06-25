@@ -407,7 +407,7 @@ public class DodoAI extends AI {
 						occupied.add(c.n.province);
 						queue.add(new Move(assigned.get(x), c.n)); 
 					} else {
-						queue.add(new SupportToMove(assigned.get(x), assigned.get(0), c.n));
+						//queue.add(new SupportToMove(assigned.get(x), assigned.get(0), c.n));
 					}
 				}
 				System.out.println("I will invade " + c.n.daide() + " with ");

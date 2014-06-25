@@ -112,7 +112,9 @@ public class Province {
 	
 	public void removeUnit()
 	{
-		if (!isCoast)
+		centralNode.unit = null; 
+		for (Node n : coastLine) n.unit = null; 
+/*		if (!isCoast)
 		{
 			centralNode.unit = null;
 		}
@@ -122,7 +124,7 @@ public class Province {
 			{
 				coastLine.get(i).unit = null;
 			}
-		}
+		}*/
 	}
 	
 	/**

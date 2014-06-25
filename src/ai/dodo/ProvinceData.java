@@ -170,6 +170,8 @@ public class ProvinceData {
 		Unit unit = nearProv.getUnit();
 		if (unit == null) return;
 
+		System.out.println("Near unit : " + unit.daide()); 
+
 		Node destNode = findDestNode(unit, province);
 		if (destNode != null) {
 			int powerIdx = powers.indexOf(unit.owner);

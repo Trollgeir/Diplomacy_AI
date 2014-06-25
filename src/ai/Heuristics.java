@@ -58,7 +58,7 @@ public class Heuristics {
 				army2 = map.getNode("PAR").unit;
 				
 				orderList.add(new Move(fleet1, map.getNode("MAO")));
-				orderList.add(new SupportToMove(army1, army2, map.getNode("BUR")));
+				orderList.add(new SupportToMove(army1, army2, map.getNode("BUR").province));
 				orderList.add(new Move(army2, map.getNode("BUR")));
 				
 			} else if (power.getName().equals("GER")) {
@@ -144,7 +144,7 @@ public class Heuristics {
 				army1 = map.getNode("SER").unit;
 				
 				orderList.add(new Move(fleet1, map.getNode("GRE")));
-				orderList.add(new SupportToMove(army1, fleet1, map.getNode("GRE")));
+				//orderList.add(new SupportToMove(army1, fleet1, map.getNode("GRE")));
 				
 			} else if (power.getName().equals("ENG")) {
 				army1 = map.getNode("EDI").unit;
