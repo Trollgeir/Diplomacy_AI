@@ -175,7 +175,7 @@ public class ExtendedDodo extends AI {
 	|=====|  ||===||    ||        || //
 	||   ||  ||   ||    \\        || \\
 	||   ||  ||   ||      =====   ||  \\
-	**********************************/
+	***********************************/
 
 	public ArrayList<Node> filterNeighbours(ArrayList<Node> neighbours, ArrayList<Province> occupied) {
 		ArrayList<Node> result = new ArrayList<Node>();
