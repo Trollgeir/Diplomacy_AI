@@ -7,25 +7,37 @@ import kb.Node;
 import kb.Power;
 import kb.province.Province;
 import kb.unit.Unit;
-import javafx.util.Pair;
+
+class AllianceInfo
+{
+	public AllianceInfo()
+	{
+		//TODO: Just some default values, may need tweaking.
+		paranoia = 0.0f;
+		supFavor = 0;
+		against = new ArrayList<Power>();
+		time = 0;
+	}
+	
+	public double 			paranoia;
+	public int				supFavor;
+	public int				time;
+	public Power			with;
+	public ArrayList<Power>	against;
+}
 
 class PowerInfo
 {
 	public PowerInfo()
 	{
-		name = "";
 		trust = 0.5;
 		peace = false;
 		peaceActuality = 1;
-		alliances = new java.util.HashMap<Power[], Pair<Double, Integer>>(); // Double is Actuality Integer is SUPFavor
 	}
 	
 	public boolean peace;
 	public double peaceActuality;
-	public boolean alliance;
 	public double trust;
-	public String name;
-	public java.util.Map<Power[], Pair<Double, Integer>> alliances;
 }
 
 class ProvinceInfo
@@ -44,6 +56,8 @@ public class DodoBeliefBase {
 	Power	self;
 	ExtendedDodo ai;
 	
+	
+	public ArrayList<AllianceInfo>					allianceInfo;
 	public java.util.Map<Province, ProvinceInfo>	provinceInfo;
 	public java.util.Map<Power, PowerInfo>			powerInfo;
 	
@@ -148,5 +162,30 @@ public class DodoBeliefBase {
 		}
 	}
 	
+	public boolean isAlly(Power power)
+	{
+		for (AllianceInfo alliance : allianceInfo)
+		{
+			if (alliance.with.equals(power))
+				return true;
+		}
+		return false;
+	}
 	
+	public void incrementAllianceTime()
+	{
+		for (int i = 0; i < allianceInfo.size(); i++)
+		{
+			allianceInfo.get(i).time++;
+		}
+	}
+	
+	public void deleteAllAlliancesWith(Power p)
+	{
+		for(int i = 0; i < allianceInfo.size(); i++)
+		{
+			if(allianceInfo.get(i).with == p)
+				allianceInfo.remove(i);
+		}
+	}
 }

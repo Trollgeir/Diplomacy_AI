@@ -17,7 +17,7 @@ public class Dispatcher implements MessageListener {
 		this.game = game; 
 	}	
 
-	@Override
+	//@Override
 	public void messageReceived(String[] message) {
 		/*System.out.println("Message received:\n"); 
 		for (String s : message) {

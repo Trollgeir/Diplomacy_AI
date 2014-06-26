@@ -3,6 +3,7 @@ package kb;
 import java.util.ArrayList;
 
 import ai.AI;
+import ai.dodo.DodoAI;
 import kb.province.*;
 import game.Receiver;
 import message.DaideList;
@@ -17,9 +18,10 @@ import kb.unit.*;
 
 public class Map extends Receiver {
 
-	public ArrayList<Province>		provinces;
-	public ArrayList<Results>		results;
+	public ArrayList<Province>	provinces;
+	public ArrayList<Results>	results;
 	public ArrayList<Power>		powers;
+	public ArrayList<String[]>	ordMessages;
 	ArrayList<Unit>			units;
 	boolean					isStandard;
 	Phase					phase;
@@ -224,30 +226,12 @@ public class Map extends Receiver {
 		
 		System.out.println("====================");
 	}
+	
 	public void processORD(String[] message)
 	{
-		
-		Power from = getPower(message[7]);
-		String orderType = message[11];
-		String Target = "";
-		Power supportPower;
-		
-		if (orderType.equals("MTO")) {
-			Target = message[12];
-			//System.out.println("" + from.getName() + " " + orderType + " " + Target);
-		} else if (orderType.equals("SUP")) {
-			supportPower = getPower(message[13]);
-			Target = message[18];
-			//System.out.println("" + from.getName() + " " + orderType + " " + supportPower.getName() + " in " + Target );
-		}
-		
-		// TODO: throw the acquired intel to a function that determines defects of allies
-	
-		if (getPhase() == Phase.SUM || getPhase() == Phase.AUT){
-			//We're only interested in processing results after a movement phase. Parser needed!
-		}
-		
+		this.ordMessages.add(message);
 	}
+	
 	public void processSCO(String[] message)
 	{
 		int pWord = 1;
@@ -287,6 +271,8 @@ public class Map extends Receiver {
 
 	public void processNOW(String[] message) {
 		units.clear();
+		for(String[] s : ordMessages)
+			ai.onMessage(s);
 		for (int i = 0; i < provinces.size(); i++)
 			provinces.get(i).removeUnit();
 		
@@ -353,7 +339,7 @@ public class Map extends Receiver {
 		}
 		
 		ai.newTurn();
-		
+		ordMessages.clear();
 		//printMap();
 	}
 	
