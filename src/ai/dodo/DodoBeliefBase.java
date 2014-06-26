@@ -7,17 +7,25 @@ import kb.Node;
 import kb.Power;
 import kb.province.Province;
 import kb.unit.Unit;
+import javafx.util.Pair;
 
 class PowerInfo
 {
 	public PowerInfo()
 	{
-		alliance = false;
+		name = "";
 		trust = 0.5;
+		peace = false;
+		peaceActuality = 1;
+		alliances = new java.util.HashMap<Power[], Pair<Double, Integer>>(); // Double is Actuality Integer is SUPFavor
 	}
 	
+	public boolean peace;
+	public double peaceActuality;
 	public boolean alliance;
 	public double trust;
+	public String name;
+	public java.util.Map<Power[], Pair<Double, Integer>> alliances;
 }
 
 class ProvinceInfo
@@ -34,6 +42,7 @@ class ProvinceInfo
 public class DodoBeliefBase {
 	Map		map;
 	Power	self;
+	ExtendedDodo ai;
 	
 	public java.util.Map<Province, ProvinceInfo>	provinceInfo;
 	public java.util.Map<Power, PowerInfo>			powerInfo;
@@ -43,6 +52,7 @@ public class DodoBeliefBase {
 	{
 		this.map = map;
 		this.self = self;
+		
 		
 		provinceInfo = new java.util.HashMap<Province, ProvinceInfo>();
 		powerInfo = new java.util.HashMap<Power, PowerInfo>();

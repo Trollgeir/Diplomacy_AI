@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import negotiator.Negotiator;
 import kb.Map;
 import kb.unit.*;
 import kb.Node;
@@ -18,6 +17,7 @@ import message.press.Alliance;
 import message.press.Arrangement;
 import message.press.Proposal;
 import message.press.Send;
+import ai.dodo.Negotiator;
 import ai.AI;
 import ai.Heuristics;
 import game.Game;
@@ -121,7 +121,6 @@ public class DodoAI extends AI {
 			names.init(map);
 		}
 		
-		//belief = new DodoBeliefBase(map, power, this);
 		belief = new DodoBeliefBase(map, power);
 	}
 	@Override
