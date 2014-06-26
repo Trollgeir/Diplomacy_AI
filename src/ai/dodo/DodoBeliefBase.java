@@ -7,7 +7,7 @@ import kb.Node;
 import kb.Power;
 import kb.province.Province;
 import kb.unit.Unit;
-import javafx.util.Pair;
+import ai.dodo.Pair;
 
 class PowerInfo
 {

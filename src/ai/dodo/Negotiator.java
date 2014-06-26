@@ -5,12 +5,12 @@ import game.Game;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.ArrayList;
 
-import javafx.util.Pair;
 import message.DaideList;
 import message.press.*;
 import message.server.*;
 import ai.Heuristics;
 import ai.dodo.DodoBeliefBase;
+import ai.dodo.Pair;
 import kb.Map;
 import kb.Phase;
 import kb.Power;
@@ -86,13 +86,13 @@ public class Negotiator {
 							if (acceptAlliance(allies, enemies)) {
 								for (int n = 0; n < allies.length; n++) {
 									if (!allies[n].equals(self.getName()));
-									setAlliance(allies[n], enemies, true);
+										setAlliance(allies[n], enemies, true);
 								}
 								Game.server.send(new Send(new Yes(prop), map.getPower(from)));
 							} else {
 								for (int n = 0; n < allies.length; n++) {
 									if (!allies[n].equals(self.getName()));
-									setAlliance(allies[n], enemies, false);
+										setAlliance(allies[n], enemies, false);
 								}
 								Game.server.send(new Send(new Reject(prop), map.getPower(from)));
 							}
@@ -115,7 +115,7 @@ public class Negotiator {
 							if (acceptPeace(members)) {
 								for (int n = 0; n<members.length;n++) {
 									if (!members[n].equals(self.getName()));
-									setPeace(members[n], true);
+										setPeace(members[n], true);
 								}
 
 								Game.server.send(new Send(new Yes(prop), map.getPower(from)));
@@ -124,7 +124,7 @@ public class Negotiator {
 
 								for (int n = 0; n<members.length;n++) {
 									if (!members[n].equals(self.getName()));
-									setPeace(members[n], false);
+										setPeace(members[n], false);
 								}
 
 								Game.server.send(new Send(new Reject(prop), map.getPower(from)));
@@ -183,20 +183,33 @@ public class Negotiator {
 								end1 = end1+7;
 								// last bracket of allies
 								end2 = DaideList.unBracket(s, end1);
-
+								
+								String[] allies = new String[end2-(end1+1)];
+								
+								i = 0;
 								for (int n = end1 + 1 ;n < end2;n++){
-
-									// TODO: fill in belief base that the power is now your ally
+									allies[i] = s[n];
+									i++;
 								}
 
 								// first bracket of enemies
 								end1 = end2+2;
 								// last bracket of enemies
 								end2 = DaideList.unBracket(s, end1);
-
+								
+								String[] enemies = new String[end2-(end1+1)];
+								
+								i = 0;
 								for (int n = end1 + 1;n < end2;n++){
-									// TODO: fill in belief base that the power is now your enemy
+									enemies[i] = s[n];
+									i++;
 								}
+								
+								for (int n = 0; n < allies.length; n++) {
+									if (!allies[n].equals(self.getName()));
+										setAlliance(allies[n], enemies, true);
+								}
+								
 							} else if (s[end1+6].equals("PCE")){
 
 								// first bracket of peace members
@@ -206,7 +219,7 @@ public class Negotiator {
 
 								for (int n = end1 + 1 ;n < end2;n++){
 									if (!s[n].equals(self.getName()));
-									setPeace(s[n],true);
+										setPeace(s[n],true);
 								}
 							} else if (s[end1+6].equals("XDO")) {
 								// TODO: handle accepted order proposal
@@ -223,6 +236,8 @@ public class Negotiator {
 								end1 = end1+7;
 								// last bracket of allies
 								end2 = DaideList.unBracket(s, end1);
+								
+								String[] allies = new String[end2-(end1+1)];
 
 								for (int n = end1 + 1 ;n < end2;n++){
 									// TODO: fill in belief base that the power is now your enemy
@@ -232,6 +247,8 @@ public class Negotiator {
 								end1 = end2+2;
 								// last bracket of enemies
 								end2 = DaideList.unBracket(s, end1);
+								
+								String[] enemies = new String[end2-(end1+1)];
 
 								for (int n = end1 + 1;n < end2;n++){
 									// TODO: fill in belief base that the power is now.... your friend? :P
