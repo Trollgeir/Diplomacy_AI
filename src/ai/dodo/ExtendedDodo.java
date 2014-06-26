@@ -253,17 +253,6 @@ public class ExtendedDodo extends AI {
 
 	public void newTurn()
 	{
-		
-		Province test = map.getProvince("STP");
-		System.out.println("All nodes!");
-		for (Province p : map.provinces) {
-			System.out.println("\t" + p.getCentralNode().daide() + " " + p.getCentralNode().unit);
-			for (Node n : p.coastLine) {
-				System.out.println("\t" + n.daide() + " " + n.unit);
-			} 
-		}
-
-
 		if (!power.alive) return;
 		MapInfo mapInfo = new MapInfo(map, power);
 
@@ -277,7 +266,6 @@ public class ExtendedDodo extends AI {
 		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
 		ArrayList<Province> occupied = new ArrayList<Province>();
 		for (Unit u : units) occupied.add(u.location.province);
-		//ArrayList<Province> occupied = new ArrayList<Province>();
 
 		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
 			/*
@@ -293,11 +281,6 @@ public class ExtendedDodo extends AI {
 			while (true) {
 				ArrayList<ProvinceData> targets = mapInfo.getSortedTargets(); 
 				targets = mapInfo.filterTakeable(targets);
-/*
-				System.out.println("Sorted targets:" + targets.size());
-				for (ProvinceData p : targets) {
-					System.out.println(p.toString()); 
-				}*/
 
 				float totalWeight = 0; 
 				for (ProvinceData target : targets) totalWeight += target.weight;
@@ -346,22 +329,6 @@ public class ExtendedDodo extends AI {
 			for (Unit u : availableUnits) {
 				queue.add(new Hold(u));
 			}
-
-			/*
-			for (Unit u : availableUnits) {
-				ArrayList<Node> nbh = filterNeighbours(map.getValidNeighbours(u), occupied);
-				if (nbh.size() == 0) {
-					//There are no possible moves so hold
-					queue.add(new Hold(u)); 
-				} else {
-					Node destination = moveToSupplyCenter(u, nbh, occupied, true, false);
-					occupied.remove(u.location.province); 
-					occupied.add(destination.province);
-					System.out.println("Unit in " + u.location.daide() + " -> " + destination.daide()); 
-					queue.add(new Move(u, destination)); 				}
-			}
-			*/
-
 			
 		} else if(map.getPhase() == Phase.SUM || map.getPhase() == Phase.AUT){
 			for(Unit u : units)
@@ -371,11 +338,14 @@ public class ExtendedDodo extends AI {
 					if(u.retreatTo.size() == 0) queue.add(new Disband(u)); 
 					else {
 						//Try to move to a supply center
-						Node destination = moveToSupplyCenter(u, u.retreatTo, occupied, true, false);
-						occupied.remove(u.location.province); 
-						occupied.add(destination.province);
-						System.out.println(power.getName() + " : " + "I want to retreat " + u.location.daide() + " to " + destination.daide()); 
-						queue.add(new Retreat(u, destination)); 
+						Node destination = moveToSupplyCenter(u, u.retreatTo, occupied, false, false);
+						if(destination == null) queue.add(new Disband(u)); 
+						else {
+							occupied.remove(u.location.province); 
+							occupied.add(destination.province);
+							System.out.println(power.getName() + " : " + "I want to retreat " + u.location.daide() + " to " + destination.daide()); 
+							queue.add(new Retreat(u, destination)); 
+						}
 					}
 				}
 			}
