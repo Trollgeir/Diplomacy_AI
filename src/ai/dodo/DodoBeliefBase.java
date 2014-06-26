@@ -7,25 +7,35 @@ import kb.Node;
 import kb.Power;
 import kb.province.Province;
 import kb.unit.Unit;
-import ai.dodo.Pair;
+
+class AllianceInfo
+{
+	public AllianceInfo()
+	{
+		//Just some default values, may need tweaking.
+		paranoia = 0.0f;
+		supFavor = 0;
+		against = new ArrayList<Power>();
+	}
+	
+	public double 			paranoia;
+	public int				supFavor;
+	public Power			with;
+	public ArrayList<Power>	against;
+}
 
 class PowerInfo
 {
 	public PowerInfo()
 	{
-		name = "";
 		trust = 0.5;
 		peace = false;
 		peaceActuality = 1;
-		alliances = new java.util.HashMap<Power[], Pair<Double, Integer>>(); // Double is Actuality Integer is SUPFavor
 	}
 	
 	public boolean peace;
 	public double peaceActuality;
-	public boolean alliance;
 	public double trust;
-	public String name;
-	public java.util.Map<Power[], Pair<Double, Integer>> alliances;
 }
 
 class ProvinceInfo
@@ -44,6 +54,8 @@ public class DodoBeliefBase {
 	Power	self;
 	ExtendedDodo ai;
 	
+	
+	public ArrayList<AllianceInfo>					allianceInfo;
 	public java.util.Map<Province, ProvinceInfo>	provinceInfo;
 	public java.util.Map<Power, PowerInfo>			powerInfo;
 	

@@ -39,6 +39,10 @@ public class Negotiator {
 		String from;
 		int end1, end2, i;
 		Power self = dodoAI.belief.self;
+		
+		Power[] allies;
+		Power[] enemies;
+		
 		synchronized(queue) {
 			for (String[] s : queue) {
 				if (s[0].equals("FRM")){
@@ -63,11 +67,11 @@ public class Negotiator {
 							// last bracket of allies
 							end2 = DaideList.unBracket(s, end1);
 
-							String[] allies = new String[end2-(end1+1)];
+							allies = new Power[end2-(end1+1)];
 
 							i=0;
 							for (int n = end1 + 1 ;n < end2;n++){
-								allies[i] = s[n];
+								allies[i] = map.getPower(s[n]);
 								i++;
 							}
 
@@ -76,13 +80,14 @@ public class Negotiator {
 							// last bracket of enemies
 							end2 = DaideList.unBracket(s, end1);
 
-							String[] enemies = new String[end2-(end1+1)];
+							enemies = new Power[end2-(end1+1)];
 
 							i = 0;
 							for (int n = end1 + 1;n < end2;n++){
-								enemies[i] = s[n];
+								enemies[i] = map.getPower(s[n]);
 								i++;
 							}
+							
 							if (acceptAlliance(allies, enemies)) {
 								for (int n = 0; n < allies.length; n++) {
 									if (!allies[n].equals(self.getName()));
@@ -184,11 +189,11 @@ public class Negotiator {
 								// last bracket of allies
 								end2 = DaideList.unBracket(s, end1);
 								
-								String[] allies = new String[end2-(end1+1)];
+								allies = new Power[end2-(end1+1)];
 								
 								i = 0;
 								for (int n = end1 + 1 ;n < end2;n++){
-									allies[i] = s[n];
+									allies[i] = map.getPower(s[n]);
 									i++;
 								}
 
@@ -197,11 +202,11 @@ public class Negotiator {
 								// last bracket of enemies
 								end2 = DaideList.unBracket(s, end1);
 								
-								String[] enemies = new String[end2-(end1+1)];
+								enemies = new Power[end2-(end1+1)];
 								
 								i = 0;
 								for (int n = end1 + 1;n < end2;n++){
-									enemies[i] = s[n];
+									enemies[i] = map.getPower(s[n]);
 									i++;
 								}
 								
@@ -237,7 +242,7 @@ public class Negotiator {
 								// last bracket of allies
 								end2 = DaideList.unBracket(s, end1);
 								
-								String[] allies = new String[end2-(end1+1)];
+								allies = new Power[end2-(end1+1)];
 
 								for (int n = end1 + 1 ;n < end2;n++){
 									// TODO: fill in belief base that the power is now your enemy
@@ -248,7 +253,7 @@ public class Negotiator {
 								// last bracket of enemies
 								end2 = DaideList.unBracket(s, end1);
 								
-								String[] enemies = new String[end2-(end1+1)];
+								enemies = new Power[end2-(end1+1)];
 
 								for (int n = end1 + 1;n < end2;n++){
 									// TODO: fill in belief base that the power is now.... your friend? :P
@@ -281,7 +286,7 @@ public class Negotiator {
 		clear();
 	}
 
-	private boolean acceptAlliance(String[] allies, String[] enemies) {
+	private boolean acceptAlliance(Power[] allies, Power[] enemies) {
 
 		// follow heuristics
 		if (map.getYear() == 1901) {
@@ -292,7 +297,7 @@ public class Negotiator {
 			boolean amIncluded = false;
 			boolean acceptAllies = false;
 			boolean acceptEnemies = false;
-			for (String s : allies) {
+			for (Power s : allies) {
 				if (s.equals(preffered.getName())) {
 					acceptAllies = true;
 				}
@@ -301,7 +306,7 @@ public class Negotiator {
 				}
 			}
 
-			for (String s : enemies) {
+			for (Power s : enemies) {
 				if (s.equals(preferredEnemy.getName())) {
 					acceptEnemies = true;
 				}
@@ -346,27 +351,43 @@ public class Negotiator {
 		}
 	}
 
-	private void setAlliance(String ally, String[] enemies, boolean bool) {
-		PowerInfo powerInfo = dodoAI.belief.powerInfo.get(map.getPower(ally));
-		java.util.Map<Power[], Pair<Double, Integer>> alliances = powerInfo.alliances;
-		Pair<Double, Integer> allianceValuePair = new Pair<Double, Integer> (1.0,0);
+	private void setAlliance(Power ally, Power[] enemies, boolean accepted) {
+		
+		AllianceInfo newAlliance = new AllianceInfo();
+		
+		newAlliance.with = ally;
+		
+		for (int n = 0; n < enemies.length; n++)
+			newAlliance.against.add(enemies[n]);
 
-		// translate the String[] enemies to Power[] enemiesP
-		Power[] enemiesP = new Power[enemies.length];
-		for (int n = 0; n<enemies.length;n++) {
-			enemiesP[n] = map.getPower(enemies[n]);
-		}
-
-		if (bool) {
-			if (alliances.containsKey(enemiesP)) {
-				allianceValuePair = alliances.get(enemiesP);
-				powerInfo.alliances.remove(enemiesP);
-				allianceValuePair = new Pair<Double, Integer>(1.0, allianceValuePair.getValue());
+		if (accepted) {
+			boolean addNew = true;
+			for (int a = 0; a < dodoAI.belief.allianceInfo.size(); a++)
+			{
+				AllianceInfo oldAlliance = dodoAI.belief.allianceInfo.get(a);
+				if (oldAlliance.with.equals(ally))
+				{
+					//refresh oldAlliance
+					
+					if (oldAlliance.against.containsAll(newAlliance.against))
+						addNew = false;
+				}
 			}
-			powerInfo.alliances.put(enemiesP, allianceValuePair);
+			if (addNew)
+				dodoAI.belief.allianceInfo.add(newAlliance);
 		} else {
-			if (alliances.containsKey(enemiesP)) {
-				powerInfo.alliances.remove(enemiesP);
+			for (int a = 0; a < dodoAI.belief.allianceInfo.size(); a++)
+			{
+				AllianceInfo oldAlliance = dodoAI.belief.allianceInfo.get(a);
+				if (oldAlliance.with.equals(ally))
+				{
+					if (oldAlliance.against.containsAll(newAlliance.against) &&
+						newAlliance.against.containsAll(oldAlliance.against))
+					{
+						dodoAI.belief.allianceInfo.remove(a);
+						a--;
+					}
+				}
 			}
 		}
 	}
