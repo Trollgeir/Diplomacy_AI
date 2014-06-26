@@ -330,11 +330,10 @@ public class Negotiator {
 		// TODO: add stuff on figuring out if we want the peace
 		return false;
 	}
-
+	
 	private boolean acceptSupportMoveProposal(Province supporting, Province supported, Province target)
 	{
-		if (!dodoAI.belief.isAlly(supported.getOwner()) ||
-			dodoAI.belief.isAlly(target.getOwner()))
+		if (!dodoAI.belief.isAlly(supported.getOwner()))
 			return false;
 		
 		
