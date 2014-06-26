@@ -125,6 +125,10 @@ public abstract class AI extends Receiver {
 		this.canMessage = cm;
 	}
 	
+	public Map getMap() {
+		return map; 
+	}
+
 	@Override
 	public void onMessage(String[] message) {
 		

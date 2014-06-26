@@ -298,6 +298,10 @@ public class ExtendedDodo extends AI {
 		return list.get((int)(Math.random() * list.size())); 
 	}
 
+	public DodoBeliefBase getBeliefBase() {
+		return belief;
+	}
+
 	/***********************************
 	||   ||     ==        =====   ||   // 
 	||   ||   //  \\     //       ||  //

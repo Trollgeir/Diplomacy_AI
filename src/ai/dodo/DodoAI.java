@@ -352,6 +352,10 @@ public class DodoAI extends AI {
 		return result; 
 	} 
 
+	public DodoBeliefBase getBeliefBase() {
+		return belief;
+	}
+
 	public void newTurn()
 	{
 		if (!power.alive)
