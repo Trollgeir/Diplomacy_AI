@@ -290,7 +290,7 @@ public class Negotiator {
 
 		// follow heuristics
 		if (map.getYear() == 1901) {
-			Power preffered = Heuristics.preferredAlliance(dodoAI.getPower(), map.getStandard(), map);
+			Power preferred = Heuristics.preferredAlliance(dodoAI.getPower(), map.getStandard(), map);
 			Power preferredSecond = Heuristics.secondPreferredAlliance(dodoAI.getPower(), map.getStandard(), map);
 			Power preferredEnemy = Heuristics.preferredEnemy(dodoAI.getPower(), map.getStandard(), map);
 
@@ -298,19 +298,19 @@ public class Negotiator {
 			boolean acceptAllies = false;
 			boolean acceptEnemies = false;
 			for (Power s : allies) {
-				if (s.equals(preffered.getName())) {
+				if (s.equals(preferred)) {
 					acceptAllies = true;
 				}
-				if (s.equals(dodoAI.belief.self.getName())) {
+				if (s.equals(dodoAI.belief.self)) {
 					amIncluded = true;
 				}
 			}
 
 			for (Power s : enemies) {
-				if (s.equals(preferredEnemy.getName())) {
+				if (s.equals(preferredEnemy)) {
 					acceptEnemies = true;
 				}
-				if (s.equals(dodoAI.belief.self.getName())) {
+				if (s.equals(dodoAI.belief.self)) {
 					acceptEnemies = false;
 				}
 			}
