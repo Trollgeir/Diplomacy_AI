@@ -2,6 +2,7 @@ package ai.dodo;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
 import kb.Map;
 import kb.unit.*;
 import kb.Node;
@@ -13,6 +14,7 @@ import ai.Heuristics;
 import game.Game;
 import kb.Names; 
 import kb.Phase; 
+import kb.Power;
 import kb.functions.MapInfo;
 import kb.functions.MapInfo.SCO_type; 
 
@@ -117,6 +119,34 @@ public class ExtendedDodo extends AI {
 		/*TODO, need to know all about sent messages..*/
 	}
 	
+	@Override
+	public void handleORD(String[] message)
+	{
+		Power from = map.getPower(message[7]);
+		String orderType = message[11];
+		String target = "";
+		Power supportPower = null;
+		
+		if (orderType.equals("MTO")) {
+			target = message[12];
+			//System.out.println("" + from.getName() + " " + orderType + " " + Target);
+		} else if (orderType.equals("SUP")) {
+			supportPower = map.getPower(message[13]);
+			target = message[18];
+			//System.out.println("" + from.getName() + " " + orderType + " " + supportPower.getName() + " in " + Target );
+		}
+		
+		ArrayList<Province> myProvinces = map.getProvincesByOwner(getPower());
+		if(target != "" && myProvinces.contains(target))
+		{
+			isDefected(from, supportPower);
+		}
+	
+		if (map.getPhase() == Phase.SUM || map.getPhase() == Phase.AUT){
+			//We're only interested in processing results after a movement phase. Parser needed!
+		}
+		
+	}
 	
 	@Override
 	public void init(String[] args) throws ArrayIndexOutOfBoundsException {
@@ -127,6 +157,32 @@ public class ExtendedDodo extends AI {
 		Map map = new Map();
 		AI ai = new ExtendedDodo(map);
 		new Game(ai, map, args);
+	}
+	
+	public void isDefected(Power mover, Power supporter)
+	{
+		if(supporter != null) // There is a supporter; check if he is in alliance or peace with us
+		{
+			if(belief.isAlly(mover) || belief.powerInfo.get(mover).peace) // The other power was trying to invade our province while being allied with us
+			{
+				handleBackstab(mover);
+			}
+			else if (belief.isAlly(supporter) || belief.powerInfo.get(supporter).peace)
+			{
+				handleBackstab(supporter);
+			}
+		}
+		else // No supporter; check if the mover has an alliance or peace with us
+			if(belief.isAlly(mover) || belief.powerInfo.get(mover).peace) // The other power was trying to invade our province while being allied with us
+			{
+				handleBackstab(mover);
+			}
+	}
+	
+	public void handleBackstab(Power p)
+	{
+		//TODO: determine if we kill of the alliance entirely
+		belief.deleteAllAlliancesWith(p);
 	}
 	
 	public void attack(ProvinceData target, ArrayList<UnitData> units, ArrayList<UnitData> usedUnits, ArrayList<Province> usedProvinces) {

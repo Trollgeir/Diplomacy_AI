@@ -157,6 +157,9 @@ public abstract class AI extends Receiver {
 		if (message[0].equals("HUH")){
 			handleHUH(message);
 		}
+		if(message[0].equals("ORD")){
+			handleORD(message);
+		}
 		
 		/*TODO*/
 	} 
@@ -196,6 +199,7 @@ public abstract class AI extends Receiver {
 	protected abstract void handleYES(String[] message);
 	protected abstract void handleREJ(String[] message);
 	protected abstract void handleHUH(String[] message);
+	protected abstract void handleORD(String[] message);
 	
 	public abstract void newTurn();
 	

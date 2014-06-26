@@ -179,4 +179,13 @@ public class DodoBeliefBase {
 			allianceInfo.get(i).time++;
 		}
 	}
+	
+	public void deleteAllAlliancesWith(Power p)
+	{
+		for(int i = 0; i < allianceInfo.size(); i++)
+		{
+			if(allianceInfo.get(i).with == p)
+				allianceInfo.remove(i);
+		}
+	}
 }
