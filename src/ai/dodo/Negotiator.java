@@ -64,10 +64,8 @@ public class Negotiator {
 
 							allies = new Power[end2-(end1+1)];
 
-							i=0;
-							for (int n = end1 + 1 ;n < end2;n++){
-								allies[i] = map.getPower(s[n]);
-								i++;
+							for (int n = 0;n <  end2 - (end1 + 1);n++){
+								allies[n] = map.getPower(s[n + end1 + 1]);
 							}
 
 							// first bracket of enemies
@@ -77,11 +75,10 @@ public class Negotiator {
 
 							enemies = new Power[end2-(end1+1)];
 
-							i = 0;
-							for (int n = end1 + 1;n < end2;n++){
-								enemies[i] = map.getPower(s[n]);
-								i++;
+							for (int n = 0;n <  end2 - (end1 + 1);n++){
+								enemies[n] = map.getPower(s[n + end1 + 1]);
 							}
+							
 							
 							if (acceptAlliance(allies, enemies)) {
 								for (int n = 0; n < allies.length; n++) {
@@ -188,10 +185,8 @@ public class Negotiator {
 								
 								allies = new Power[end2-(end1+1)];
 								
-								i = 0;
-								for (int n = end1 + 1 ;n < end2;n++){
-									allies[i] = map.getPower(s[n]);
-									i++;
+								for (int n = 0;n <  end2 - (end1 + 1);n++){
+									allies[n] = map.getPower(s[n + end1 + 1]);
 								}
 
 								// first bracket of enemies
@@ -201,10 +196,8 @@ public class Negotiator {
 								
 								enemies = new Power[end2-(end1+1)];
 								
-								i = 0;
-								for (int n = end1 + 1;n < end2;n++){
-									enemies[i] = map.getPower(s[n]);
-									i++;
+								for (int n = 0;n <  end2 - (end1 + 1);n++){
+									enemies[n] = map.getPower(s[n + end1 + 1]);
 								}
 								
 								for (int n = 0; n < allies.length; n++) {
@@ -241,8 +234,8 @@ public class Negotiator {
 								
 								allies = new Power[end2-(end1+1)];
 
-								for (int n = end1 + 1 ;n < end2;n++){
-									// TODO: fill in belief base that the power is now your enemy
+								for (int n = 0;n <  end2 - (end1 + 1);n++){
+									allies[n] = map.getPower(s[n + end1 + 1]);
 								}
 
 								// first bracket of enemies
@@ -252,9 +245,15 @@ public class Negotiator {
 								
 								enemies = new Power[end2-(end1+1)];
 
-								for (int n = end1 + 1;n < end2;n++){
-									// TODO: fill in belief base that the power is now.... your friend? :P
+								for (int n = 0;n <  end2 - (end1 + 1);n++){
+									enemies[n] = map.getPower(s[n + end1 + 1]);
 								}
+								
+								for (int n = 0; n < allies.length; n++) {
+									if (!allies[n].equals(self.getName()));
+										setAlliance(allies[n], enemies, false);
+								}
+								
 							} else if (s[end1+6].equals("PCE")){
 
 								// first bracket of peace members
