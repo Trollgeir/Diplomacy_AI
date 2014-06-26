@@ -9,6 +9,7 @@ public class LogReader {
 
 	public String[] names; 
 	public String[] powers;
+	int numObservers = 0;
 
 	public void readLog(String path, String[] powers, String[] names) {
 		this.names = names;
@@ -45,14 +46,19 @@ public class LogReader {
 		i--;
 		char x = line.charAt(i); 
 		int num = x - '0';
-		if (num == 0 || num > 7) return;
+		if (num == 0) return;
+		if(line.indexOf(">> OBS") != -1)
+		{
+			numObservers++;
+			return;
+		}
 		int idx = line.indexOf("NME");
 		if (idx != -1) { 
-			names[num] = processName(line, idx + 3 + 4);
+			names[num-numObservers] = processName(line, idx + 3 + 4);
 		}
 		idx = line.indexOf("HLO");
 		if (idx != -1) {
-			powers[num] = processPower(line, idx + 3 + 3);
+			powers[num-numObservers] = processPower(line, idx + 3 + 3);
 		}  			
 	}
 
