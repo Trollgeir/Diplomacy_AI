@@ -12,7 +12,7 @@ class AllianceInfo
 {
 	public AllianceInfo()
 	{
-		//Just some default values, may need tweaking.
+		//TODO: Just some default values, may need tweaking.
 		paranoia = 0.0f;
 		supFavor = 0;
 		against = new ArrayList<Power>();
@@ -160,6 +160,16 @@ public class DodoBeliefBase {
 					provinceInfo.get(p).threatChange = 0.0;
 			}
 		}
+	}
+	
+	public boolean isAlly(Power power)
+	{
+		for (AllianceInfo alliance : allianceInfo)
+		{
+			if (alliance.with.equals(power))
+				return true;
+		}
+		return false;
 	}
 	
 	public void incrementAllianceTime()

@@ -3,19 +3,13 @@ package ai.dodo;
 import game.Game;
 
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.ArrayList;
-
 import message.DaideList;
 import message.press.*;
 import message.server.*;
 import ai.Heuristics;
-import ai.dodo.DodoBeliefBase;
-import ai.dodo.Pair;
 import kb.Map;
-import kb.Phase;
 import kb.Power;
 import kb.province.Province;
-import kb.unit.Unit;
 
 // its a bit messy & ugly but it works
 public class Negotiator {
@@ -339,13 +333,23 @@ public class Negotiator {
 
 	private boolean acceptSupportMoveProposal(Province supporting, Province supported, Province target)
 	{
+		if (!dodoAI.belief.isAlly(supported.getOwner()) ||
+			dodoAI.belief.isAlly(target.getOwner()))
+			return false;
+		
+		
 		//TODO: this.
+		
 		return false;
 	}
 	
 	private boolean acceptSupportHoldProposal(Province supporting, Province supported)
 	{
+		if (!dodoAI.belief.isAlly(supported.getOwner()))
+			return false;
+		
 		//TODO: this.
+		
 		return false;
 	}
 
