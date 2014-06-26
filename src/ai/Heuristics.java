@@ -10,7 +10,6 @@ import kb.Map;
 import kb.Node;
 import kb.Power;
 import kb.unit.Unit;
-import negotiator.Negotiator;
 import message.order.*;
 import message.server.Connect;
 import message.server.MapDefinition;
@@ -20,6 +19,7 @@ import communication.server.DisconnectedException;
 import communication.server.Server;
 import communication.server.UnknownTokenException;
 import ai.AI;
+import ai.dodo.Negotiator;
 import game.Game;
 import kb.Names; 
 
