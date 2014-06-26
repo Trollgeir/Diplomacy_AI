@@ -209,7 +209,7 @@ public class ExtendedDodo extends AI {
 		usedProvinces.add(target.province);
 
 		int used = 0;
-		int needed = target.getSupportNeeded();
+		int needed = target.supportNeeded;
 		while (used < needed - 1) {
 			UnitData supportUnit = units.get(used); 
 			if (holdingUnit == null) {
@@ -331,7 +331,6 @@ public class ExtendedDodo extends AI {
 			/*
 			MOVEMENT PHASES
 			*/
-
 			System.out.println("Init MapInfo");
 			System.out.println("power: " + power);
 			
@@ -341,6 +340,11 @@ public class ExtendedDodo extends AI {
 			while (true) {
 				ArrayList<ProvinceData> targets = mapInfo.getSortedTargets(); 
 				targets = mapInfo.filterTakeable(targets);
+
+				System.out.println("Sorted targets:" + targets.size());
+				for (ProvinceData p : targets) {
+					if (p.weight > 0) System.out.println(p.toString()); 
+				}
 
 				float totalWeight = 0; 
 				for (ProvinceData target : targets) totalWeight += target.weight;
@@ -354,6 +358,7 @@ public class ExtendedDodo extends AI {
 
 				//System.out.println("attacking: " + targets.get(targetIdx).province.name);
 				ArrayList<UnitData> sortedUnits = mapInfo.getSortedUnits(targets.get(targetIdx));
+				System.out.println("UNITS SIZE : " + sortedUnits.size());
 
 				//Be sure that the unit standing on the target is always used (or do something intelligent...)
 				
@@ -377,17 +382,19 @@ public class ExtendedDodo extends AI {
 					}
 				}
 
-				System.out.println("------------- ORDERS -------------");
-				for (Order order : queue) {
-					System.out.println(order.daide());
-				}
-
 
 				mapInfo.updateByMove(usedUnits, usedProvinceData);
 
 			}
+			
+			System.out.println(availableUnits.size() + " units have nothing to do");
 			for (Unit u : availableUnits) {
 				queue.add(new Hold(u));
+			}
+
+			System.out.println("------------- ORDERS -------------");
+			for (Order order : queue) {
+				System.out.println(order.daide());
 			}
 			
 		} else if(map.getPhase() == Phase.SUM || map.getPhase() == Phase.AUT){

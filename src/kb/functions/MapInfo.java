@@ -36,6 +36,28 @@ public class MapInfo {
 		initProvinceDataList();
 	}
 
+	/*
+	Create for every province we can move to, a new provinceData object 
+	*/
+	private void initProvinceDataList() {
+		for (Province prov : map.provinces) {
+			provinceData.add(new ProvinceData(power, prov, map.powers));
+		}
+
+		for (ProvinceData p : provinceData) p.computeAdjProvDatas(provinceData);
+
+		for (ProvinceData p : provinceData) p.determineSharedUnits(provinceData);
+
+		for (ProvinceData p : provinceData) p.computeSupportValues();
+
+		for (ProvinceData p : provinceData) p.computeGains();
+
+		for (ProvinceData p : provinceData) p.computeSmoothedGains();
+
+		for (ProvinceData p : provinceData) p.computeWeight();
+	}
+
+
 	public ArrayList<ProvinceData> getSortedTargets() {
 		ArrayList<ProvinceData> sortedList = new ArrayList<ProvinceData>();
 		sortedList.addAll(provinceData);
@@ -106,25 +128,7 @@ public class MapInfo {
 		provinceData.add(new ProvinceData(power, n.province, map.powers));
 	}
 
-	/*
-	Create for every province we can move to, a new provinceData object 
-	*/
-	private void initProvinceDataList() {
-		for (Unit u : units) {
-			addProvinceData(u, u.location); 
-			ArrayList<Node> neighbourhood = map.getValidNeighbours(u);
-			for (Node n : neighbourhood) {
-				addProvinceData(u, n);
-			}
-		}
 	
-		for (ProvinceData p : provinceData) p.determineSharedUnits(provinceData);
-
-		for (ProvinceData p : provinceData) {
-			p.computeWeight();
-		}
-	}
-
 	/*
 	Return a list of home SCO's under our control, which do not have our units on there 
 	*/

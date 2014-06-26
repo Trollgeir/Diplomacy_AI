@@ -93,20 +93,12 @@ public class Province {
 	
 	public Unit unit()
 	{
-		if (!isCoast)
-		{
-			return centralNode.unit;
+		if (centralNode.unit != null) return centralNode.unit;
+
+		for (Node node : coastLine) {
+			if (node.unit != null) return node.unit;
 		}
-		else
-		{
-			for (int i = 0; i < coastLine.size(); i++)
-			{
-				if (coastLine.get(i).unit != null)
-				{
-					return coastLine.get(i).unit;
-				}
-			}
-		}
+
 		return null;
 	}
 	

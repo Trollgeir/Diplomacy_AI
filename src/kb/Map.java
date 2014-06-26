@@ -42,6 +42,12 @@ public class Map extends Receiver {
 		year = -1;
 		
 		ai = null;
+
+		//YOU FORGOT TO INIT THIS !!! 
+		//JURIAN ? :P 
+		//OR THIJS ...
+		//!!!!!!!!!!!!!
+		ordMessages = new ArrayList<String[]>();
 	}
 
 	public void setAI(AI ai)
