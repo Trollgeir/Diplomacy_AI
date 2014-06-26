@@ -16,10 +16,12 @@ class AllianceInfo
 		paranoia = 0.0f;
 		supFavor = 0;
 		against = new ArrayList<Power>();
+		time = 0;
 	}
 	
 	public double 			paranoia;
 	public int				supFavor;
+	public int				time;
 	public Power			with;
 	public ArrayList<Power>	against;
 }
@@ -160,5 +162,11 @@ public class DodoBeliefBase {
 		}
 	}
 	
-	
+	public void incrementAllianceTime()
+	{
+		for (int i = 0; i < allianceInfo.size(); i++)
+		{
+			allianceInfo.get(i).time++;
+		}
+	}
 }

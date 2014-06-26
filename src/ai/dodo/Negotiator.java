@@ -14,6 +14,7 @@ import ai.dodo.Pair;
 import kb.Map;
 import kb.Phase;
 import kb.Power;
+import kb.province.Province;
 import kb.unit.Unit;
 
 // its a bit messy & ugly but it works
@@ -109,16 +110,14 @@ public class Negotiator {
 							// last bracket of peace
 							end2 = DaideList.unBracket(s, end1);
 
-							String[] members = new String[end2-(end1+1)];
+							Power[] members = new Power[end2-(end1+1)];
 
-							i=0;
-							for (int n = end1 + 1 ;n < end2;n++){
-								members[i] = s[n];
-								i++;
+							for (int n = 0 ;n < end2 - (end1 + 1); n++){
+								members[n] = map.getPower(s[n + end1 + 1]);
 							}
 
 							if (acceptPeace(members)) {
-								for (int n = 0; n<members.length;n++) {
+								for (int n = 0; n<members.length; n++) {
 									if (!members[n].equals(self.getName()));
 										setPeace(members[n], true);
 								}
@@ -143,26 +142,30 @@ public class Negotiator {
 							end2 = DaideList.unBracket(s, end1);
 
 							if (s[end2+1].equals("SUP")) {
-								//String unit1Pow = s[end1+1];
-								//String unit1Type = s[end1+2];
-								String unit1Prov = s[end1+3];
+								
+								Province supporting, supported, target;
+								
+								supporting = map.getProvince(s[end1+3]);
 
 								//start second unit
 								end1 = end2+2;
 								// end second unit
 								end2 = DaideList.unBracket(s, end1);
+							
+								supported = map.getProvince(s[end1+3]);
 
-								//String unit2Pow = s[end1+1];
-								//String unit2Type = s[end1+2];
-								String unit2Prov = s[end1+3];
-
-								String target = "";
-
+								boolean accept;
+								
 								if (s[end2+1].equals("MTO")) {
-									target = s[end2+2];
+									target = map.getProvince(s[end2+2]);
+									accept = acceptSupportMoveProposal(supporting, supported, target);
+								}
+								else
+								{
+									accept = acceptSupportHoldProposal(supporting, supported);
 								}
 
-								if (acceptOrderProposal(unit1Prov, unit2Prov, target)) {
+								if (accept) {
 									// TODO: handle XDO
 									Game.server.send(new Send(new Yes(prop), map.getPower(from)));
 								} else {
@@ -224,7 +227,7 @@ public class Negotiator {
 
 								for (int n = end1 + 1 ;n < end2;n++){
 									if (!s[n].equals(self.getName()));
-										setPeace(s[n],true);
+										setPeace(map.getPower(s[n]),true);
 								}
 							} else if (s[end1+6].equals("XDO")) {
 								// TODO: handle accepted order proposal
@@ -235,7 +238,7 @@ public class Negotiator {
 
 					} else if (s[end1+2].equals("REJ")) {
 						if (s[end1+4].equals("PRP")){
-							// handle rejected aly proposal:
+							// handle rejected ally proposal:
 							if (s[end1+6].equals("ALY")) {
 								// first bracket of allies
 								end1 = end1+7;
@@ -267,7 +270,7 @@ public class Negotiator {
 
 								for (int n = end1 + 1 ;n < end2;n++){
 									if (!s[n].equals(self.getName()));
-									setPeace(s[n], false);
+									setPeace(map.getPower(s[n]), false);
 								}
 							} else if (s[end1+6].equals("XDO")) {
 								// TODO handle rejected order proposal
@@ -328,21 +331,28 @@ public class Negotiator {
 
 	}
 
-	private boolean acceptPeace(String[] members) {
+	private boolean acceptPeace(Power[] members) {
 
 		// TODO: add stuff on figuring out if we want the peace
 		return false;
 	}
 
-	private boolean acceptOrderProposal(String ProvenceUnit1, String ProvenceUnit2, String target) {
-		// TODO: add stuff on figuring out if we accept the order proposal
+	private boolean acceptSupportMoveProposal(Province supporting, Province supported, Province target)
+	{
+		//TODO: this.
+		return false;
+	}
+	
+	private boolean acceptSupportHoldProposal(Province supporting, Province supported)
+	{
+		//TODO: this.
 		return false;
 	}
 
-	private void setPeace(String power, boolean bool) {
+	private void setPeace(Power member, boolean accepted) {
 
-		PowerInfo powerInfo = dodoAI.belief.powerInfo.get(map.getPower(power));
-		if (bool) {
+		PowerInfo powerInfo = dodoAI.belief.powerInfo.get(member);
+		if (accepted) {
 			powerInfo.peace = true;
 			powerInfo.peaceActuality = 1.0;
 		} else {
