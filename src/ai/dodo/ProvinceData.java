@@ -12,17 +12,17 @@ import kb.province.Province;
 public class ProvinceData {
 
 	public static float c_smooth = 0.25f;
-	public static float c_thread = 0.25f;
+	public static float c_threat = 0.5f;
 	
-	public static float c_shared = 0.0f;
-	public static float risk = 1.0f; 
-	public static float sharedRisk = 1.0f;
+	public static float c_shared = 0.25f;
+	//public static float risk = 1.0f; 
+	//public static float sharedRisk = 1.0f;
 	public static float defence = 1.0f; 
 
 	public static float takeOverRisk = 0.5f;
 
-	public static float normalSuply = 1.0f;
-	public static float homeSuply = 2.0f; 
+	public static float normalSuply = 2.5f;
+	public static float homeSuply = 4.0f; 
 
 	public static float c_neutralCSO = 1.0f;
 	public static float c_ownedCSO = 1.5f;
@@ -42,7 +42,7 @@ public class ProvinceData {
 	public int supportNeeded;
 	public int maxNegSupport; 
 	public int mainEnemy; 
-	public float expectedNeg;
+	//public float expectedNeg;
 
 	public float weight; 
 	public float gains; 
@@ -65,10 +65,6 @@ public class ProvinceData {
 		shared = new int[powers.size()];
 
 		computeAdjProvinces();
-
-		addNearUnits(province);
-		for (Province p : adjProvinces) addNearUnits(p);
-
 		//computeGains(power);
 	}
 
@@ -78,6 +74,9 @@ public class ProvinceData {
 				if (provData.province == prov) adjProvDatas.add(provData);
 			}
 		}
+
+		addNearUnits(this);
+		for (ProvinceData p : adjProvDatas) addNearUnits(p);
 	}
 
 	private void computeWeight(Power power) {
@@ -89,7 +88,15 @@ public class ProvinceData {
 		//init weight on the gains.
 		weight = smoothedGains; 
 
-		if (weight >= c_neutralCSO * normalSuply && mainEnemy == -1) weight += 1;
+		int idx = powers.indexOf(power);
+		for (UnitData unit : nearUnits.get(idx)) {
+			if (unit.provData == this) continue;
+			weight -= c_shared * unit.provData.smoothedGains;
+		}
+
+		if (weight < 0) weight = 0; 
+
+		//if (weight >= c_neutralCSO * normalSuply && mainEnemy == -1) weight += 1;
 
 		weight *= weight; 
 	}
@@ -101,7 +108,7 @@ public class ProvinceData {
 
 		//add gain when our SCO is threaded. 
 		if (getSupplyWeight(province) * isOwn > 0) {
-			gains += c_thread * maxNegSupport;
+			gains += c_threat * maxNegSupport;
 		}
 	}
 
@@ -200,11 +207,13 @@ public class ProvinceData {
 			}
 		}
 
+		/*
 		if (mainEnemy == -1) {
 			expectedNeg = 0; 
 		} else{
 			expectedNeg =  risk * (maxNegSupport - shared[mainEnemy]) + sharedRisk * shared[mainEnemy];
 		}
+		*/
 	}
 
 	private void computeSupport(Power power) {
@@ -217,14 +226,14 @@ public class ProvinceData {
 
 	//Add the units from nearProv to nearUnits.
 	//This is done seperatly for each power. 
-	private void addNearUnits(Province nearProv) {
-		Unit unit = nearProv.getUnit();
+	private void addNearUnits(ProvinceData nearProv) {
+		Unit unit = nearProv.province.getUnit();
 		if (unit == null) return;
 
 		Node destNode = findDestNode(unit, province);
 		if (destNode != null) {
 			int powerIdx = powers.indexOf(unit.owner);
-			nearUnits.get(powerIdx).add(new UnitData(unit, destNode));
+			nearUnits.get(powerIdx).add(new UnitData(unit, destNode, nearProv));
 		}
 	
 	}
@@ -346,7 +355,6 @@ public class ProvinceData {
 		str += "\tsupport: " + support + "\n";
 		str += "\tsupportNeeded: " + supportNeeded + "\n"; 
 		str += "\tmaxNegSupport: " + maxNegSupport + "\n"; 
-		str += "\texpectedNeg:   " + expectedNeg + "\n";
 		str += "\tmainEnemy:     " + mainEnemy + "\n";
 		return str; 
 	}

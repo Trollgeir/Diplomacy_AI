@@ -11,10 +11,12 @@ public class UnitData {
 	public Unit unit;
 	public int shared;
 	public Node destNode;
+	public ProvinceData provData; 
 
-	public UnitData(Unit unit, Node destNode) {
+	public UnitData(Unit unit, Node destNode, ProvinceData provData) {
 		this.unit = unit;
 		this.destNode = destNode; 
+		this.provData = provData;
 		shared = 0;
 	}
 
