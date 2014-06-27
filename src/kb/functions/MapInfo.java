@@ -100,6 +100,18 @@ public class MapInfo {
 		//remove the provinces to which is moved. 
 		provinceData.removeAll(movedTo);
 
+		//add smoothedgains to nearby provinces to simulate cohesion. 
+		float kernelWeight[] = {0, 2, 0.75f};
+		ArrayList<ArrayList<ProvinceData>> kernel = getProvinceKernel(movedTo, 2);
+		for (int i = 0; i < kernel.size(); ++i ) {
+			System.out.println("Order " + i);
+			for (ProvinceData provData : kernel.get(i)) {
+				System.out.println("\t" + provData.province.getName());
+				provData.smoothedGains += kernelWeight[i]; 
+			}
+		}
+
+
 		//recompute the weights for the provinces left.
 		//the gains will remain the same. 
 		for (ProvinceData p : provinceData) p.computeWeight();
@@ -107,6 +119,35 @@ public class MapInfo {
 		//dont't call the determineSharedUnits, since the near units are locally updated during the p.update() call.   
 	}
 	
+	public ArrayList<ArrayList<ProvinceData>> getProvinceKernel(ArrayList<ProvinceData> order0, int order) {
+		 ArrayList<ArrayList<ProvinceData>> result = new  ArrayList<ArrayList<ProvinceData>>();
+		 for (int i = 0; i <= order; ++i) {
+		 	result.add(new ArrayList<ProvinceData>());
+		 }
+
+		 result.get(0).addAll(order0);
+
+		 //Add order i to result;
+		 for (int i = 1; i <= order; ++i) {
+		 	//add all the adjecent provinces from the previous order
+		 	for (ProvinceData provData : result.get(i-1)) {
+		 		for (ProvinceData adjProvData : provData.adjProvDatas) {
+		 			//add only when it is not already contained in the 0 .. i-th order.  
+		 			boolean contained = false;
+		 			for (int j = 0; j <= i; ++j) {
+		 				if (result.get(j).contains(adjProvData)) {
+		 					contained = true;
+		 					break;
+		 				}
+		 			}
+
+		 			if (!contained) result.get(i).add(adjProvData);
+		 		}
+		 	} 	
+		}
+
+		return result; 
+	}
 
 	public ArrayList<Unit> getUnits() {
 		return units; 
