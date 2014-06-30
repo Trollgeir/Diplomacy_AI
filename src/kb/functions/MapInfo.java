@@ -83,6 +83,16 @@ public class MapInfo {
 		return result; 
 	}
 
+	public ArrayList<ProvinceData> filterOccupied(ArrayList<ProvinceData> targets, Power power) {
+		ArrayList<ProvinceData> result = new ArrayList<ProvinceData>();
+
+		for (ProvinceData p : targets) {
+			if (p.province.getUnit() != null && p.province.getUnit().owner == power) result.add(p);
+		}
+
+		return result; 
+	}
+
 	public ArrayList<UnitData> getSortedUnits(ProvinceData target) {
 		return target.getAvailebleUnits();
 	}
@@ -101,7 +111,7 @@ public class MapInfo {
 		provinceData.removeAll(movedTo);
 
 		//add smoothedgains to nearby provinces to simulate cohesion. 
-		float kernelWeight[] = {0, 2, 0.75f};
+		float kernelWeight[] = {0, 8, 5};
 		ArrayList<ArrayList<ProvinceData>> kernel = getProvinceKernel(movedTo, 2);
 		for (int i = 0; i < kernel.size(); ++i ) {
 			System.out.println("Order " + i);

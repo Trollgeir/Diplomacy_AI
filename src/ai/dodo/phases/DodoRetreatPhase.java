@@ -12,7 +12,7 @@ import ai.dodo.*;
 
 public class DodoRetreatPhase extends DodoPhase {
 
-	public DodoRetreatPhase(DodoAI ai) {
+	public DodoRetreatPhase(ExtendedDodo ai) {
 		super(ai); 
 	} 
 

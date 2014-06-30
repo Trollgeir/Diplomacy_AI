@@ -13,9 +13,7 @@ import ai.dodo.*;
 
 public class DodoMovementPhase extends DodoPhase {
 
-
-
-	public DodoMovementPhase(DodoAI ai) {
+	public DodoMovementPhase(ExtendedDodo ai) {
 		super(ai); 
 	} 
 
@@ -60,10 +58,12 @@ public class DodoMovementPhase extends DodoPhase {
 
 	public void run(LinkedBlockingQueue<Order> queue) {
 		MapInfo mapInfo = new MapInfo(map, power);
+		
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
 		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
 		ArrayList<Province> occupied = new ArrayList<Province>();
+		
 		for (Unit u : units) occupied.add(u.location.province);
 
 		System.out.println("Init MapInfo");

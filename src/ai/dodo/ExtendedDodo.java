@@ -3,6 +3,7 @@ package ai.dodo;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import ai.dodo.phases.*;
 import kb.Map;
 import kb.unit.*;
 import kb.Node;
@@ -326,160 +327,19 @@ public class ExtendedDodo extends AI {
 		System.out.println("New turn for " + power.getName());
 		System.out.println("Year: " + map.getYear() + " -----------  Phase: " + map.getPhase()); 
 
-		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
-		ArrayList<Province> home = power.homeProvinces;
-		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
-		ArrayList<Province> occupied = new ArrayList<Province>();
-		for (Unit u : units) occupied.add(u.location.province);
-
 		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
-			/*
-			MOVEMENT PHASES
-			*/
-			System.out.println("Init MapInfo");
-			System.out.println("power: " + power);
-			
-			ArrayList<Unit> availableUnits = new ArrayList<Unit>(); 
-			availableUnits.addAll(units);
-			
-			while (availableUnits.size() > 0) {
-				ArrayList<ProvinceData> targets = mapInfo.getSortedTargets(); 
-				targets = mapInfo.filterTakeable(targets);
-
-				System.out.println("Sorted targets:" + targets.size());
-				for (ProvinceData p : targets) {
-					if (p.weight > 0) System.out.println(p.toString()); 
-				}
-
-				float totalWeight = 0; 
-				for (ProvinceData target : targets) totalWeight += target.weight;
-
-				if (totalWeight == 0) break; 
-
-				int targetIdx = 0;
-				float val = 0;
-				float targetVal = (float)Math.random() * totalWeight;
-				while ((val += targets.get(targetIdx).weight) < targetVal && targetIdx++ < targets.size());
-
-				//System.out.println("attacking: " + targets.get(targetIdx).province.name);
-				ArrayList<UnitData> sortedUnits = mapInfo.getSortedUnits(targets.get(targetIdx));
-				System.out.println("UNITS SIZE : " + sortedUnits.size());
-
-				//Be sure that the unit standing on the target is always used (or do something intelligent...)
-				
-				ArrayList<UnitData> usedUnits = new ArrayList<UnitData>();
-				ArrayList<Province> usedProvinces = new ArrayList<Province>(); 
-				
-				attack(targets.get(targetIdx), sortedUnits, usedUnits, usedProvinces);
-	
-				for (UnitData ud : usedUnits) {
-					availableUnits.remove(ud.unit); 
-				}
-
-				ArrayList<ProvinceData> usedProvinceData =  new ArrayList<ProvinceData>();
-
-				for (Province p0 : usedProvinces) {
-					for (ProvinceData p1 : targets) {
-						if (p0 == p1.province) {
-							usedProvinceData.add(p1);
-							break;
-						}
-					}
-				}
-
-
-				mapInfo.updateByMove(usedUnits, usedProvinceData);
-
-			}
-			
-			System.out.println(availableUnits.size() + " units have nothing to do");
-			for (Unit u : availableUnits) {
-				queue.add(new Hold(u));
-			}
-
-			System.out.println("------------- ORDERS -------------");
-			for (Order order : queue) {
-				System.out.println(order.daide());
-			}
+			DodoMovementPhase movementPhase = new DodoMovementPhase(this); 
+			movementPhase.run(queue);
 			
 		} else if(map.getPhase() == Phase.SUM || map.getPhase() == Phase.AUT){
-			for(Unit u : units)
-			{
-				if(u.mustRetreat) {
-					// No place to retreat to, so we must disband. 
-					if(u.retreatTo.size() == 0) queue.add(new Disband(u)); 
-					else {
-						//Try to move to a supply center
-						Node destination = moveToSupplyCenter(u, u.retreatTo, occupied, false, false);
-						if(destination == null) queue.add(new Disband(u)); 
-						else {
-							occupied.remove(u.location.province); 
-							occupied.add(destination.province);
-							System.out.println(power.getName() + " : " + "I want to retreat " + u.location.daide() + " to " + destination.daide()); 
-							queue.add(new Retreat(u, destination)); 
-						}
-					}
-				}
-			}
+			
+			DodoRetreatPhase retreatPhase = new DodoRetreatPhase(this);
+			retreatPhase.run(queue);
 		} else if (map.getPhase() == Phase.WIN) { 
-			/*
-			BUILD PHASE
-			*/
-			System.out.println("---------- BUILD/REMOVE ----------");
-			ArrayList<Province> built = new ArrayList<Province>();
-			ArrayList<Unit> canBeRemoved = new ArrayList<Unit>();
-			canBeRemoved.addAll(units); 
-			int error = units.size() - provinces.size(); 
-			// error > 0 means more units then provinces so REMOVE
-			// error < 0 means more provinces then units so  BUILD
-			while(error > 0)
-			{
-				Unit remove = null; int best = 0; int j = 0;
-				for(Unit u : canBeRemoved)
-				{
-					if (u.location.province.isSupplyCenter()) {
-						j = 0;
-					} else {
-						ArrayList<Node> nbh = filterNeighbours(map.getValidNeighbours(u), occupied);
-						Node n = moveToSupplyCenter(u, nbh, occupied, false, true);
-						if (n == null) {
-							j = 3;
-						} else if (n.province.isSupplyCenter()) {
-							j = 1;
-						} else {
-							j = 2;
-						}
-					}
-					if(j > best)
-					{
-						remove = u;
-						best = j;
-					}
-					else if(j == best)
-						if(Math.random() > 0.5)
-							remove = u;
-				}
-				queue.add(new Remove(remove));
-				canBeRemoved.remove(remove); 
-				error--;
-			}
-			while (error < 0) {
-				//BUILD
-				ArrayList<Province> scs = filterProvinces(map.getProvincesByOwner(power), built, units);
-
-				if (scs.size() == 0) { 
-					System.out.println("No room to build! All SC's are occupied :(");
-					queue.add(new WaiveBuild(power));
-				} else {
-					int idx = (int)(Math.random() * scs.size());
-					queue.add(new Build(new Army(power, scs.get(idx).getCentralNode())));
-					System.out.println("Building unit in " + scs.get(idx).getCentralNode().daide());
-					built.add(scs.get(idx));
-				}
-				error++; 
-			}
+			
+			DodoBuildPhase buildPhase = new DodoBuildPhase(this);
+			buildPhase.run(queue);
 		}
-		
 
 		if (key_to_send) {
 			try {

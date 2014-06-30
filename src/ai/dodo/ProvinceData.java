@@ -65,18 +65,6 @@ public class ProvinceData {
 		shared = new int[powers.size()];
 
 		computeAdjProvinces();
-		//computeGains(power);
-	}
-
-	public void computeAdjProvDatas(ArrayList<ProvinceData> provDatas) {
-		for (ProvinceData provData : provDatas) {
-			for (Province prov : adjProvinces) {
-				if (provData.province == prov) adjProvDatas.add(provData);
-			}
-		}
-
-		addNearUnits(this);
-		for (ProvinceData p : adjProvDatas) addNearUnits(p);
 	}
 
 	private void computeWeight(Power power) {
@@ -95,8 +83,6 @@ public class ProvinceData {
 		}
 
 		if (weight < 0) weight = 0; 
-
-		//if (weight >= c_neutralCSO * normalSuply && mainEnemy == -1) weight += 1;
 
 		weight *= weight; 
 	}
@@ -206,14 +192,6 @@ public class ProvinceData {
 				mainEnemy = i; 
 			}
 		}
-
-		/*
-		if (mainEnemy == -1) {
-			expectedNeg = 0; 
-		} else{
-			expectedNeg =  risk * (maxNegSupport - shared[mainEnemy]) + sharedRisk * shared[mainEnemy];
-		}
-		*/
 	}
 
 	private void computeSupport(Power power) {
@@ -267,7 +245,13 @@ public class ProvinceData {
 		float c_supply = province.getOwner() != null ? c_ownedCSO : c_neutralCSO; 
 
 		for (Power p : powers) {
-			if (p.homeProvinces.contains(province)) return c_supply * homeSuply; 
+			if (p.homeProvinces.contains(province)) {
+				if (province.getOwner() == p && p.alive) {
+					return c_supply * homeSuply; 
+				} else {
+					break;
+				}
+			}
 		}
 
 		return c_supply * normalSuply;
@@ -344,6 +328,18 @@ public class ProvinceData {
 			}
 		}
 	}
+
+	public void computeAdjProvDatas(ArrayList<ProvinceData> provDatas) {
+		for (ProvinceData provData : provDatas) {
+			for (Province prov : adjProvinces) {
+				if (provData.province == prov) adjProvDatas.add(provData);
+			}
+		}
+
+		addNearUnits(this);
+		for (ProvinceData p : adjProvDatas) addNearUnits(p);
+	}
+
 
 
 	public String toString() {
