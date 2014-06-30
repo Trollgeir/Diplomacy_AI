@@ -125,14 +125,17 @@ public class Negotiator {
 								Game.server.send(new Send(new Reject(prop), map.getPower(from)));
 
 							}
-						} else if (s[end1+4].equals("XDO")) {
+						} 
+						else if (s[end1+4].equals("XDO")) 
+						{
 
 							// start first unit
 							end1=end1+6;
 							// end first unit
 							end2 = DaideList.unBracket(s, end1);
 
-							if (s[end2+1].equals("SUP")) {
+							if (s[end2+1].equals("SUP")) 
+							{
 								
 								Province supporting, supported, target;
 								
@@ -175,9 +178,13 @@ public class Negotiator {
 
 						}
 
-					} else if (s[end1+2].equals("YES")) {
-						if (s[end1+4].equals("PRP")){
-							if (s[end1+6].equals("ALY")) {
+					} 
+					else if (s[end1+2].equals("YES")) 
+					{
+						if (s[end1+4].equals("PRP"))
+						{
+							if (s[end1+6].equals("ALY")) 
+							{
 								// first bracket of allies
 								end1 = end1+7;
 								// last bracket of allies
@@ -335,6 +342,23 @@ public class Negotiator {
 		if (!dodoAI.belief.isAlly(supported.getOwner()))
 			return false;
 		
+		AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
+		
+		int totalSupFavor = 0;
+		
+		for (Power enemy : alliance.against)
+		{
+			if (target.getOwner().equals(enemy))
+			{
+				totalSupFavor += alliance.supFavor;
+			}
+		}
+		
+		if (totalSupFavor < 0) //We owe them
+		{
+			if (dodoAI.righteousness >= 1.0) //TODO: should this be righteousness > paranoia?
+				return true;
+		}
 		
 		//TODO: this.
 		
@@ -345,6 +369,21 @@ public class Negotiator {
 	{
 		if (!dodoAI.belief.isAlly(supported.getOwner()))
 			return false;
+		
+		AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
+		
+		int totalSupFavor = 0;
+		
+		for (Power enemy : alliance.against)
+		{
+			totalSupFavor += alliance.supFavor;
+		}
+		
+		if (totalSupFavor < 0) //We owe them
+		{
+			if (dodoAI.righteousness >= 1.0)
+				return true;
+		}
 		
 		//TODO: this.
 		

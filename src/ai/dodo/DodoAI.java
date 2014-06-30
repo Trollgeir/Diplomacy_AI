@@ -33,7 +33,7 @@ public class DodoAI extends AI {
 	String fileName = "";
 	String name = "changeMe!";
 	double initialTrust = 0.5;
-	double decrement = 0.05;
+	double decay = 0.05;
 	double righteousness = 0.5;
 	double supportSteep = 0.5;
 	
@@ -87,7 +87,7 @@ public class DodoAI extends AI {
 					} else if (line.startsWith("initialTrust")) {
 						initialTrust = Double.parseDouble(result);
 					} else if (line.startsWith("halflife")) {
-						decrement = Double.parseDouble(result);
+						decay = Double.parseDouble(result);
 					} else if (line.startsWith("rightesnous")) {
 						righteousness = Double.parseDouble(result);
 					} else if (line.startsWith("supportSteep")) {
@@ -103,7 +103,7 @@ public class DodoAI extends AI {
 			
 			e.printStackTrace();
 		}
-		System.out.println("name: " + name + " initialTrust: " + initialTrust + " decrement: " + decrement + " rightesnous: " + righteousness + " supportSteep: " + supportSteep );
+		System.out.println("name: " + name + " initialTrust: " + initialTrust + " decay: " + decay + " rightesnous: " + righteousness + " supportSteep: " + supportSteep );
 	}
 
 	public void findGains()
