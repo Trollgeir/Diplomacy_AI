@@ -331,7 +331,7 @@ public class ExtendedDodo extends AI {
 		ArrayList<Province> provinces = map.getProvincesByOwner(this.getPower()); 
 		ArrayList<Province> occupied = new ArrayList<Province>();
 		for (Unit u : units) occupied.add(u.location.province);
-
+		
 		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
 			/*
 			MOVEMENT PHASES
@@ -495,6 +495,8 @@ public class ExtendedDodo extends AI {
 		System.out.println("-----------END OF TURN -----------");
 		System.out.println("");
 		System.out.println("");
+		if (map.getPhase() != Phase.WIN)
+			System.out.println("Winter is coming.");
 		//System.out.println(this.getPower().getName() + " sent his order!"); 
 	}
 	

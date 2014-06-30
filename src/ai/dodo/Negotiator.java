@@ -318,16 +318,23 @@ public class Negotiator {
 				}
 			}
 
-			if (amIncluded && acceptAllies && acceptEnemies) {
-				return true;
-			} else {
-				return false;
-			}
+			return (amIncluded && acceptAllies && acceptEnemies);
 		}
 
+		for (Power ally : allies)
+		{
+			if (dodoAI.belief.isEnemy(ally))
+				return false;
+		}
+		for (Power enemy : enemies)
+		{
+			if (dodoAI.belief.isAlly(enemy))
+				return false;
+		}
+		
 		// TODO: add stuff on figuring out if we want the alliance
 
-		return false;
+		return true;
 
 	}
 
@@ -335,12 +342,10 @@ public class Negotiator {
 		for (Power member : members) {
 			if (dodoAI.belief.isEnemy(member)){
 				return false;
-			} else {
-				return true;
 			}
 		}
 		// TODO: check if this is correct
-		return false;
+		return true;
 	}
 	
 	private boolean acceptSupportMoveProposal(Province supporting, Province supported, Province target)
@@ -348,21 +353,11 @@ public class Negotiator {
 		if (!dodoAI.belief.isAlly(supported.getOwner()))
 			return false;
 		
-		AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
+		//AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
 		
-		int totalSupFavor = 0;
-		
-		for (Power enemy : alliance.against)
+		if (dodoAI.belief.powerInfo.get(supported.getOwner()).supFavor < 0) //We owe them
 		{
-			if (target.getOwner().equals(enemy))
-			{
-				totalSupFavor += alliance.supFavor;
-			}
-		}
-		
-		if (totalSupFavor < 0) //We owe them
-		{
-			if (dodoAI.righteousness >= 1.0) //TODO: should this be righteousness > paranoia?
+			if (dodoAI.righteousness >= 1.0) //TODO: should this be righteousness > paranoia or something?
 				return true;
 		}
 		
@@ -376,16 +371,9 @@ public class Negotiator {
 		if (!dodoAI.belief.isAlly(supported.getOwner()))
 			return false;
 		
-		AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
+		//AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
 		
-		int totalSupFavor = 0;
-		
-		for (Power enemy : alliance.against)
-		{
-			totalSupFavor += alliance.supFavor;
-		}
-		
-		if (totalSupFavor < 0) //We owe them
+		if (dodoAI.belief.powerInfo.get(supported.getOwner()).supFavor < 0) //We owe them
 		{
 			if (dodoAI.righteousness >= 1.0)
 				return true;
