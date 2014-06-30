@@ -162,6 +162,16 @@ public class DodoBeliefBase {
 		}
 	}
 	
+	public AllianceInfo allianceByPower(Power power)
+	{
+		for (AllianceInfo alliance : allianceInfo)
+		{
+			if (alliance.with.equals(power))
+				return alliance;
+		}
+		return null;
+	}
+	
 	public boolean isAlly(Power power)
 	{
 		for (AllianceInfo alliance : allianceInfo)
@@ -179,7 +189,7 @@ public class DodoBeliefBase {
 			AllianceInfo alliance = allianceInfo.get(i);
 			
 			alliance.time++;
-			alliance.paranoia = 1.0 - Math.pow(1.0 - ai.decrement, alliance.time) * ai.initialTrust;
+			alliance.paranoia = 1.0 - Math.pow(1.0 - ai.decay, alliance.time) * ai.initialTrust;
 		}
 	}
 	

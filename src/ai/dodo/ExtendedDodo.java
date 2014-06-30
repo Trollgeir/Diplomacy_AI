@@ -22,7 +22,7 @@ public class ExtendedDodo extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
 	
 	public double initialTrust = 0.5;
-	public double decrement = 0.05;
+	public double decay = 0.05;
 	public double righteousness = 0.5;
 	public double supportSteep = 0.5;
 	
