@@ -2,8 +2,11 @@ package ai.dodo;
 
 import game.Game;
 
+import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
+
 import message.DaideList;
+import message.order.*;
 import message.press.*;
 import message.server.*;
 import ai.Heuristics;
@@ -16,6 +19,7 @@ public class Negotiator {
 
 	protected LinkedBlockingQueue<String[]> queue = new LinkedBlockingQueue<String[]>();
 	protected ExtendedDodo dodoAI;
+	protected ArrayList<Order> proposedOrders = new ArrayList<Order>();
 	protected Map map;
 
 	public void addProposal(String[] proposal) {
@@ -139,7 +143,7 @@ public class Negotiator {
 							if (s[end2+1].equals("SUP")) 
 							{
 								
-								Province supporting, supported, target;
+								Province supporting, supported, target = null;
 								
 								supporting = map.getProvince(s[end1+3]);
 
@@ -162,7 +166,11 @@ public class Negotiator {
 								}
 
 								if (accept) {
-									// TODO: handle XDO
+									if (s[end2+1].equals("MTO")) {
+										proposedOrders.add(new SupportToMove(supporting.getUnit(), supported.getUnit(), target));
+									} else {
+										proposedOrders.add(new SupportToHold(supporting.getUnit(), supported.getUnit()));
+									}
 									Game.server.send(new Send(new Yes(prop), map.getPower(from)));
 								} else {
 									// TODO: handle XDO
