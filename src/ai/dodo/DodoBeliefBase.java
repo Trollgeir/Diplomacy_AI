@@ -172,6 +172,17 @@ public class DodoBeliefBase {
 		return false;
 	}
 	
+	public boolean isEnemy(Power power)
+	{
+		for (AllianceInfo alliance : allianceInfo)
+		{
+			if (alliance.against.contains(power)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void incrementAllianceTime()
 	{
 		for (int i = 0; i < allianceInfo.size(); i++)
