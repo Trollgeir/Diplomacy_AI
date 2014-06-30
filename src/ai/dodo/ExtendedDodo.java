@@ -336,8 +336,8 @@ public class ExtendedDodo extends AI {
 			
 			ArrayList<Unit> availableUnits = new ArrayList<Unit>(); 
 			availableUnits.addAll(units);
-
-			while (true) {
+			
+			while (availableUnits.size() > 0) {
 				ArrayList<ProvinceData> targets = mapInfo.getSortedTargets(); 
 				targets = mapInfo.filterTakeable(targets);
 
