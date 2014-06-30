@@ -21,5 +21,17 @@ public abstract class DodoPhase {
 		map = ai.getMap(); 
 	}
 
+	public Power getPower() {
+		return power; 
+	}
+
+	public DodoBeliefBase getBeliefBase() {
+		return belief; 
+	}
+
+	public Map getMap() {
+		return map; 
+	}
+
 	public abstract void run(LinkedBlockingQueue<Order> queue); 
 }
