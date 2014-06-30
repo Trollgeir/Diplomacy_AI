@@ -15,7 +15,7 @@ import kb.province.Province;
 public class Negotiator {
 
 	protected LinkedBlockingQueue<String[]> queue = new LinkedBlockingQueue<String[]>();
-	protected DodoAI dodoAI;
+	protected ExtendedDodo dodoAI;
 	protected Map map;
 
 	public void addProposal(String[] proposal) {
@@ -82,13 +82,13 @@ public class Negotiator {
 							
 							if (acceptAlliance(allies, enemies)) {
 								for (int n = 0; n < allies.length; n++) {
-									if (!allies[n].equals(self.getName()));
+									if (allies[n] != self)
 										setAlliance(allies[n], enemies, true);
 								}
 								Game.server.send(new Send(new Yes(prop), map.getPower(from)));
 							} else {
 								for (int n = 0; n < allies.length; n++) {
-									if (!allies[n].equals(self.getName()));
+									if (allies[n] != self)
 										setAlliance(allies[n], enemies, false);
 								}
 								Game.server.send(new Send(new Reject(prop), map.getPower(from)));
@@ -109,8 +109,10 @@ public class Negotiator {
 
 							if (acceptPeace(members)) {
 								for (int n = 0; n<members.length; n++) {
-									if (!members[n].equals(self.getName()));
+									if (members[n] != self)
+									{
 										setPeace(members[n], true);
+									}
 								}
 
 								Game.server.send(new Send(new Yes(prop), map.getPower(from)));
@@ -118,7 +120,7 @@ public class Negotiator {
 							} else {
 
 								for (int n = 0; n<members.length;n++) {
-									if (!members[n].equals(self.getName()));
+									if (members[n] != self)
 										setPeace(members[n], false);
 								}
 
@@ -208,7 +210,7 @@ public class Negotiator {
 								}
 								
 								for (int n = 0; n < allies.length; n++) {
-									if (!allies[n].equals(self.getName()));
+									if (!allies[n].equals(self));
 										setAlliance(allies[n], enemies, true);
 								}
 								
@@ -257,7 +259,7 @@ public class Negotiator {
 								}
 								
 								for (int n = 0; n < allies.length; n++) {
-									if (!allies[n].equals(self.getName()));
+									if (!allies[n].equals(self));
 										setAlliance(allies[n], enemies, false);
 								}
 								
@@ -270,7 +272,7 @@ public class Negotiator {
 
 								for (int n = end1 + 1 ;n < end2;n++){
 									if (!s[n].equals(self.getName()));
-									setPeace(map.getPower(s[n]), false);
+										setPeace(map.getPower(s[n]), false);
 								}
 							} else if (s[end1+6].equals("XDO")) {
 								// TODO handle rejected order proposal

@@ -67,7 +67,7 @@ public class DodoBeliefBase {
 		this.map = map;
 		this.self = self;
 		
-		
+		allianceInfo = new ArrayList<AllianceInfo>();
 		provinceInfo = new java.util.HashMap<Province, ProvinceInfo>();
 		powerInfo = new java.util.HashMap<Power, PowerInfo>();
 		
