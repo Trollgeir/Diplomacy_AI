@@ -332,8 +332,14 @@ public class Negotiator {
 	}
 
 	private boolean acceptPeace(Power[] members) {
-
-		// TODO: add stuff on figuring out if we want the peace
+		for (Power member : members) {
+			if (dodoAI.belief.isEnemy(member)){
+				return false;
+			} else {
+				return true;
+			}
+		}
+		// TODO: check if this is correct
 		return false;
 	}
 	
