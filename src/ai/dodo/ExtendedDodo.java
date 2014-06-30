@@ -34,6 +34,8 @@ public class ExtendedDodo extends AI {
 	
 	public ExtendedDodo(Map map) {
 		super("ExtendedDodo", "0.0.0.0.1", map);
+		negotiator.dodoAI = this;
+		negotiator.map = map;
 	}
 
 	@Override
@@ -66,7 +68,7 @@ public class ExtendedDodo extends AI {
 	@Override
 	protected void handleHLO(String[] message)
 	{
-		this.power =  map.getPower(message[2]);
+		this.power =  map.getPower(message[2]);		
 		this.passcode = message[5];
 		this.lvl = message[10];
 		if (names != null) {
@@ -355,6 +357,8 @@ public class ExtendedDodo extends AI {
 		System.out.println("-----------END OF TURN -----------");
 		System.out.println("");
 		System.out.println("");
+		if (map.getPhase() != Phase.WIN)
+			System.out.println("Winter is coming.");
 		//System.out.println(this.getPower().getName() + " sent his order!"); 
 	}
 	

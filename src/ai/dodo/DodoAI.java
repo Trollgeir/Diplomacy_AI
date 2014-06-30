@@ -42,8 +42,8 @@ public class DodoAI extends AI {
 	
 	public DodoAI(Map map) {
 		super("DodoAI", "0.0.0.0.1", map);
-		negotiator.dodoAI = this;
-		negotiator.map = map;
+		//negotiator.dodoAI = this;
+		//negotiator.map = map;
 	}
 
 	@Override
@@ -235,11 +235,12 @@ public class DodoAI extends AI {
 		}
 	}
 
+	/*
 	public static void main(String[] args) {
 		Map map = new Map();
 		AI ai = new ExtendedDodo(map);
 		new Game(ai, map, args);
-	}
+	}*/
 	
 	public <T> T getRandomElement(ArrayList<T> list) {
 		return list.get((int)(Math.random() * list.size())); 

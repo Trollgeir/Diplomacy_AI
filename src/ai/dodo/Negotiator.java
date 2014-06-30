@@ -2,8 +2,11 @@ package ai.dodo;
 
 import game.Game;
 
+import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
+
 import message.DaideList;
+import message.order.*;
 import message.press.*;
 import message.server.*;
 import ai.Heuristics;
@@ -15,7 +18,8 @@ import kb.province.Province;
 public class Negotiator {
 
 	protected LinkedBlockingQueue<String[]> queue = new LinkedBlockingQueue<String[]>();
-	protected DodoAI dodoAI;
+	protected ExtendedDodo dodoAI;
+	protected ArrayList<Order> proposedOrders = new ArrayList<Order>();
 	protected Map map;
 
 	public void addProposal(String[] proposal) {
@@ -82,13 +86,13 @@ public class Negotiator {
 							
 							if (acceptAlliance(allies, enemies)) {
 								for (int n = 0; n < allies.length; n++) {
-									if (!allies[n].equals(self.getName()));
+									if (allies[n] != self)
 										setAlliance(allies[n], enemies, true);
 								}
 								Game.server.send(new Send(new Yes(prop), map.getPower(from)));
 							} else {
 								for (int n = 0; n < allies.length; n++) {
-									if (!allies[n].equals(self.getName()));
+									if (allies[n] != self)
 										setAlliance(allies[n], enemies, false);
 								}
 								Game.server.send(new Send(new Reject(prop), map.getPower(from)));
@@ -109,8 +113,10 @@ public class Negotiator {
 
 							if (acceptPeace(members)) {
 								for (int n = 0; n<members.length; n++) {
-									if (!members[n].equals(self.getName()));
+									if (members[n] != self)
+									{
 										setPeace(members[n], true);
+									}
 								}
 
 								Game.server.send(new Send(new Yes(prop), map.getPower(from)));
@@ -118,7 +124,7 @@ public class Negotiator {
 							} else {
 
 								for (int n = 0; n<members.length;n++) {
-									if (!members[n].equals(self.getName()));
+									if (members[n] != self)
 										setPeace(members[n], false);
 								}
 
@@ -137,7 +143,7 @@ public class Negotiator {
 							if (s[end2+1].equals("SUP")) 
 							{
 								
-								Province supporting, supported, target;
+								Province supporting, supported, target = null;
 								
 								supporting = map.getProvince(s[end1+3]);
 
@@ -160,7 +166,11 @@ public class Negotiator {
 								}
 
 								if (accept) {
-									// TODO: handle XDO
+									if (s[end2+1].equals("MTO")) {
+										proposedOrders.add(new SupportToMove(supporting.getUnit(), supported.getUnit(), target));
+									} else {
+										proposedOrders.add(new SupportToHold(supporting.getUnit(), supported.getUnit()));
+									}
 									Game.server.send(new Send(new Yes(prop), map.getPower(from)));
 								} else {
 									// TODO: handle XDO
@@ -208,7 +218,7 @@ public class Negotiator {
 								}
 								
 								for (int n = 0; n < allies.length; n++) {
-									if (!allies[n].equals(self.getName()));
+									if (!allies[n].equals(self));
 										setAlliance(allies[n], enemies, true);
 								}
 								
@@ -257,7 +267,7 @@ public class Negotiator {
 								}
 								
 								for (int n = 0; n < allies.length; n++) {
-									if (!allies[n].equals(self.getName()));
+									if (!allies[n].equals(self));
 										setAlliance(allies[n], enemies, false);
 								}
 								
@@ -270,7 +280,7 @@ public class Negotiator {
 
 								for (int n = end1 + 1 ;n < end2;n++){
 									if (!s[n].equals(self.getName()));
-									setPeace(map.getPower(s[n]), false);
+										setPeace(map.getPower(s[n]), false);
 								}
 							} else if (s[end1+6].equals("XDO")) {
 								// TODO handle rejected order proposal
@@ -318,16 +328,23 @@ public class Negotiator {
 				}
 			}
 
-			if (amIncluded && acceptAllies && acceptEnemies) {
-				return true;
-			} else {
-				return false;
-			}
+			return (amIncluded && acceptAllies && acceptEnemies);
 		}
 
+		for (Power ally : allies)
+		{
+			if (dodoAI.belief.isEnemy(ally))
+				return false;
+		}
+		for (Power enemy : enemies)
+		{
+			if (dodoAI.belief.isAlly(enemy))
+				return false;
+		}
+		
 		// TODO: add stuff on figuring out if we want the alliance
 
-		return false;
+		return true;
 
 	}
 
@@ -335,12 +352,10 @@ public class Negotiator {
 		for (Power member : members) {
 			if (dodoAI.belief.isEnemy(member)){
 				return false;
-			} else {
-				return true;
 			}
 		}
 		// TODO: check if this is correct
-		return false;
+		return true;
 	}
 	
 	private boolean acceptSupportMoveProposal(Province supporting, Province supported, Province target)
@@ -348,21 +363,11 @@ public class Negotiator {
 		if (!dodoAI.belief.isAlly(supported.getOwner()))
 			return false;
 		
-		AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
+		//AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
 		
-		int totalSupFavor = 0;
-		
-		for (Power enemy : alliance.against)
+		if (dodoAI.belief.powerInfo.get(supported.getOwner()).supFavor < 0) //We owe them
 		{
-			if (target.getOwner().equals(enemy))
-			{
-				totalSupFavor += alliance.supFavor;
-			}
-		}
-		
-		if (totalSupFavor < 0) //We owe them
-		{
-			if (dodoAI.righteousness >= 1.0) //TODO: should this be righteousness > paranoia?
+			if (dodoAI.righteousness >= 1.0) //TODO: should this be righteousness > paranoia or something?
 				return true;
 		}
 		
@@ -376,16 +381,9 @@ public class Negotiator {
 		if (!dodoAI.belief.isAlly(supported.getOwner()))
 			return false;
 		
-		AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
+		//AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
 		
-		int totalSupFavor = 0;
-		
-		for (Power enemy : alliance.against)
-		{
-			totalSupFavor += alliance.supFavor;
-		}
-		
-		if (totalSupFavor < 0) //We owe them
+		if (dodoAI.belief.powerInfo.get(supported.getOwner()).supFavor < 0) //We owe them
 		{
 			if (dodoAI.righteousness >= 1.0)
 				return true;
