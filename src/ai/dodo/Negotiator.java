@@ -342,19 +342,9 @@ public class Negotiator {
 		if (!dodoAI.belief.isAlly(supported.getOwner()))
 			return false;
 		
-		AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
+		//AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
 		
-		int totalSupFavor = 0;
-		
-		for (Power enemy : alliance.against)
-		{
-			if (target.getOwner().equals(enemy))
-			{
-				totalSupFavor += alliance.supFavor;
-			}
-		}
-		
-		if (totalSupFavor < 0) //We owe them
+		if (dodoAI.belief.powerInfo.get(supported.getOwner()).supFavor < 0) //We owe them
 		{
 			if (dodoAI.righteousness >= 1.0) //TODO: should this be righteousness > paranoia?
 				return true;
@@ -370,16 +360,9 @@ public class Negotiator {
 		if (!dodoAI.belief.isAlly(supported.getOwner()))
 			return false;
 		
-		AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
+		//AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
 		
-		int totalSupFavor = 0;
-		
-		for (Power enemy : alliance.against)
-		{
-			totalSupFavor += alliance.supFavor;
-		}
-		
-		if (totalSupFavor < 0) //We owe them
+		if (dodoAI.belief.powerInfo.get(supported.getOwner()).supFavor < 0) //We owe them
 		{
 			if (dodoAI.righteousness >= 1.0)
 				return true;

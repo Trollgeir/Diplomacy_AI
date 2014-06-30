@@ -14,13 +14,11 @@ class AllianceInfo
 	{
 		//TODO: Just some default values, may need tweaking.
 		paranoia = 0.0f;
-		supFavor = 0;
 		against = new ArrayList<Power>();
 		time = 0;
 	}
 	
 	public double 			paranoia;
-	public int				supFavor;
 	public int				time;
 	public Power			with;
 	public ArrayList<Power>	against;
@@ -30,14 +28,16 @@ class PowerInfo
 {
 	public PowerInfo()
 	{
+		supFavor = 0;
 		trust = 0.5;
 		peace = false;
 		peaceActuality = 1;
 	}
 	
-	public boolean peace;
-	public double peaceActuality;
-	public double trust;
+	public int 		supFavor;
+	public boolean 	peace;
+	public double 	peaceActuality;
+	public double 	trust;
 }
 
 class ProvinceInfo
