@@ -128,7 +128,7 @@ public class ProvinceData {
 				if (unitUsed.unit == unitData.unit) {
 					support--;
 					//if this unit was shared then the shared state needs to be decremented.
-					if (unitData.shared > 0) shared[idx]--;
+					//if (unitData.shared > 0) shared[idx]--;
 				 	
 				 	//remove the unit from the nearUnits
 					removeList.add(unitData);
@@ -276,7 +276,7 @@ public class ProvinceData {
 
 					//contains can be used since equals() is overwritten
 					if (p.nearUnits.get(powerIdx).contains(unitData)) {
-						shared[powerIdx]++;
+						//shared[powerIdx]++;
 						unitData.shared++;
 					}
 				}

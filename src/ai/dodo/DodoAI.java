@@ -235,12 +235,12 @@ public class DodoAI extends AI {
 		}
 	}
 
-	/*
+	
 	public static void main(String[] args) {
 		Map map = new Map();
 		AI ai = new ExtendedDodo(map);
 		new Game(ai, map, args);
-	}*/
+	}
 	
 	public <T> T getRandomElement(ArrayList<T> list) {
 		return list.get((int)(Math.random() * list.size())); 

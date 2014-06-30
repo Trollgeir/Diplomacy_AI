@@ -59,8 +59,8 @@ public class DodoBuildPhase extends DodoPhase {
 	public boolean buildFleet() {
 		int numFleets = numFleets() ;
 		if (power.getName().equals("ENG")) return true;
-		if (power.getName().equals("AUS") && numFleets < 3) return Math.random() < 0.75; 
-		return numFleets < 2 && Math.random() < 0.75; 
+		if (power.getName().equals("AUS") && numFleets < 5) return Math.random() < 0.75; 
+		return numFleets < 4 && Math.random() < 0.75; 
 	}
 
 	public void run(LinkedBlockingQueue<Order> queue) {
