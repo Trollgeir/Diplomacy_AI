@@ -176,7 +176,10 @@ public class DodoBeliefBase {
 	{
 		for (int i = 0; i < allianceInfo.size(); i++)
 		{
-			allianceInfo.get(i).time++;
+			AllianceInfo alliance = allianceInfo.get(i);
+			
+			alliance.time++;
+			alliance.paranoia = 1.0 - Math.pow(1.0 - ai.decrement, alliance.time) * ai.initialTrust;
 		}
 	}
 	

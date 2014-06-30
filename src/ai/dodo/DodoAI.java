@@ -33,8 +33,8 @@ public class DodoAI extends AI {
 	String fileName = "";
 	String name = "changeMe!";
 	double initialTrust = 0.5;
-	double halflife = 0.05;
-	double rightesnous = 0.5;
+	double decrement = 0.05;
+	double righteousness = 0.5;
 	double supportSteep = 0.5;
 	
 	ArrayList<Province> visitedProvinces = new ArrayList<Province>();
@@ -87,9 +87,9 @@ public class DodoAI extends AI {
 					} else if (line.startsWith("initialTrust")) {
 						initialTrust = Double.parseDouble(result);
 					} else if (line.startsWith("halflife")) {
-						halflife = Double.parseDouble(result);
+						decrement = Double.parseDouble(result);
 					} else if (line.startsWith("rightesnous")) {
-						rightesnous = Double.parseDouble(result);
+						righteousness = Double.parseDouble(result);
 					} else if (line.startsWith("supportSteep")) {
 						supportSteep = Double.parseDouble(result);
 					}
@@ -103,7 +103,7 @@ public class DodoAI extends AI {
 			
 			e.printStackTrace();
 		}
-		System.out.println("name: " + name + " initialTrust: " + initialTrust + " halflife: " + halflife + " rightesnous: " + rightesnous + " supportSteep: " + supportSteep );
+		System.out.println("name: " + name + " initialTrust: " + initialTrust + " decrement: " + decrement + " rightesnous: " + righteousness + " supportSteep: " + supportSteep );
 	}
 
 	public void findGains()
