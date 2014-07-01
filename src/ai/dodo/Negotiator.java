@@ -35,7 +35,7 @@ public class Negotiator {
 	}
 
 	public void handleProposal() {
-		String from;
+		String fromName;
 		int end1, end2, i;
 		Power self = dodoAI.belief.self;
 		
@@ -43,24 +43,33 @@ public class Negotiator {
 		Power[] enemies;
 		
 		synchronized(queue) {
-			for (String[] s : queue) {
-				if (s[0].equals("FRM")){
-					from = s[2];
-					PowerInfo powerInfo = dodoAI.belief.powerInfo.get(map.getPower(from));
+			for (String[] s : queue) 
+			{
+				if (s[0].equals("FRM"))
+				{
+					fromName = s[2];
+					Power from = map.getPower(fromName);
+					PowerInfo powerInfo = dodoAI.belief.powerInfo.get(from);
+					
 					//ending of 'to'
 					end1 = DaideList.unBracket(s, 4);
-					if (s[end1+2].equals("PRP")) {
-
+					if (s[end1+2].equals("PRP")) 
+					{
 						// end bracket of PRP
 						end2 = DaideList.unBracket(s, end1+3);
 						String[] prop = new String[(end2)-(end1+1)];
+						
+						boolean sendYes = false; //respond with a YES or REJECT to the sender?
+						boolean huh = false;
+						
 						i = 0;
-						for (int n = end1+2;n<=end2;n++) {
+						for (int n = end1+2; n<=end2; n++) 
+						{
 							prop[i] = s[n];
 							i++;
 						}
-						if (s[end1+4].equals("ALY")) {
-
+						if (s[end1+4].equals("ALY")) //proposing alliance
+						{
 							// first bracket of allies
 							end1 = end1+5;
 							// last bracket of allies
@@ -68,7 +77,8 @@ public class Negotiator {
 
 							allies = new Power[end2-(end1+1)];
 
-							for (int n = 0;n <  end2 - (end1 + 1);n++){
+							for (int n = 0; n < end2 - (end1 + 1);n++)
+							{
 								allies[n] = map.getPower(s[n + end1 + 1]);
 							}
 
@@ -79,70 +89,57 @@ public class Negotiator {
 
 							enemies = new Power[end2-(end1+1)];
 
-							for (int n = 0;n <  end2 - (end1 + 1);n++){
+							for (int n = 0; n < end2 - (end1 + 1);n++)
+							{
 								enemies[n] = map.getPower(s[n + end1 + 1]);
 							}
 							
 							
-							if (acceptAlliance(allies, enemies)) {
-								for (int n = 0; n < allies.length; n++) {
-									if (allies[n] != self)
-										setAlliance(allies[n], enemies, true);
-								}
-								Game.server.send(new Send(new Yes(prop), map.getPower(from)));
-							} else {
-								for (int n = 0; n < allies.length; n++) {
-									if (allies[n] != self)
-										setAlliance(allies[n], enemies, false);
-								}
-								Game.server.send(new Send(new Reject(prop), map.getPower(from)));
+							boolean accept = acceptAlliance(allies, enemies);
+							for (int n = 0; n < allies.length; n++) 
+							{
+								if (allies[n] != self)
+									setAlliance(allies[n], enemies, accept);
 							}
+							sendYes = accept;
 
-						} else if (s[end1+4].equals("PCE")) {
+						} 
+						else if (s[end1+4].equals("PCE")) //proposing peace treaty
+						{
 
 							// first bracket of peace
 							end1 = end1+5;
 							// last bracket of peace
 							end2 = DaideList.unBracket(s, end1);
 
+							
 							Power[] members = new Power[end2-(end1+1)];
 
-							for (int n = 0 ;n < end2 - (end1 + 1); n++){
+							for (int n = 0 ;n < end2 - (end1 + 1); n++)
+							{
 								members[n] = map.getPower(s[n + end1 + 1]);
 							}
 
-							if (acceptPeace(members)) {
-								for (int n = 0; n<members.length; n++) {
-									if (members[n] != self)
-									{
-										setPeace(members[n], true);
-									}
-								}
-
-								Game.server.send(new Send(new Yes(prop), map.getPower(from)));
-
-							} else {
-
-								for (int n = 0; n<members.length;n++) {
-									if (members[n] != self)
-										setPeace(members[n], false);
-								}
-
-								Game.server.send(new Send(new Reject(prop), map.getPower(from)));
-
+							boolean accept = acceptPeace(members);
+							
+							for (int n = 0; n<members.length; n++) 
+							{
+								if (members[n] != self)
+									setPeace(members[n], accept);
 							}
+							
+							sendYes = accept;
 						} 
-						else if (s[end1+4].equals("XDO")) 
+						else if (s[end1+4].equals("XDO")) //suggest move
 						{
-
 							// start first unit
 							end1=end1+6;
 							// end first unit
 							end2 = DaideList.unBracket(s, end1);
 
-							if (s[end2+1].equals("SUP")) 
+							
+							if (s[end2+1].equals("SUP")) //suggest support
 							{
-								
 								Province supporting, supported, target = null;
 								
 								supporting = map.getProvince(s[end1+3]);
@@ -156,39 +153,50 @@ public class Negotiator {
 
 								boolean accept;
 								
-								if (s[end2+1].equals("MTO")) {
+								if (s[end2+1].equals("MTO")) //suggest move (attack)
+								{
 									target = map.getProvince(s[end2+2]);
 									accept = acceptSupportMoveProposal(supporting, supported, target);
+									
+									if (accept)
+										proposedOrders.add(new SupportToMove(supporting.getUnit(), supported.getUnit(), target));
 								}
 								else
 								{
 									accept = acceptSupportHoldProposal(supporting, supported);
-								}
-
-								if (accept) {
-									if (s[end2+1].equals("MTO")) {
-										proposedOrders.add(new SupportToMove(supporting.getUnit(), supported.getUnit(), target));
-									} else {
+									
+									if (accept)
 										proposedOrders.add(new SupportToHold(supporting.getUnit(), supported.getUnit()));
-									}
-									Game.server.send(new Send(new Yes(prop), map.getPower(from)));
-								} else {
-									// TODO: handle XDO
-									Game.server.send(new Send(new Reject(prop), map.getPower(from)));
 								}
 
-							} else {
-								Game.server.send(new Send(new Reject(prop), map.getPower(from)));
+								sendYes = accept;
+							} 
+							else 
+							{
+								sendYes = false; //reject anything other than SUP; dodoAI can't handle it.
 							}
-
-						} else if (s[end1+4].equals("DMZ")) {
-
-							Game.server.send(new Send(new Huh(prop), map.getPower(from)));
-							System.out.println("Cant handle DMZ, sorry!");
-
+						} 
+						else // if (s[end1+4].equals("DMZ")) 
+						{
+							Game.server.send(new Send(new Huh(prop), from));
+							huh = true;
 						}
-
+						
+						
+						if (!huh)
+						{
+							if (sendYes)
+							{
+								powerInfo.supFavor++; //They now owe us
+								Game.server.send(new Send(new Yes(prop), from));
+							}
+							else
+							{
+								Game.server.send(new Send(new Reject(prop), from));
+							}
+						}
 					} 
+					
 					else if (s[end1+2].equals("YES")) 
 					{
 						if (s[end1+4].equals("PRP"))
@@ -202,7 +210,8 @@ public class Negotiator {
 								
 								allies = new Power[end2-(end1+1)];
 								
-								for (int n = 0;n <  end2 - (end1 + 1);n++){
+								for (int n = 0; n < end2 - (end1 + 1); n++)
+								{
 									allies[n] = map.getPower(s[n + end1 + 1]);
 								}
 
@@ -213,37 +222,51 @@ public class Negotiator {
 								
 								enemies = new Power[end2-(end1+1)];
 								
-								for (int n = 0;n <  end2 - (end1 + 1);n++){
+								for (int n = 0; n < end2 - (end1 + 1); n++)
+								{
 									enemies[n] = map.getPower(s[n + end1 + 1]);
 								}
 								
-								for (int n = 0; n < allies.length; n++) {
-									if (!allies[n].equals(self));
+								for (int n = 0; n < allies.length; n++) 
+								{
+									if (!allies[n].equals(self))
 										setAlliance(allies[n], enemies, true);
 								}
 								
-							} else if (s[end1+6].equals("PCE")){
+							} 
+							else if (s[end1+6].equals("PCE"))
+							{
 
 								// first bracket of peace members
 								end1 = end1+7;
 								// last bracket of peace members
 								end2 = DaideList.unBracket(s, end1);
 
-								for (int n = end1 + 1 ;n < end2;n++){
-									if (!s[n].equals(self.getName()));
+								for (int n = end1 + 1 ;n < end2;n++)
+								{
+									if (!s[n].equals(self.getName()))
 										setPeace(map.getPower(s[n]),true);
 								}
-							} else if (s[end1+6].equals("XDO")) {
+							} 
+							else if (s[end1+6].equals("XDO")) 
+							{
+								powerInfo.supFavor--; //We now owe them
 								// TODO: handle accepted order proposal
-							} else if (s[end1+6].equals("DMZ")) {
+							} 
+							else if (s[end1+6].equals("DMZ")) 
+							{
 								// TODO: handle accepted DMZ proposal (on hold)
 							}
 						}
 
-					} else if (s[end1+2].equals("REJ")) {
-						if (s[end1+4].equals("PRP")){
+					} 
+					else if (s[end1+2].equals("REJ")) 
+					{
+						if (s[end1+4].equals("PRP"))
+						{
 							// handle rejected ally proposal:
-							if (s[end1+6].equals("ALY")) {
+							if (s[end1+6].equals("ALY")) 
+							{
 								// first bracket of allies
 								end1 = end1+7;
 								// last bracket of allies
@@ -251,7 +274,8 @@ public class Negotiator {
 								
 								allies = new Power[end2-(end1+1)];
 
-								for (int n = 0;n <  end2 - (end1 + 1);n++){
+								for (int n = 0;n <  end2 - (end1 + 1);n++)
+								{
 									allies[n] = map.getPower(s[n + end1 + 1]);
 								}
 
@@ -262,34 +286,45 @@ public class Negotiator {
 								
 								enemies = new Power[end2-(end1+1)];
 
-								for (int n = 0;n <  end2 - (end1 + 1);n++){
+								for (int n = 0;n <  end2 - (end1 + 1);n++)
+								{
 									enemies[n] = map.getPower(s[n + end1 + 1]);
 								}
 								
-								for (int n = 0; n < allies.length; n++) {
-									if (!allies[n].equals(self));
+								for (int n = 0; n < allies.length; n++) 
+								{
+									if (!allies[n].equals(self))
 										setAlliance(allies[n], enemies, false);
 								}
 								
-							} else if (s[end1+6].equals("PCE")){
+							} 
+							else if (s[end1+6].equals("PCE"))
+							{
 
 								// first bracket of peace members
 								end1 = end1+7;
 								// last bracket of peace members
 								end2 = DaideList.unBracket(s, end1);
 
-								for (int n = end1 + 1 ;n < end2;n++){
-									if (!s[n].equals(self.getName()));
+								for (int n = end1 + 1 ;n < end2;n++)
+								{
+									if (!s[n].equals(self.getName()))
 										setPeace(map.getPower(s[n]), false);
 								}
-							} else if (s[end1+6].equals("XDO")) {
+							} 
+							else if (s[end1+6].equals("XDO")) 
+							{
 								// TODO handle rejected order proposal
 
-							} else if (s[end1+6].equals("DMZ")) {
+							} 
+							else if (s[end1+6].equals("DMZ")) 
+							{
 								// handle rejected DMZ proposal (on hold)
 							}
 						}
-					} else {
+					} 
+					else 
+					{
 						// TODO: HUH
 					}
 				}
