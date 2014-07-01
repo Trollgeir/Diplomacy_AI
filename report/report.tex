@@ -18,13 +18,46 @@
 
 \section{Introduction}
 
-The dodo (Raphus cucullatus) is an extinct flightless bird that was endemic to the island of Mauritius, east of Madagascar in the Indian Ocean. Its closest genetic relative was the also extinct Rodrigues solitaire, the two forming the subfamily Raphinae of the family of pigeons and doves. The closest living relative of the dodo is the Nicobar pigeon. A white dodo was once incorrectly thought to have existed on the nearby island of Réunion.
+\section{Gains \& Weights}
 
-Subfossil remains show the dodo was about 1 metre (3.3 feet) tall and may have weighed 10–18 kg (22–40 lb) in the wild. The dodo's appearance in life is evidenced only by drawings, paintings and written accounts from the 17th century. Because these vary considerably, and because only some illustrations are known to have been drawn from live specimens, its exact appearance in life remains unresolved. Similarly, little is known with certainty about its habitat and behaviour.[3] It has been depicted with brownish-grey plumage, yellow feet, a tuft of tail feathers, a grey, naked head, and a black, yellow, and green beak. It used gizzard stones to help digest its food, which is thought to have included fruits, and its main habitat is believed to have been the woods in the drier coastal areas of Mauritius. One account states its clutch consisted of a single egg. It is presumed that the dodo became flightless because of the ready availability of abundant food sources and a relative absence of predators on Mauritius.
+In order for our AI to move units around the map, we make use of a gains \& weights system. For every province we calculate a gain value. This values signifies the importance of this province based on a variety of properties and variables. This gain is weighed by the weight value, which not only signifies the likeliness of succes to take this province - but also the cost (for example, do we defect allies with this action?).
 
-The first recorded mention of the dodo was by Dutch sailors in 1598. In the following years, the bird was hunted by sailors, their domesticated animals, and invasive species introduced during that time. The last widely accepted sighting of a dodo was in 1662. Its extinction was not immediately noticed, and some considered it to be a mythical creature. In the 19th century, research was conducted on a small quantity of remains of four specimens that had been brought to Europe in the early 17th century. Among these is a dried head, the only soft tissue of the dodo that remains today. Since then, a large amount of subfossil material has been collected from Mauritius, mostly from the Mare aux Songes swamp. The extinction of the dodo within less than a century of its discovery called attention to the previously unrecognised problem of human involvement in the disappearance of entire species. The dodo achieved widespread recognition from its role in the story of Alice in Wonderland, and it has since become a fixture in popular culture, often as a symbol of extinction and obsolescence. It is frequently used as a mascot on Mauritius.
+\subsection{Gains}
+As you win the game when you control the majority of supply centers, it is important for our AI to move it's units toward supply centers. Therefore we have chosen to base the gain value of a province on wether it is a supply center or not. A province without a supply center has no direct gain. A province with a supply center has a gain based on the type of supply center it is. 
+
+Some special supply centers are home supply centers. These are home and starting supply center to a specific power. A power can only build new units on his home supply centers.   
+
+In order to assign a gain, we distinguish the following types of supply centers: 
+
+\begin{description} 
+
+\item[Normal Supply centers]
+are all supply centers, excluding home supply centers, not under our control (So either neutral/untaken or under control by another power). As these supply centers are not under our control, we can potentially take them in order to bring us closer to victory. These supply centers should have a relatively high gain value. 
+
+\item[Home supply centers]
+are all home supply centers, excluding our own. Taking such a supply center does not just take us one step closer to victory, but also effectively disables a power from building units there. To consider this, we will give this type a slightly higher gain than normal supply centers only if it is under control by it's original power. If for example Austria is controlling Russia's home supply center, Russia is already unable to build units there. In this case there should not be an extra gain and it is treated as a normal supply center.    
+
+\item[Our supply centers] are all supply centers, excluding \textit{our} home supply centers, under our control. As we already control these supply centers and want units to take other supply centers, we assign a lower gain to this type. However, in the case that this supply center is threatened by enemy units we will increase the gain to prevent losing control over this supply center.  
+
+\item[Our home supply centers] are all of our home supply centers. As with other supply centers under our control, these will have a lower gain to prevent units from staying here, and will increase in case of a threat. The difference is that whenever this supply centers is under enemy control, it should have a very high gain as it is very important to take it back in order to build new units.   
+
+\subsection{Smoothed gains}
+We want units to move towards high gain provinces. Therefore provinces adjacent to high gain provinces should also have same gain - as moving to this province will move us towards a province with high gain. In order to achieve this we smooth the gains over the map after the gains have been calculated. For each province the smoothed gain $g_s$ is calculated as follows:
+
+We tried: 
+
+$$ g_{s} = g_0 + \frac{ C_1 \sum_i g_1^i}{n}$$
+
+But right now we do :
+
+$$ g_{s} = g_0 + C_1 \sum_i g_1^i$$
+
+where $g_0$ is the gain of the province, $C_1$ is a constant, $g_1$ is a first-order neighbor of the province and $n$ is the number of provinces affecting the sum. 
+
+\subsection{Threat}
 
 
+\end{description} 
 
 
 \bibliography{references}{}

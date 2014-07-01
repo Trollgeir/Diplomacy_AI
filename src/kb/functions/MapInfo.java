@@ -111,7 +111,7 @@ public class MapInfo {
 		provinceData.removeAll(movedTo);
 
 		//add smoothedgains to nearby provinces to simulate cohesion. 
-		float kernelWeight[] = {0, 8, 5};
+		float kernelWeight[] = {0, 0, 0};
 		ArrayList<ArrayList<ProvinceData>> kernel = getProvinceKernel(movedTo, 2);
 		for (int i = 0; i < kernel.size(); ++i ) {
 			System.out.println("Order " + i);
