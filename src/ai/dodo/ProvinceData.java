@@ -22,14 +22,29 @@ public class ProvinceData {
 
 	public static float takeOverRisk = 0.5f;
 
-	public static float c_normalSuply = 2.5f;
-	public static float c_homeSuply = 3.5f; 
+	public static float c_normalNotOurs = 3.0f; 
+	public static float c_homeNotOurs = 3.2f; 
+
+	public static float c_normalOurs = 0.0f; 
+	public static float c_homeOurs = 0.0f; 
+
+	public static float c_normalOursThreat = 3.1f; 
+	public static float c_homeOursThreat = 3.5f; 
+
+	public static float c_homeOursTaken = 10.0f; 
+
+	public static float c_threatThreshold = 1.15f; 
+/*
+	public static float c_normalSuply = 1.0f;
+	public static float c_homeSuply = 1.2f; 
+
+	public static float c_takenHomeSuply = 5.0f; 
 
 	public static float c_enemySCO = 1.0f;
 	public static float c_ownSCO = 0.0f; 
 
 	public static float c_defendHome = 3.0f;
-	public static float c_defendNormal = 1.0f;
+	public static float c_defendNormal = 1.0f;*/
 
 	public int neighborSupply; 
 
@@ -83,7 +98,7 @@ public class ProvinceData {
 		supplyGain = getSupplyGain();
 		//System.out.println("supplyGain: " + supplyGain);
 
-		float[] weightKernel = {1, 0.5f, 0.15f};
+		float[] weightKernel = {1, 1f, 0.25f};
 		defendGain = getDefendSupplyGain(provinceKernel, weightKernel);
 		//System.out.println("defendGain: " + defendGain);
 
@@ -99,27 +114,17 @@ public class ProvinceData {
 		
 		//If it's not a supply center, it does not get supply center gain
 		if (!isSCO) return 0; 
-
-
 		
 		if (isHomeSCO != null) {
-			//This is a home sco.
 			if (isHomeSCO == power) {
-				return c_ownSCO * c_homeSuply;
+				return isOwn ? c_homeOurs : c_homeOursTaken; 
 			} else {
-				if (isHomeSCO == province.getOwner()) {
-					return c_enemySCO * c_homeSuply;
-				} else {
-					return c_enemySCO * c_normalSuply;
-				}
+				if (isOwn) return c_homeOurs;
+				return isHomeSCO == province.getOwner() ? c_homeNotOurs : c_normalNotOurs;   
 			}
 		} else {
 			//This is not a home sco
-			if (isOwn) {
-				return c_ownSCO * c_normalSuply; 
-			} else {
-				return c_enemySCO * c_normalSuply;
-			}
+			return isOwn ? c_normalOurs : c_normalNotOurs; 
 		}
 
 	}
@@ -135,12 +140,8 @@ public class ProvinceData {
 		if (province.getOwner() != power) return 0; 
 
 
-		float c_supplyType = isHomeSCO != null ? c_defendHome : c_defendNormal; 
-
-
-		if (province.getName().equals("TRI")) {
-			System.out.println("Trieste supply type : " + c_supplyType); 	
-		}
+		float c_supplyType = isHomeSCO != null ? c_homeOursThreat : c_normalOursThreat; 
+		float threat = 0; 
 
 		float[] enemyWeight = new float[powers.size()]; 
 		for (int  i = 0; i < powers.size(); ++i) enemyWeight[i] = 0;
@@ -151,10 +152,7 @@ public class ProvinceData {
 
 				if (unit != null && unit.owner != power) {
 					int powerIdx = powers.indexOf(unit.owner);
-					enemyWeight[powerIdx] += c_supplyType * weightKernel[i]; 
-					if (province.getName().equals("TRI")) {
-						System.out.println("Trieste neighbor : " + provData.province.getName() + " - " + c_supplyType * weightKernel[i]); 	
-					}
+					enemyWeight[powerIdx] += weightKernel[i];
 				}
 			}
 		}
@@ -169,8 +167,10 @@ public class ProvinceData {
 				bestIdx = i; 
 			}
 		}  
+		threat = bestIdx == -1 ? 0 : bestWeight; 
+		if (threat > c_threatThreshold) return c_supplyType; 
 
-		return bestIdx == -1 ? 0 : c_threat * bestWeight;
+		return 0;  
 	}
 
 	private void computeWeight(Power power) {
@@ -196,13 +196,17 @@ public class ProvinceData {
 	public void computeSmoothedGains() {
 		
 		float total = 0;
+		float max = 0; 
 		int num = 0;
 		for (ProvinceData provData : adjProvDatas) {
+			if (provData.gains > max) {
+				max = provData.gains; 
+			}
 			total += c_smooth * provData.gains; 
 			num++; 
 		}
 
-		smoothedGains = gains + total;
+		smoothedGains = Math.max(gains, max * 0.8f);
 		//if (num > 0) smoothedGains += total / num; 
 	}
 
