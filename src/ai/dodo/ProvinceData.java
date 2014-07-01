@@ -15,7 +15,7 @@ public class ProvinceData {
 	public static float c_smooth = 0.25f;
 	public static float c_threat = 1.0f;
 	
-	public static float c_shared = 0.25f;
+	public static float c_shared = 0.0f;
 	//public static float risk = 1.0f; 
 	//public static float sharedRisk = 1.0f;
 	public static float defence = 1.0f; 
@@ -25,15 +25,15 @@ public class ProvinceData {
 	public static float c_normalNotOurs = 3.0f; 
 	public static float c_homeNotOurs = 3.2f; 
 
-	public static float c_normalOurs = 0.0f; 
-	public static float c_homeOurs = 0.0f; 
+	public static float c_normalOurs = 0.25f; 
+	public static float c_homeOurs = 0.30f; 
 
-	public static float c_normalOursThreat = 3.1f; 
-	public static float c_homeOursThreat = 3.5f; 
+	public static float c_normalOursThreat = 3.5f; 
+	public static float c_homeOursThreat = 3.8f; 
 
 	public static float c_homeOursTaken = 10.0f; 
 
-	public static float c_threatThreshold = 1.15f; 
+	public static float c_threatThreshold = 1.10f; 
 /*
 	public static float c_normalSuply = 1.0f;
 	public static float c_homeSuply = 1.2f; 
@@ -206,7 +206,7 @@ public class ProvinceData {
 			num++; 
 		}
 
-		smoothedGains = Math.max(gains, max * 0.8f);
+		smoothedGains = Math.max(gains, max * 0.5f);
 		//if (num > 0) smoothedGains += total / num; 
 	}
 
