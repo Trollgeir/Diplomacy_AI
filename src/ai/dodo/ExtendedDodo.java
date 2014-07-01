@@ -189,7 +189,10 @@ public class ExtendedDodo extends AI {
 	
 	public void handleBackstab(Power p)
 	{
-		//TODO: determine if we kill of the alliance entirely
+		AllianceInfo allianceInfo = belief.allianceByPower(p);
+		// Decrement trust of the power
+		belief.defectDec(allianceInfo.time, p);
+		// Disband the alliance ??
 		belief.deleteAllAlliancesWith(p);
 	}
 	
