@@ -13,7 +13,7 @@ import kb.province.Province;
 public class ProvinceData {
 
 	public static float c_smooth = 0.25f;
-	public static float c_threat = 0.25f;
+	public static float c_threat = 1.0f;
 	
 	public static float c_shared = 0.25f;
 	//public static float risk = 1.0f; 
@@ -28,7 +28,7 @@ public class ProvinceData {
 	public static float c_enemySCO = 1.0f;
 	public static float c_ownSCO = 0.0f; 
 
-	public static float c_defendHome = 2.0f;
+	public static float c_defendHome = 3.0f;
 	public static float c_defendNormal = 1.0f;
 
 	public int neighborSupply; 
@@ -95,10 +95,15 @@ public class ProvinceData {
 		boolean isOwn = province.getOwner() == power; 
 		boolean isSCO = province.isSupplyCenter(); 
 		Power isHomeSCO = isHomeSCO(province);
-
+		
+		
+		//If it's not a supply center, it does not get supply center gain
 		if (!isSCO) return 0; 
 
+
+		
 		if (isHomeSCO != null) {
+			//This is a home sco.
 			if (isHomeSCO == power) {
 				return c_ownSCO * c_homeSuply;
 			} else {
@@ -109,12 +114,14 @@ public class ProvinceData {
 				}
 			}
 		} else {
+			//This is not a home sco
 			if (isOwn) {
 				return c_ownSCO * c_normalSuply; 
 			} else {
 				return c_enemySCO * c_normalSuply;
 			}
 		}
+
 	}
 
 	//values weightKernel between 0 and 1
@@ -127,7 +134,13 @@ public class ProvinceData {
 		//if (province.getOwner != power && isHomeSCO != power) return 0;
 		if (province.getOwner() != power) return 0; 
 
+
 		float c_supplyType = isHomeSCO != null ? c_defendHome : c_defendNormal; 
+
+
+		if (province.getName().equals("TRI")) {
+			System.out.println("Trieste supply type : " + c_supplyType); 	
+		}
 
 		float[] enemyWeight = new float[powers.size()]; 
 		for (int  i = 0; i < powers.size(); ++i) enemyWeight[i] = 0;
@@ -139,6 +152,9 @@ public class ProvinceData {
 				if (unit != null && unit.owner != power) {
 					int powerIdx = powers.indexOf(unit.owner);
 					enemyWeight[powerIdx] += c_supplyType * weightKernel[i]; 
+					if (province.getName().equals("TRI")) {
+						System.out.println("Trieste neighbor : " + provData.province.getName() + " - " + c_supplyType * weightKernel[i]); 	
+					}
 				}
 			}
 		}

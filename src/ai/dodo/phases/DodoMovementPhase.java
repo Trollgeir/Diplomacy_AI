@@ -82,13 +82,22 @@ public class DodoMovementPhase extends DodoPhase {
 					System.out.println(p.toString()); 
 				}
 				
-				
+				if (targets.size() == 0) break;
 
 				float totalWeight = 0; 
-				for (ProvinceData target : targets) totalWeight += target.weight;
+				ProvinceData mainTarget = targets.get(0);
+
+
+				for (ProvinceData target : targets) {
+					if (target.weight > 0.5f * mainTarget.weight) {
+						totalWeight += target.weight;
+					} else {
+						break;
+					}
+				}
 
 				if (totalWeight == 0) break; 
-
+				System.out.println("Total weight: " + totalWeight); 
 				int targetIdx = 0;
 				float val = 0;
 				float targetVal = (float)Math.random() * totalWeight;
