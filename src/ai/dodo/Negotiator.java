@@ -412,6 +412,9 @@ public class Negotiator {
 		
 		newAlliance.with = ally;
 		
+		// This is the starting paranoia value of an alliance
+		newAlliance.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(dodoAI.belief.powerInfo.get(ally).trust/10));
+		
 		for (int n = 0; n < enemies.length; n++)
 			newAlliance.against.add(enemies[n]);
 
@@ -423,7 +426,9 @@ public class Negotiator {
 				if (oldAlliance.with.equals(ally))
 				{
 					//refresh oldAlliance
-					
+
+					// This is the starting paranoia value of an alliance
+					oldAlliance.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(dodoAI.belief.powerInfo.get(ally).trust/10));
 					if (oldAlliance.against.containsAll(newAlliance.against))
 						addNew = false;
 				}

@@ -7,12 +7,13 @@ import java.lang.Comparable;
 import kb.Node;
 import kb.unit.Unit; 
 import kb.*;
+import kb.functions.MapInfo; 
 import kb.province.Province;
 
 public class ProvinceData {
 
 	public static float c_smooth = 0.25f;
-	public static float c_threat = 0.5f;
+	public static float c_threat = 0.25f;
 	
 	public static float c_shared = 0.25f;
 	//public static float risk = 1.0f; 
@@ -21,11 +22,14 @@ public class ProvinceData {
 
 	public static float takeOverRisk = 0.5f;
 
-	public static float normalSuply = 2.5f;
-	public static float homeSuply = 4.0f; 
+	public static float c_normalSuply = 2.5f;
+	public static float c_homeSuply = 3.5f; 
 
-	public static float c_neutralCSO = 1.0f;
-	public static float c_ownedCSO = 1.5f;
+	public static float c_enemySCO = 1.0f;
+	public static float c_ownSCO = 0.0f; 
+
+	public static float c_defendHome = 2.0f;
+	public static float c_defendNormal = 1.0f;
 
 	public int neighborSupply; 
 
@@ -46,6 +50,8 @@ public class ProvinceData {
 
 	public float weight; 
 	public float gains; 
+	public float supplyGain;
+	public float defendGain; 
 	public float smoothedGains; 
 
 	public ProvinceData(Power power, Province province, ArrayList<Power> powers) {
@@ -65,6 +71,90 @@ public class ProvinceData {
 		shared = new int[powers.size()];
 
 		computeAdjProvinces();
+	}
+
+	public void computeGains(ArrayList<ProvinceData> provinces) {
+		ArrayList<ProvinceData> order0 = new ArrayList<ProvinceData>();
+		order0.add(this);
+		ArrayList<ArrayList<ProvinceData>> provinceKernel = MapInfo.getProvinceKernel(order0, 2);
+
+		//System.out.println("Province:  " + province.getName());
+		
+		supplyGain = getSupplyGain();
+		//System.out.println("supplyGain: " + supplyGain);
+
+		float[] weightKernel = {1, 0.5f, 0.15f};
+		defendGain = getDefendSupplyGain(provinceKernel, weightKernel);
+		//System.out.println("defendGain: " + defendGain);
+
+		gains = 0; 
+		gains += supplyGain + defendGain;
+	}
+
+	public float getSupplyGain() {
+		boolean isOwn = province.getOwner() == power; 
+		boolean isSCO = province.isSupplyCenter(); 
+		Power isHomeSCO = isHomeSCO(province);
+
+		if (!isSCO) return 0; 
+
+		if (isHomeSCO != null) {
+			if (isHomeSCO == power) {
+				return c_ownSCO * c_homeSuply;
+			} else {
+				if (isHomeSCO == province.getOwner()) {
+					return c_enemySCO * c_homeSuply;
+				} else {
+					return c_enemySCO * c_normalSuply;
+				}
+			}
+		} else {
+			if (isOwn) {
+				return c_ownSCO * c_normalSuply; 
+			} else {
+				return c_enemySCO * c_normalSuply;
+			}
+		}
+	}
+
+	//values weightKernel between 0 and 1
+	public float getDefendSupplyGain(ArrayList<ArrayList<ProvinceData>> provinceKernel, float[] weightKernel) {
+		boolean isSCO = province.isSupplyCenter(); 
+		Power isHomeSCO = isHomeSCO(province);
+		
+		if (!isSCO) return 0; 
+
+		//if (province.getOwner != power && isHomeSCO != power) return 0;
+		if (province.getOwner() != power) return 0; 
+
+		float c_supplyType = isHomeSCO != null ? c_defendHome : c_defendNormal; 
+
+		float[] enemyWeight = new float[powers.size()]; 
+		for (int  i = 0; i < powers.size(); ++i) enemyWeight[i] = 0;
+
+		for (int i = 0; i < provinceKernel.size(); ++i) {
+			for (ProvinceData provData : provinceKernel.get(i)) {
+				Unit unit = provData.province.getUnit();
+
+				if (unit != null && unit.owner != power) {
+					int powerIdx = powers.indexOf(unit.owner);
+					enemyWeight[powerIdx] += c_supplyType * weightKernel[i]; 
+				}
+			}
+		}
+
+		int bestIdx = -1;
+		float bestWeight = 0; 
+		for (int i = 0; i < powers.size(); ++i) {
+			if (powers.get(i) == power) continue;
+
+			if (enemyWeight[i] > bestWeight) {
+				bestWeight = enemyWeight[i];
+				bestIdx = i; 
+			}
+		}  
+
+		return bestIdx == -1 ? 0 : c_threat * bestWeight;
 	}
 
 	private void computeWeight(Power power) {
@@ -87,22 +177,17 @@ public class ProvinceData {
 		weight *= weight; 
 	}
 
-	public void computeGains() {
-		//gains = c_supply * getSupplyWeight(province) * isOwnCenter(province, power) * defence;
-		int isOwn = isOwnCenter(province, power);
-		gains = getSupplyWeight(province) * (1 - isOwn);
-
-		//add gain when our SCO is threaded. 
-		if (getSupplyWeight(province) * isOwn > 0) {
-			gains += c_threat * maxNegSupport;
-		}
-	}
-
 	public void computeSmoothedGains() {
-		smoothedGains = gains;
+		
+		float total = 0;
+		int num = 0;
 		for (ProvinceData provData : adjProvDatas) {
-			smoothedGains += c_smooth * provData.gains; 
+			total += c_smooth * provData.gains; 
+			num++; 
 		}
+
+		smoothedGains = gains + total;
+		//if (num > 0) smoothedGains += total / num; 
 	}
 
 	public void computeSupportValues() { 
@@ -238,27 +323,16 @@ public class ProvinceData {
 		return false;
 	}
 
-	//TODO: take main supply in account
-	private float getSupplyWeight(Province province) {
-		if (!province.isSupplyCenter()) return 0;
+	private Power isHomeSCO(Province province) {
+		if (!province.isSupplyCenter()) return null;
 
-		float c_supply = province.getOwner() != null ? c_ownedCSO : c_neutralCSO; 
-
-		for (Power p : powers) {
+		for (Power p : powers) { 
 			if (p.homeProvinces.contains(province)) {
-				if (province.getOwner() == p && p.alive) {
-					return c_supply * homeSuply; 
-				} else {
-					break;
-				}
+				return p;
 			}
 		}
 
-		return c_supply * normalSuply;
-	}
-
-	private int isOwnCenter(Province province, Power power) {
-		return province.getOwner() == power ? 1 : 0;  
+		return null; 
 	}
 
 	public void determineSharedUnits(ArrayList<ProvinceData> provinces) {
@@ -344,14 +418,16 @@ public class ProvinceData {
 
 	public String toString() {
 		String str = "";
-		str += "\tname:    " + province.daide().toString() + "\n";
-		str += "\tgains:   " + gains + "\n";
-		str += "\tsmoothed gains:   " + smoothedGains + "\n";
-		str += "\tweight:  " + weight + "\n";
-		str += "\tsupport: " + support + "\n";
-		str += "\tsupportNeeded: " + supportNeeded + "\n"; 
-		str += "\tmaxNegSupport: " + maxNegSupport + "\n"; 
-		str += "\tmainEnemy:     " + mainEnemy + "\n";
+		str += "\tname:           " + province.daide().toString() + "\n";
+		str += "\tsupplyGain:     " + supplyGain + "\n";
+		str += "\tdefendGain:     " + defendGain + "\n";
+		str += "\tgains:          " + gains + "\n";
+		str += "\tsmoothed gains: " + smoothedGains + "\n";
+		str += "\tweight:         " + weight + "\n";
+		str += "\tsupport:        " + support + "\n";
+		str += "\tsupportNeeded:  " + supportNeeded + "\n"; 
+		str += "\tmaxNegSupport:  " + maxNegSupport + "\n"; 
+		str += "\tmainEnemy:      " + mainEnemy + "\n";
 		return str; 
 	}
 }

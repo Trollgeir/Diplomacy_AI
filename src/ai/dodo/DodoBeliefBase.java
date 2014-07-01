@@ -56,6 +56,10 @@ public class DodoBeliefBase {
 	Power	self;
 	ExtendedDodo ai;
 	
+	// The initial values which are used for incrementation and decrementation of support and trust
+	public double supIntolerance = 0.5; 		//Pick a value between 0-1. 0 means you don't care about support reciprocity
+	public double tHalflife = 1.1;			//Treaty half-life. This indicates how fast treaties decay
+	public double tTrustInc = 0.03;			//How much trust to increment for every phase as long as the treaty holds.
 	
 	public ArrayList<AllianceInfo>					allianceInfo;
 	public java.util.Map<Province, ProvinceInfo>	provinceInfo;
@@ -211,5 +215,21 @@ public class DodoBeliefBase {
 			if(allianceInfo.get(i).with == p)
 				allianceInfo.remove(i);
 		}
+	}
+	
+	public double round(double i) { 		//Rounding numbers.
+		return Math.round(i*10000) / 10000.0;
+	}
+	public void supCalc(int supFavor, Power p) {
+		//Function for trust alteration based on support reciprocity
+		powerInfo.get(p).trust += round((this.supIntolerance * Math.abs(supFavor)) / 100);
+	}
+	public double pUpdate(double time) {	
+		//Function for trust alteration while holding a treaty
+		return Math.pow(this.tHalflife,-time);
+	}
+	public void defectDec(double time, Power p) { 	
+		//Function for trust alteration based on defecting a treaty (backstab!)
+		powerInfo.get(p).trust -= round(Math.pow(this.tHalflife,(1 - time)));
 	}
 }

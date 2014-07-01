@@ -50,7 +50,7 @@ public class MapInfo {
 
 		for (ProvinceData p : provinceData) p.computeSupportValues();
 
-		for (ProvinceData p : provinceData) p.computeGains();
+		for (ProvinceData p : provinceData) p.computeGains(provinceData);
 
 		for (ProvinceData p : provinceData) p.computeSmoothedGains();
 
@@ -112,6 +112,9 @@ public class MapInfo {
 
 		//add smoothedgains to nearby provinces to simulate cohesion. 
 		float kernelWeight[] = {0, 0, 0};
+		
+		/*
+		float kernelWeight[] = {0, 8, 5};
 		ArrayList<ArrayList<ProvinceData>> kernel = getProvinceKernel(movedTo, 2);
 		for (int i = 0; i < kernel.size(); ++i ) {
 			System.out.println("Order " + i);
@@ -120,6 +123,7 @@ public class MapInfo {
 				provData.smoothedGains += kernelWeight[i]; 
 			}
 		}
+		*/
 
 
 		//recompute the weights for the provinces left.
@@ -129,7 +133,7 @@ public class MapInfo {
 		//dont't call the determineSharedUnits, since the near units are locally updated during the p.update() call.   
 	}
 	
-	public ArrayList<ArrayList<ProvinceData>> getProvinceKernel(ArrayList<ProvinceData> order0, int order) {
+	public static ArrayList<ArrayList<ProvinceData>> getProvinceKernel(ArrayList<ProvinceData> order0, int order) {
 		 ArrayList<ArrayList<ProvinceData>> result = new  ArrayList<ArrayList<ProvinceData>>();
 		 for (int i = 0; i <= order; ++i) {
 		 	result.add(new ArrayList<ProvinceData>());
