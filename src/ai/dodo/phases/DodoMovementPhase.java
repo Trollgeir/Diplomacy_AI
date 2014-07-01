@@ -74,12 +74,15 @@ public class DodoMovementPhase extends DodoPhase {
 			
 			while (availableUnits.size() > 0) {
 				ArrayList<ProvinceData> targets = mapInfo.getSortedTargets(); 
+
 				targets = mapInfo.filterTakeable(targets);
 
 				System.out.println("Sorted targets:" + targets.size());
 				for (ProvinceData p : targets) {
-					if (p.weight > 0) System.out.println(p.toString()); 
+					System.out.println(p.toString()); 
 				}
+				
+				
 
 				float totalWeight = 0; 
 				for (ProvinceData target : targets) totalWeight += target.weight;
@@ -93,7 +96,7 @@ public class DodoMovementPhase extends DodoPhase {
 
 				//System.out.println("attacking: " + targets.get(targetIdx).province.name);
 				ArrayList<UnitData> sortedUnits = mapInfo.getSortedUnits(targets.get(targetIdx));
-				System.out.println("UNITS SIZE : " + sortedUnits.size());
+				System.out.println("targetIdx: " + targetIdx + " / " + targets.size());
 
 				//Be sure that the unit standing on the target is always used (or do something intelligent...)
 				
@@ -121,8 +124,7 @@ public class DodoMovementPhase extends DodoPhase {
 				mapInfo.updateByMove(usedUnits, usedProvinceData);
 
 			}
-			
-			System.out.println(availableUnits.size() + " units have nothing to do");
+		
 			for (Unit u : availableUnits) {
 				queue.add(new Hold(u));
 			}
