@@ -35,7 +35,6 @@ public class Negotiator {
 	}
 
 	public void handleProposal() {
-		String fromName;
 		int end1, end2, i;
 		Power self = dodoAI.belief.self;
 		
@@ -47,7 +46,7 @@ public class Negotiator {
 			{
 				if (s[0].equals("FRM"))
 				{
-					fromName = s[2];
+					String fromName = s[2];
 					Power from = map.getPower(fromName);
 					PowerInfo powerInfo = dodoAI.belief.powerInfo.get(from);
 					
@@ -229,7 +228,7 @@ public class Negotiator {
 								
 								for (int n = 0; n < allies.length; n++) 
 								{
-									if (!allies[n].equals(self))
+									if (allies[n] != self)
 										setAlliance(allies[n], enemies, true);
 								}
 								
@@ -244,8 +243,9 @@ public class Negotiator {
 
 								for (int n = end1 + 1 ;n < end2;n++)
 								{
-									if (!s[n].equals(self.getName()))
-										setPeace(map.getPower(s[n]),true);
+									Power other = map.getPower(s[n]);
+									if (other != self)
+										setPeace(other, true);
 								}
 							} 
 							else if (s[end1+6].equals("XDO")) 
@@ -259,7 +259,8 @@ public class Negotiator {
 							}
 						}
 
-					} 
+					}
+					
 					else if (s[end1+2].equals("REJ")) 
 					{
 						if (s[end1+4].equals("PRP"))
@@ -293,7 +294,7 @@ public class Negotiator {
 								
 								for (int n = 0; n < allies.length; n++) 
 								{
-									if (!allies[n].equals(self))
+									if (allies[n] != self)
 										setAlliance(allies[n], enemies, false);
 								}
 								
@@ -308,8 +309,9 @@ public class Negotiator {
 
 								for (int n = end1 + 1 ;n < end2;n++)
 								{
-									if (!s[n].equals(self.getName()))
-										setPeace(map.getPower(s[n]), false);
+									Power other = map.getPower(s[n]);
+									if (other != self)
+										setPeace(other, false);
 								}
 							} 
 							else if (s[end1+6].equals("XDO")) 
@@ -432,56 +434,57 @@ public class Negotiator {
 	private void setPeace(Power member, boolean accepted) {
 
 		PowerInfo powerInfo = dodoAI.belief.powerInfo.get(member);
-		if (accepted) {
-			powerInfo.peace = true;
+		
+		powerInfo.peace = accepted;
+		
+		if (accepted)			
 			powerInfo.peaceActuality = 1.0;
-		} else {
-			powerInfo.peace = false;
+		else
 			powerInfo.peaceActuality = 0.0;
-		}
 	}
 
 	private void setAlliance(Power ally, Power[] enemies, boolean accepted) {
 		
-		AllianceInfo newAlliance = new AllianceInfo();
-		
-		newAlliance.with = ally;
-		
-		// This is the starting paranoia value of an alliance
-		newAlliance.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(dodoAI.belief.powerInfo.get(ally).trust/10));
+		ArrayList<Power> enemiesList = new ArrayList<Power>();
 		
 		for (int n = 0; n < enemies.length; n++)
-			newAlliance.against.add(enemies[n]);
+			enemiesList.add(enemies[n]);
 
 		if (accepted) {
 			boolean addNew = true;
 			for (int a = 0; a < dodoAI.belief.allianceInfo.size(); a++)
 			{
 				AllianceInfo oldAlliance = dodoAI.belief.allianceInfo.get(a);
-				if (oldAlliance.with.equals(ally))
+				//Check if the proposed alliance is the same as the oldAlliance
+				if (oldAlliance.with == ally &&
+					oldAlliance.against.containsAll(enemiesList) &&
+					enemiesList.containsAll(oldAlliance.against))
 				{
-					//refresh oldAlliance
-
-					// This is the starting paranoia value of an alliance
-					oldAlliance.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(dodoAI.belief.powerInfo.get(ally).trust/10));
-					if (oldAlliance.against.containsAll(newAlliance.against))
-						addNew = false;
+					addNew = false;
+					oldAlliance.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(dodoAI.belief.powerInfo.get(ally).trust/10));	
 				}
 			}
 			if (addNew)
-				dodoAI.belief.allianceInfo.add(newAlliance);
-		} else {
+			{
+				AllianceInfo newAlliance = new AllianceInfo();
+				
+				newAlliance.against.addAll(enemiesList);
+				newAlliance.with = ally;
+				newAlliance.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(dodoAI.belief.powerInfo.get(ally).trust/10));
+			}
+		} 
+		else 
+		{
 			for (int a = 0; a < dodoAI.belief.allianceInfo.size(); a++)
 			{
 				AllianceInfo oldAlliance = dodoAI.belief.allianceInfo.get(a);
-				if (oldAlliance.with.equals(ally))
+				
+				if (oldAlliance.with == ally &&
+					oldAlliance.against.containsAll(enemiesList) &&
+					enemiesList.containsAll(oldAlliance.against))
 				{
-					if (oldAlliance.against.containsAll(newAlliance.against) &&
-						newAlliance.against.containsAll(oldAlliance.against))
-					{
-						dodoAI.belief.allianceInfo.remove(a);
-						a--;
-					}
+					dodoAI.belief.allianceInfo.remove(a);
+					a--;
 				}
 			}
 		}
