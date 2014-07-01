@@ -28,12 +28,15 @@ public class ProvinceData {
 	public static float c_normalOurs = 0.25f; 
 	public static float c_homeOurs = 0.30f; 
 
-	public static float c_normalOursThreat = 3.5f; 
-	public static float c_homeOursThreat = 3.8f; 
+	public static float c_normalOursThreat = 3.0f; 
+	public static float c_homeOursThreat = 3.2f; 
 
-	public static float c_homeOursTaken = 10.0f; 
+	public static float c_homeOursTaken = 5.0f; 
 
 	public static float c_threatThreshold = 1.10f; 
+
+	public static float c_counter = 5.0f; 
+
 /*
 	public static float c_normalSuply = 1.0f;
 	public static float c_homeSuply = 1.2f; 
@@ -66,6 +69,7 @@ public class ProvinceData {
 	public float weight; 
 	public float gains; 
 	public float supplyGain;
+	public float counterGain; 
 	public float defendGain; 
 	public float smoothedGains; 
 
@@ -97,13 +101,25 @@ public class ProvinceData {
 		
 		supplyGain = getSupplyGain();
 		//System.out.println("supplyGain: " + supplyGain);
+		counterGain = getCounterGain(); 
 
 		float[] weightKernel = {1, 1f, 0.25f};
 		defendGain = getDefendSupplyGain(provinceKernel, weightKernel);
 		//System.out.println("defendGain: " + defendGain);
 
 		gains = 0; 
-		gains += supplyGain + defendGain;
+		gains += supplyGain + defendGain + counterGain;
+	}
+
+	public float getCounterGain() {
+		Unit u = province.getUnit(); 
+		if (u == null || u.owner == power) return 0; 
+
+		for (ProvinceData provData : adjProvDatas) {
+			Power isHomeSCO = provData.isHomeSCO(province);
+			if (isHomeSCO == power) return c_counter; 
+		}
+		return 0; 
 	}
 
 	public float getSupplyGain() {
@@ -114,7 +130,7 @@ public class ProvinceData {
 		
 		//If it's not a supply center, it does not get supply center gain
 		if (!isSCO) return 0; 
-		
+
 		if (isHomeSCO != null) {
 			if (isHomeSCO == power) {
 				return isOwn ? c_homeOurs : c_homeOursTaken; 
