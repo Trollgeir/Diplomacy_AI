@@ -3,6 +3,7 @@
 \usepackage{uureport}
 \usepackage{cite}
 \usepackage{hyperref}
+\usepackage{pgfplots}
 \bibliographystyle{alpha}
 
 \title{Diplomacy}
@@ -57,6 +58,43 @@ where $g_0$ is the gain of the province, $C_1$ is a constant, $g_1$ is a first-o
 
 \subsection{Threat}
 
+\begin{tikzpicture}
+  \begin{axis}[ 
+    xlabel= time,
+    ylabel={},
+    xtick = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15},
+    ytick = {0,1},
+    xmin = 0,
+    ymin = 0,
+    xmax = 16,
+    ymax = 1,
+    domain = 0:15
+  ] 
+    \addplot {1-((1.1^(-x))*(0.9+0.02*x))};
+    \addplot {(1.1^(1-x))};
+    \addplot {0.02*x};
+    \legend{Case 1,Case 2, Case 3};
+  \end{axis}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \begin{axis}[ 
+    xlabel= time,
+    ylabel={},
+    xtick = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15},
+    ytick = {0,1},
+    xmin = 0,
+    ymin = 0,
+    xmax = 16,
+    ymax = 1,
+    domain = 0:15
+  ] 
+    \addplot {1-((1.1^(-x))*(0.0+0.02*x))};
+    \addplot {(1.1^(1-x))};
+    \addplot {0.02*x};
+    \legend{Case 1,Case 2, Case 3};
+  \end{axis}
+\end{tikzpicture}
 
 \end{description} 
 
