@@ -171,11 +171,13 @@ public class DodoBeliefBase {
 
 	public float defendAgainstWeight(Power p) {
 		PowerInfo info = powerInfo.get(p); 
+		if (info == null) return 0; 
 		return info.peace ? 0.0f : 1.0f; 
 	}
 
 	public float attackAgainstWeight(Power p) {
 		PowerInfo info = powerInfo.get(p);
+		if (info == null) return 0; 
 		return info.peace ? 0.0f : 1.0f; 
 	}
 
