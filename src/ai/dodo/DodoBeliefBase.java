@@ -143,7 +143,7 @@ public class DodoBeliefBase {
 			alliance.paranoia = 1.0 - Math.pow(1.0 - ai.decay, alliance.time) * ai.initialTrust;//TODO: Is this right?
 		}
 	}
-	
+
 	public void deleteAllAlliancesWith(Power p)
 	{
 		for(int i = 0; i < allianceInfo.size(); i++)
@@ -168,4 +168,32 @@ public class DodoBeliefBase {
 		//Function for trust alteration based on defecting a treaty (backstab!)
 		powerInfo.get(p).trust -= round(Math.pow(this.tHalflife,(1 - time)));
 	}
+
+	public float defendAgainstWeight(Power p) {
+		PowerInfo info = powerInfo.get(p); 
+		return info.peace ? 0.0f : 1.0f; 
+	}
+
+	public float attackAgainstWeight(Power p) {
+		PowerInfo info = powerInfo.get(p);
+		return info.peace ? 0.0f : 1.0f; 
+	}
+
+	public float[] allDefendAgainstWeights() {
+		float[] result = new float[map.powers.size()];
+		for (int i = 0; i < map.powers.size(); ++i) {
+			result[i] = defendAgainstWeight(map.powers.get(i)); 
+		}
+		return result; 
+	}
+
+	public float[] allAttackAgainstWeights() {
+		float[] result = new float[map.powers.size()];
+		for (int i = 0; i < map.powers.size(); ++i) {
+			result[i] = attackAgainstWeight(map.powers.get(i)); 
+		}
+		return result; 
+	}
+
+
 }
