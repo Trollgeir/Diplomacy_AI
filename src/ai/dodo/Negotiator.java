@@ -102,7 +102,9 @@ public class Negotiator {
 							
 							boolean accept = acceptAlliance(allies, enemies);
 							if (accept)
-								System.out.println("Accepted!");
+								System.out.println(" Accepted!");
+							else
+								System.out.println(" Rejected!");
 							for (int n = 0; n < allies.length; n++) 
 							{
 								if (allies[n] != self)
@@ -176,6 +178,11 @@ public class Negotiator {
 										proposedOrders.add(new SupportToHold(supporting.getUnit(), supported.getUnit()));
 								}
 
+								if (accept)
+								{
+									powerInfo.supFavor++; //They now owe us
+								}
+								
 								sendYes = accept;
 							} 
 							else 
@@ -194,7 +201,6 @@ public class Negotiator {
 						{
 							if (sendYes)
 							{
-								powerInfo.supFavor++; //They now owe us
 								Game.server.send(new Send(new Yes(prop), from));
 							}
 							else

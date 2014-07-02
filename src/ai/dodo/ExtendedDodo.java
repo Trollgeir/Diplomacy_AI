@@ -12,6 +12,7 @@ import kb.unit.Unit;
 import message.DaideMessage;
 import message.order.*;
 import message.press.Alliance;
+import message.press.Peace;
 import message.press.Proposal;
 import message.press.Send;
 import message.server.Huh;
@@ -338,25 +339,6 @@ public class ExtendedDodo extends AI {
 		System.out.println("The new Dodo lives!");
 		System.out.println("New turn for " + power.getName());
 		System.out.println("Year: " + map.getYear() + " -----------  Phase: " + map.getPhase()); 
-
-		
-		//Suggesting alliances to EVERYONE!
-		Power[] me = {power};
-		
-		for ( Power ally : map.powers )
-		{
-			for ( Power enemy : map.powers )
-			{
-				Power[] against = {enemy};
-				DaideMessage msg = new Send(new Proposal(new Alliance(me, against)), ally);
-				
-				if (ally != enemy && ally != power && enemy != power)
-				{
-					Game.server.send(msg);
-					System.out.println(msg);
-				}
-			}
-		}
 		
 		
 		
