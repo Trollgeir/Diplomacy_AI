@@ -32,8 +32,8 @@ public class DodoRetreatPhase extends DodoPhase {
 	}
 
 	public void run(LinkedBlockingQueue<Order> queue) {
-		float[] willAttack;
-		float[] willDefend;  
+		float[] willAttack = belief.allAttackAgainstWeights(); 
+		float[] willDefend = belief.allDefendAgainstWeights(); 
 
 		MapInfo mapInfo = new MapInfo(map, power, willAttack, willDefend);
 

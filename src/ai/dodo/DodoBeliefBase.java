@@ -41,17 +41,6 @@ class PowerInfo
 	public double 	trust;
 }
 
-class ProvinceInfo
-{
-	public ProvinceInfo()
-	{
-		threat = 0.0;
-		threatChange = 0.0;
-	}
-	public double threat;
-	public double threatChange;
-}
-
 public class DodoBeliefBase {
 	Map		map;
 	Power	self;
@@ -63,7 +52,6 @@ public class DodoBeliefBase {
 	public double tTrustInc = 0.03;			//How much trust to increment for every phase as long as the treaty holds.
 	
 	public ArrayList<AllianceInfo>					allianceInfo;
-	public java.util.Map<Province, ProvinceInfo>	provinceInfo;
 	public java.util.Map<Power, PowerInfo>			powerInfo;
 	
 	
@@ -73,7 +61,6 @@ public class DodoBeliefBase {
 		this.self = self;
 		
 		allianceInfo = new ArrayList<AllianceInfo>();
-		provinceInfo = new java.util.HashMap<Province, ProvinceInfo>();
 		powerInfo = new java.util.HashMap<Power, PowerInfo>();
 		
 		for (Power p : map.powers)
@@ -81,31 +68,12 @@ public class DodoBeliefBase {
 			if (!p.equals(self))
 				powerInfo.put(p, new PowerInfo());
 		}
-		
-		for (Province p : map.provinces)
-		{
-			provinceInfo.put(p, new ProvinceInfo());
-		}
 	}
 	
 	public String toString()
 	{
 		String ret = "=====BELIEFS OF " + self.getName() + "=====\n";
 		
-		
-		ret += " PROVINCES\n-----------\n";
-		Set<Province> provinceKeys = provinceInfo.keySet();
-		
-		for (Province p : provinceKeys)
-		{
-			ProvinceInfo info = provinceInfo.get(p);
-			
-			ret += "\t" + p.getName() + " : \n";
-			ret += "\t - threat : " + info.threat + "\n";
-			ret += "\t - threatChange : " + info.threatChange + "\n";
-		}
-		
-		ret += "\n\n";
 		ret += " POWERS\n--------\n";
 		Set<Power> powerKeys = powerInfo.keySet();
 		
@@ -131,88 +99,7 @@ public class DodoBeliefBase {
 			ret += "\t - paranoia : " + info.paranoia + "\n";
 		}
 		
-		
-		
 		return ret + "\n========================";
-	}
-	
-	public int distance(Node start, Node goal)
-	{
-		java.util.Map<Node, Integer> distanceList = new java.util.HashMap<Node, Integer>();
-		ArrayList<Node> procdList = new ArrayList<Node>();
-		ArrayList<Node> addedList = new ArrayList<Node>();
-		
-		addedList.add(start);
-		distanceList.put(start, 0);
-		
-		for (int j = 0; j < addedList.size(); j++)
-		{
-			Node cNode = addedList.get(j);
-			ArrayList<Node> neighbors = cNode.allNeighbors();
-			
-			for (int i = 0; i < neighbors.size(); i++)
-			{
-				Node adjNode = neighbors.get(i);
-				int adjDist = distanceList.get(cNode) + 1;
-				
-				if (adjNode.equals(goal))
-					return adjDist;
-				
-				if (!distanceList.containsKey(adjNode))
-				{
-					distanceList.put(adjNode, adjDist);
-					addedList.add(adjNode);
-				}
-			}
-			procdList.add(cNode);
-		}
-		
-		return -1;
-	}
-	
-	public void calcThreats()
-	{		
-		for (Province p : map.provinces)
-		{
-			if (!self.equals(p.getOwner()))
-			{
-				provinceInfo.put(p, new ProvinceInfo());
-			}
-			else
-			{
-				double prevThreat = provinceInfo.get(p).threat;
-				double threatVal = 0.0;
-				
-				for (int pow = 0; pow < map.powers.size(); pow++)
-				{
-					Power cPow = map.powers.get(pow);
-					if (cPow.equals(self))
-						continue;
-					
-					ArrayList<Unit> threatUnits = map.getUnitsByOwner(cPow);
-					
-					for (int u = 0; u < threatUnits.size(); u++)
-					{
-						double trustFactor = 1.0 - powerInfo.get(cPow).trust;
-						int dist = distance(p.getCentralNode(), threatUnits.get(u).location);
-						
-						double threatFromUnit;
-						
-						if (dist != -1)
-							threatFromUnit = trustFactor * Math.pow(0.5, dist);
-						else
-							threatFromUnit = 0.0;
-						
-						threatVal += threatFromUnit;
-					}
-				}
-				provinceInfo.get(p).threat = threatVal;
-				if (prevThreat != -1.0)
-					provinceInfo.get(p).threatChange = threatVal - prevThreat;
-				else
-					provinceInfo.get(p).threatChange = 0.0;
-			}
-		}
 	}
 	
 	public AllianceInfo allianceByPower(Power power)
@@ -253,10 +140,10 @@ public class DodoBeliefBase {
 			AllianceInfo alliance = allianceInfo.get(i);
 			
 			alliance.time++;
-			alliance.paranoia = 1.0 - Math.pow(1.0 - ai.decay, alliance.time) * ai.initialTrust;
+			alliance.paranoia = 1.0 - Math.pow(1.0 - ai.decay, alliance.time) * ai.initialTrust;//TODO: Is this right?
 		}
 	}
-	
+
 	public void deleteAllAlliancesWith(Power p)
 	{
 		for(int i = 0; i < allianceInfo.size(); i++)
@@ -281,4 +168,32 @@ public class DodoBeliefBase {
 		//Function for trust alteration based on defecting a treaty (backstab!)
 		powerInfo.get(p).trust -= round(Math.pow(this.tHalflife,(1 - time)));
 	}
+
+	public float defendAgainstWeight(Power p) {
+		PowerInfo info = powerInfo.get(p); 
+		return info.peace ? 0.0f : 1.0f; 
+	}
+
+	public float attackAgainstWeight(Power p) {
+		PowerInfo info = powerInfo.get(p);
+		return info.peace ? 0.0f : 1.0f; 
+	}
+
+	public float[] allDefendAgainstWeights() {
+		float[] result = new float[map.powers.size()];
+		for (int i = 0; i < map.powers.size(); ++i) {
+			result[i] = defendAgainstWeight(map.powers.get(i)); 
+		}
+		return result; 
+	}
+
+	public float[] allAttackAgainstWeights() {
+		float[] result = new float[map.powers.size()];
+		for (int i = 0; i < map.powers.size(); ++i) {
+			result[i] = attackAgainstWeight(map.powers.get(i)); 
+		}
+		return result; 
+	}
+
+
 }

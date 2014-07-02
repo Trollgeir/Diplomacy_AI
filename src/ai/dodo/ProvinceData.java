@@ -77,7 +77,7 @@ public class ProvinceData {
 
 	public float[] willAttack;
 	public float[] willDefend;  
-
+	
 	public ProvinceData(Power power, Province province, ArrayList<Power> powers, 
 						float[] willAttack, float[] willDefend) {
 		

@@ -11,7 +11,7 @@ import kb.province.Province;
 import kb.unit.Unit;
 import message.DaideMessage;
 import message.order.*;
-import message.press.Alliance;
+import message.press.*;
 import message.press.Proposal;
 import message.press.Send;
 import message.server.Huh;
@@ -218,9 +218,16 @@ public class ExtendedDodo extends AI {
 		System.out.println("New turn for " + power.getName());
 		System.out.println("Year: " + map.getYear() + " -----------  Phase: " + map.getPhase()); 
 
-		
+		if (power.getName().equals("ITA")) {
+			System.out.println("Hey, I am Italy and I want peace with Austria! :D"); 
+			Power[] peace = new Power[2];
+			peace[0] = power; 
+			peace[1] = map.getPower("AUS");
+			Game.server.send(new Send(new Proposal(new Peace(peace)), peace[1]));  
+		}
+
 		//Suggesting alliances to EVERYONE!
-		Power[] me = {power};
+		/*Power[] me = {power};
 		
 		for ( Power ally : map.powers )
 		{
@@ -235,8 +242,7 @@ public class ExtendedDodo extends AI {
 					System.out.println(msg);
 				}
 			}
-		}
-		
+		}*/
 		
 		
 		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {

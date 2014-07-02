@@ -68,8 +68,8 @@ public class DodoBuildPhase extends DodoPhase {
 			BUILD PHASE
 		*/
 
-		float[] willAttack;
-		float[] willDefend;  
+		float[] willAttack = belief.allAttackAgainstWeights(); 
+		float[] willDefend = belief.allDefendAgainstWeights();
 
 		MapInfo mapInfo = new MapInfo(map, power, willAttack, willDefend);
 
