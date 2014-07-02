@@ -61,6 +61,22 @@ public class DodoMovementPhase extends DodoPhase {
 		float[] willDefend = belief.allDefendAgainstWeights(); 
 
 		MapInfo mapInfo = new MapInfo(map, power, willAttack, willDefend);
+
+		int[] neighborCount = mapInfo.getNeighborCount();
+		int max = 0;
+		int bestIdx = -1;
+		for (int i = 0; i < neighborCount.length; ++i) {
+			if (neighborCount[i] > max) {
+				max = neighborCount[i];
+				bestIdx = i;
+			}
+		}
+
+		if (bestIdx != -1) {
+			System.out.println("Peace suggestion: " + map.powers.get(bestIdx).getName());
+		} else {
+			System.out.println("No powers to make peace with");
+		}
 		
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
@@ -80,10 +96,12 @@ public class DodoMovementPhase extends DodoPhase {
 
 				targets = mapInfo.filterTakeable(targets);
 
+				/*
 				System.out.println("Sorted targets:" + targets.size());
 				for (ProvinceData p : targets) {
 					System.out.println(p.toString()); 
 				}
+				*/
 				
 				if (targets.size() == 0) break;
 

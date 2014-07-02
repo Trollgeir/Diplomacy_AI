@@ -248,6 +248,20 @@ public class MapInfo {
 		return result; 
 	}
 
+	public int[] getNeighborCount() {
+		int[] res = new int[map.powers.size()];
+		int powerIdx = map.powers.indexOf(power);
+
+		for (ProvinceData provData : provinceData) {
+			if (provData.support > 0) {
+				int ownerIdx = provData.getProvinceOwner();
+				if (ownerIdx != -1 && ownerIdx != powerIdx) res[ownerIdx]++; 
+			}
+		}
+
+		return res; 
+	}
+
 
 
 }

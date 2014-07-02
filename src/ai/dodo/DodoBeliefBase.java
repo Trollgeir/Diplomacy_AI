@@ -191,8 +191,10 @@ public class DodoBeliefBase {
 
 	public float[] allAttackAgainstWeights() {
 		float[] result = new float[map.powers.size()];
+		System.out.println("willAttack: ");
 		for (int i = 0; i < map.powers.size(); ++i) {
 			result[i] = attackAgainstWeight(map.powers.get(i)); 
+			System.out.println("\tpower: " + map.powers.get(i) + ": " + result[i]);
 		}
 		return result; 
 	}

@@ -35,7 +35,9 @@ public class ProvinceData {
 
 	public static float c_threatThreshold = 1.10f; 
 
-	public static float c_counter = 5.0f; 
+	public static float c_counter = 5.5f; 
+
+	public static float c_kill = 5.0f; 
 
 	public static float attackThreshold = 3.0f; 
 
@@ -73,6 +75,7 @@ public class ProvinceData {
 	public float supplyGain;
 	public float counterGain; 
 	public float defendGain; 
+	public float killGain; 
 	public float smoothedGains; 
 
 	public float[] willAttack;
@@ -105,27 +108,57 @@ public class ProvinceData {
 		order0.add(this);
 		ArrayList<ArrayList<ProvinceData>> provinceKernel = MapInfo.getProvinceKernel(order0, 2);
 
-		//System.out.println("Province:  " + province.getName());
 		
 		supplyGain = getSupplyGain();
-		//System.out.println("supplyGain: " + supplyGain);
+	
 		counterGain = getCounterGain(); 
 
 		float[] weightKernel = {1, 1f, 0.25f};
 		defendGain = getDefendSupplyGain(provinceKernel, weightKernel);
-		//System.out.println("defendGain: " + defendGain);
+		
+		killGain = getKillGain(provinceKernel);
+ 
+		gains = supplyGain + defendGain + counterGain + killGain;
+	}
 
-		gains = 0; 
-		gains += supplyGain + defendGain + counterGain;
+	public float getKillGain(ArrayList<ArrayList<ProvinceData>> provinceKernel) {
+		Unit u = province.getUnit(); 
+		if (u == null || u.owner == power) return 0; 		
+
+		Power unitOwner = u.owner; 
+
+		//Search for a team unit
+		for (int order = 1; order < provinceKernel.size(); ++order) {
+			for (ProvinceData provData : provinceKernel.get(order)) {
+				Unit unit = provData.province.getUnit();
+				if (unit != null && unit.owner == unitOwner) {
+					return 0; 
+				}
+			}
+		}
+
+		int numEscapeRoutes = 0; 
+		for (Province prov : adjProvinces) {
+			Node node = findDestNode(u, prov);
+			if (node != null && prov.getUnit() == null) numEscapeRoutes++; 
+		}
+		
+		if (support > 0 && numEscapeRoutes <= 1) System.out.println("I AM GOING TO KILL YOU: " + province.getName());
+		
+		int idx = powers.indexOf(unitOwner);
+		return numEscapeRoutes <= 1 ? willAttack[idx] * c_kill : 0;  
 	}
 
 	public float getCounterGain() {
 		Unit u = province.getUnit(); 
 		if (u == null || u.owner == power) return 0; 
 
+		int idx = powers.indexOf(u.owner);
+		float w = willDefend[idx];  
+
 		for (ProvinceData provData : adjProvDatas) {
 			Power isHomeSCO = provData.isHomeSCO(province);
-			if (isHomeSCO == power) return c_counter; 
+			if (isHomeSCO == power) return w * c_counter; 
 		}
 		return 0; 
 	}
@@ -135,20 +168,26 @@ public class ProvinceData {
 		boolean isSCO = province.isSupplyCenter(); 
 		Power isHomeSCO = isHomeSCO(province);
 		
-		
 		//If it's not a supply center, it does not get supply center gain
 		if (!isSCO) return 0; 
+
+		float w;
+		if (getProvinceOwner() != -1 && !isOwn) {
+			w = willAttack[getProvinceOwner()];
+		} else {
+			w = 1; 
+		}
 
 		if (isHomeSCO != null) {
 			if (isHomeSCO == power) {
 				return isOwn ? c_homeOurs : c_homeOursTaken; 
 			} else {
 				if (isOwn) return c_homeOurs;
-				return isHomeSCO == province.getOwner() ? c_homeNotOurs : c_normalNotOurs;   
+				return isHomeSCO == province.getOwner() ? w * c_homeNotOurs : w * c_normalNotOurs;   
 			}
 		} else {
 			//This is not a home sco
-			return isOwn ? c_normalOurs : c_normalNotOurs; 
+			return isOwn ? c_normalOurs : w * c_normalNotOurs; 
 		}
 
 	}
@@ -162,6 +201,11 @@ public class ProvinceData {
 		//if (province.getOwner != power && isHomeSCO != power) return 0;
 		if (province.getOwner() != power) return 0; 
 
+		for (int i = 0; i < powers.size(); ++i) {
+			if (willDefend[i] == 0) {
+				System.out.println("I do not care about " + powers.get(i).getName());
+			}
+		}
 
 		float c_supplyType = isHomeSCO != null ? c_homeOursThreat : c_normalOursThreat; 
 		float threat = 0; 
@@ -175,7 +219,7 @@ public class ProvinceData {
 
 				if (unit != null && unit.owner != power) {
 					int powerIdx = powers.indexOf(unit.owner);
-					enemyWeight[powerIdx] += weightKernel[i];
+					enemyWeight[powerIdx] += willDefend[powerIdx] * weightKernel[i];
 				}
 			}
 		}
@@ -190,6 +234,12 @@ public class ProvinceData {
 				bestIdx = i; 
 			}
 		}  
+
+		if (bestIdx != -1) {
+			System.out.println("Threat " + province.getName() + ": " + powers.get(bestIdx).getName());
+			System.out.println("\t" + bestWeight);
+		}
+
 		threat = bestIdx == -1 ? 0 : bestWeight; 
 		if (threat > c_threatThreshold) return c_supplyType; 
 
@@ -213,8 +263,7 @@ public class ProvinceData {
 
 		int ownerIdx = getProvinceOwner(); 
 		if (ownerIdx != - 1 && ownerIdx != powers.indexOf(power)) {
-			float newWeight = weight * willAttack[ownerIdx];
-			weight = (newWeight > attackThreshold ? newWeight : weight);
+			if (weight < attackThreshold) weight = 0;
 		}
 
 		if (weight < 0) weight = 0; 
@@ -405,7 +454,7 @@ public class ProvinceData {
 		}
 	}
 
-	//Is for the belief stuf
+	//Is for the belief stuff
 	//returns the owner of the unit on this province.
 	//otherwise the owner of the SCO
 	//otherwise neutral
