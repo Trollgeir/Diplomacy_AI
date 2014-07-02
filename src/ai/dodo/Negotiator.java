@@ -460,14 +460,19 @@ public class Negotiator {
 		
 		powerInfo.peace = accepted;
 		
-		if (accepted)			
+		if (accepted)
+		{
 			powerInfo.peaceActuality = 1.0;
+			powerInfo.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(powerInfo.trust/10));
+		}
 		else
+		{
 			powerInfo.peaceActuality = 0.0;
+		}
 	}
 
 	private void setAlliance(Power ally, Power[] enemies, boolean accepted) {
-		
+		PowerInfo pi = dodoAI.belief.powerInfo.get(ally);
 		ArrayList<Power> enemiesList = new ArrayList<Power>();
 		
 		for (int n = 0; n < enemies.length; n++)
@@ -485,7 +490,7 @@ public class Negotiator {
 				{
 					System.out.println("Refreshing alliance with "+ally.getName());
 					addNew = false;
-					oldAlliance.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(dodoAI.belief.powerInfo.get(ally).trust/10));	
+					pi.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(pi.trust/10));	
 				}
 			}
 			if (addNew)
@@ -495,7 +500,7 @@ public class Negotiator {
 				
 				newAlliance.against.addAll(enemiesList);
 				newAlliance.with = ally;
-				newAlliance.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(dodoAI.belief.powerInfo.get(ally).trust/10));
+				pi.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(pi.trust/10));
 				
 				dodoAI.belief.allianceInfo.add(newAlliance);
 			}
