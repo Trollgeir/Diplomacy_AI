@@ -1,6 +1,7 @@
 package ai.dodo;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import kb.Map;
 import kb.Node;
@@ -85,6 +86,54 @@ public class DodoBeliefBase {
 		{
 			provinceInfo.put(p, new ProvinceInfo());
 		}
+	}
+	
+	public String toString()
+	{
+		String ret = "=====BELIEFS OF " + self.getName() + "=====\n";
+		
+		
+		ret += " PROVINCES\n-----------\n";
+		Set<Province> provinceKeys = provinceInfo.keySet();
+		
+		for (Province p : provinceKeys)
+		{
+			ProvinceInfo info = provinceInfo.get(p);
+			
+			ret += "\t" + p.getName() + " : \n";
+			ret += "\t - threat : " + info.threat + "\n";
+			ret += "\t - threatChange : " + info.threatChange + "\n";
+		}
+		
+		ret += "\n\n";
+		ret += " POWERS\n--------\n";
+		Set<Power> powerKeys = powerInfo.keySet();
+		
+		for (Power p : powerKeys)
+		{
+			PowerInfo info = powerInfo.get(p);
+
+			ret += "\t" + p.getName() + " : \n";
+			ret += "\t - supFavor : " + info.supFavor + "\n";
+			ret += "\t - peace : " + info.peace + "\n";
+			ret += "\t - peaceActuality : " + info.peaceActuality + "\n";
+			ret += "\t - trust : " + info.trust + "\n";
+		}
+		
+		ret += "\n\n";
+		ret += " ALLIANCES\n-----------\n";
+
+		for (AllianceInfo info : allianceInfo)
+		{
+			ret += "\t" + info.with.getName() + " : \n";
+			ret += "\t - against : " + info.against + "\n";
+			ret += "\t - time : " + info.time + "\n";
+			ret += "\t - paranoia : " + info.paranoia + "\n";
+		}
+		
+		
+		
+		return ret + "\n========================";
 	}
 	
 	public int distance(Node start, Node goal)

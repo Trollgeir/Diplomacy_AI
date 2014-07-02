@@ -39,4 +39,9 @@ public class Power{
 	{
 		return name;
 	}
+	
+	public String toString()
+	{
+		return name;
+	}
 }

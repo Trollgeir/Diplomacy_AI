@@ -10,7 +10,7 @@ import message.press.Arrangement;
  *
  */
 
-public abstract class Proposal extends DaideMessage{
+public class Proposal extends DaideMessage{
 	
 	Arrangement arrangement;
 	

@@ -26,7 +26,6 @@ public abstract class AI extends Receiver {
 	protected String passcode;
 	protected String lvl;
 	protected boolean canMessage;
-	protected Negotiator negotiator;
 	protected Map	map;
 	protected ArrayList<ArrayList<Node>> adjacencyList;
 	protected Game game;
@@ -36,7 +35,6 @@ public abstract class AI extends Receiver {
 		this.name = name; 
 		this.version = version;
 		usage = "";
-		this.negotiator = new Negotiator();
 		this.queue = new LinkedBlockingQueue<Order>();
 		this.map = map;
 		map.setAI(this);
@@ -132,10 +130,14 @@ public abstract class AI extends Receiver {
 	@Override
 	public void onMessage(String[] message) {
 		
-		String o  = "Message received: ";
-		for (String p : message)
-			o += p + " ";
-		System.out.println(o);
+		if (!message[0].equals("ORD"))
+		{
+			String o  = "Message received: ";
+			for (String p : message)
+				o += p + " ";
+			System.out.println(o);
+		}
+		
 		
 		if (message[0].equals ("HLO")) {
 			handleHLO(message);

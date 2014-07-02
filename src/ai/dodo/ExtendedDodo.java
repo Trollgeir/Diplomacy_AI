@@ -9,7 +9,12 @@ import kb.unit.*;
 import kb.Node;
 import kb.province.Province;
 import kb.unit.Unit;
+import message.DaideMessage;
 import message.order.*;
+import message.press.Alliance;
+import message.press.Proposal;
+import message.press.Send;
+import message.server.Huh;
 import ai.AI;
 import ai.Heuristics;
 import game.Game;
@@ -27,6 +32,8 @@ public class ExtendedDodo extends AI {
 	public double righteousness = 0.5;
 	public double supportSteep = 0.5;
 	
+	protected Negotiator negotiator;
+	
 	boolean key_to_send = false; 
 	Names names = null; 
 	// /ArrayList<Province> visitedProvinces = new ArrayList<Province>();
@@ -34,8 +41,8 @@ public class ExtendedDodo extends AI {
 	
 	public ExtendedDodo(Map map) {
 		super("ExtendedDodo", "0.0.0.0.1", map);
-		negotiator.dodoAI = this;
-		negotiator.map = map;
+		
+		negotiator = new Negotiator(this, map);
 	}
 
 	@Override
@@ -332,6 +339,27 @@ public class ExtendedDodo extends AI {
 		System.out.println("New turn for " + power.getName());
 		System.out.println("Year: " + map.getYear() + " -----------  Phase: " + map.getPhase()); 
 
+		
+		//Suggesting alliances to EVERYONE!
+		Power[] me = {power};
+		
+		for ( Power ally : map.powers )
+		{
+			for ( Power enemy : map.powers )
+			{
+				Power[] against = {enemy};
+				DaideMessage msg = new Send(new Proposal(new Alliance(me, against)), ally);
+				
+				if (ally != enemy && ally != power && enemy != power)
+				{
+					Game.server.send(msg);
+					System.out.println(msg);
+				}
+			}
+		}
+		
+		
+		
 		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
 			DodoMovementPhase movementPhase = new DodoMovementPhase(this); 
 			movementPhase.run(queue);
@@ -357,11 +385,12 @@ public class ExtendedDodo extends AI {
 		}
 		
 		handleQueue();
+		
+		System.out.println("");
+		System.out.println(belief);
+		System.out.println("");
 		System.out.println("-----------END OF TURN -----------");
 		System.out.println("");
-		System.out.println("");
-		if (map.getPhase() != Phase.WIN)
-			System.out.println("Winter is coming.");
 		//System.out.println(this.getPower().getName() + " sent his order!"); 
 	}
 	

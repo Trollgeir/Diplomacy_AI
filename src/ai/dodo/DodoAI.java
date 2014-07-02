@@ -135,7 +135,6 @@ public class DodoAI extends AI {
 	@Override
 	protected void handleFRM(String[] message)
 	{
-		this.negotiator.addProposal(message);
 	}
 	@Override
 	protected void handleSMR(String[] message)

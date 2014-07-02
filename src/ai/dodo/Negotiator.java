@@ -22,6 +22,12 @@ public class Negotiator {
 	protected ArrayList<Order> proposedOrders = new ArrayList<Order>();
 	protected Map map;
 
+	public Negotiator(ExtendedDodo dodo, Map map) 
+	{
+		this.dodoAI = dodo;
+		this.map = map;
+	}
+	
 	public void addProposal(String[] proposal) {
 		synchronized(queue) {
 			queue.add(proposal);
@@ -95,6 +101,8 @@ public class Negotiator {
 							
 							
 							boolean accept = acceptAlliance(allies, enemies);
+							if (accept)
+								System.out.println("Accepted!");
 							for (int n = 0; n < allies.length; n++) 
 							{
 								if (allies[n] != self)
@@ -139,7 +147,7 @@ public class Negotiator {
 							
 							if (s[end2+1].equals("SUP")) //suggest support
 							{
-								Province supporting, supported, target = null;
+								Province supporting, supported;
 								
 								supporting = map.getProvince(s[end1+3]);
 
@@ -154,13 +162,13 @@ public class Negotiator {
 								
 								if (s[end2+1].equals("MTO")) //suggest move (attack)
 								{
-									target = map.getProvince(s[end2+2]);
+									Province target = map.getProvince(s[end2+2]);
 									accept = acceptSupportMoveProposal(supporting, supported, target);
 									
 									if (accept)
 										proposedOrders.add(new SupportToMove(supporting.getUnit(), supported.getUnit(), target));
 								}
-								else
+								else //support to hold is the only alternative
 								{
 									accept = acceptSupportHoldProposal(supporting, supported);
 									
@@ -175,7 +183,7 @@ public class Negotiator {
 								sendYes = false; //reject anything other than SUP; dodoAI can't handle it.
 							}
 						} 
-						else // if (s[end1+4].equals("DMZ")) 
+						else //DMZ (and any other messages) cannot be handled
 						{
 							Game.server.send(new Send(new Huh(prop), from));
 							huh = true;
@@ -268,6 +276,8 @@ public class Negotiator {
 							// handle rejected ally proposal:
 							if (s[end1+6].equals("ALY")) 
 							{
+								 //break existing alliances
+								
 								// first bracket of allies
 								end1 = end1+7;
 								// last bracket of allies
@@ -338,6 +348,13 @@ public class Negotiator {
 
 	private boolean acceptAlliance(Power[] allies, Power[] enemies) {
 
+		System.out.println("Considering alliance of ");
+		for (Power p : allies)
+			System.out.print(p.getName() + ",");
+		System.out.print(" VERSUS ");
+		for (Power p : enemies)
+			System.out.print(p.getName() + ",");
+		
 		// follow heuristics
 		if (map.getYear() == 1901) {
 			Power preferred = Heuristics.preferredAlliance(dodoAI.getPower(), map.getStandard(), map);
@@ -379,7 +396,7 @@ public class Negotiator {
 				return false;
 		}
 		
-		// TODO: add stuff on figuring out if we want the alliance
+		// TODO: add stuff on figuring out if we want the alliance, right now it accepts all alliances that don't clash with existing alliances.
 
 		return true;
 
@@ -422,7 +439,7 @@ public class Negotiator {
 		
 		if (dodoAI.belief.powerInfo.get(supported.getOwner()).supFavor < 0) //We owe them
 		{
-			if (dodoAI.righteousness >= 1.0)
+			if (dodoAI.righteousness >= 1.0) //TODO: should this be righteousness > paranoia or something?
 				return true;
 		}
 		
@@ -460,17 +477,21 @@ public class Negotiator {
 					oldAlliance.against.containsAll(enemiesList) &&
 					enemiesList.containsAll(oldAlliance.against))
 				{
+					System.out.println("Refreshing alliance with "+ally.getName());
 					addNew = false;
 					oldAlliance.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(dodoAI.belief.powerInfo.get(ally).trust/10));	
 				}
 			}
 			if (addNew)
 			{
+				System.out.println("Creating alliance with "+ally.getName());
 				AllianceInfo newAlliance = new AllianceInfo();
 				
 				newAlliance.against.addAll(enemiesList);
 				newAlliance.with = ally;
 				newAlliance.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(dodoAI.belief.powerInfo.get(ally).trust/10));
+				
+				dodoAI.belief.allianceInfo.add(newAlliance);
 			}
 		} 
 		else 
@@ -483,6 +504,7 @@ public class Negotiator {
 					oldAlliance.against.containsAll(enemiesList) &&
 					enemiesList.containsAll(oldAlliance.against))
 				{
+					System.out.println("Breaking alliance with "+ally.getName());
 					dodoAI.belief.allianceInfo.remove(a);
 					a--;
 				}
