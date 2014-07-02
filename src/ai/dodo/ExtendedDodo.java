@@ -11,7 +11,12 @@ import kb.province.Province;
 import kb.unit.Unit;
 import message.DaideMessage;
 import message.order.*;
+<<<<<<< HEAD
 import message.press.*;
+=======
+import message.press.Alliance;
+import message.press.Peace;
+>>>>>>> 24833cac7c4300ab5f2b1015a40bb8610e39ac5f
 import message.press.Proposal;
 import message.press.Send;
 import message.server.Huh;
@@ -338,7 +343,7 @@ public class ExtendedDodo extends AI {
 		System.out.println("The new Dodo lives!");
 		System.out.println("New turn for " + power.getName());
 		System.out.println("Year: " + map.getYear() + " -----------  Phase: " + map.getPhase()); 
-
+		
 		if (power.getName().equals("ITA")) {
 			System.out.println("Hey, I am Italy and I want peace with Austria! :D"); 
 			Power[] peace = new Power[2];
@@ -364,7 +369,6 @@ public class ExtendedDodo extends AI {
 				}
 			}
 		}*/
-		
 		
 		
 		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
