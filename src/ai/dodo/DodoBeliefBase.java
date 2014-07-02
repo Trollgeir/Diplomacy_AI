@@ -14,13 +14,11 @@ class AllianceInfo
 	public AllianceInfo()
 	{
 		//TODO: Just some default values, may need tweaking.
-		paranoia = 0.0f;
 		against = new ArrayList<Power>();
-		time = 0;
+		actuality = 10;
 	}
 	
-	public double 			paranoia;
-	public int				time;
+	public int				actuality;
 	public Power			with;
 	public ArrayList<Power>	against;
 }
@@ -33,11 +31,13 @@ class PowerInfo
 		trust = 0.5;
 		peace = false;
 		peaceActuality = 1;
+		paranoia = 1.0;
 	}
 	
 	public int 		supFavor;
 	public boolean 	peace;
 	public double 	peaceActuality;
+	public double	paranoia;
 	public double 	trust;
 }
 
@@ -86,6 +86,7 @@ public class DodoBeliefBase {
 			ret += "\t - peace : " + info.peace + "\n";
 			ret += "\t - peaceActuality : " + info.peaceActuality + "\n";
 			ret += "\t - trust : " + info.trust + "\n";
+			ret += "\t - paranoia : " + info.paranoia + "\n";
 		}
 		
 		ret += "\n\n";
@@ -95,8 +96,7 @@ public class DodoBeliefBase {
 		{
 			ret += "\t" + info.with.getName() + " : \n";
 			ret += "\t - against : " + info.against + "\n";
-			ret += "\t - time : " + info.time + "\n";
-			ret += "\t - paranoia : " + info.paranoia + "\n";
+			ret += "\t - time : " + info.actuality + "\n";
 		}
 		
 		return ret + "\n========================";
@@ -139,8 +139,19 @@ public class DodoBeliefBase {
 		{
 			AllianceInfo alliance = allianceInfo.get(i);
 			
-			alliance.time++;
-			alliance.paranoia = 1.0 - Math.pow(1.0 - ai.decay, alliance.time) * ai.initialTrust;//TODO: Is this right?
+			alliance.actuality--;
+			PowerInfo pi = powerInfo.get(alliance.with);
+			pi.paranoia = 1.0 - (ai.belief.pUpdate(alliance.actuality)*(ai.belief.powerInfo.get(alliance.with).trust/10));
+		}
+	}
+	
+	public void incrementPeaceTime()
+	{
+		for(int i = 0; i < powerInfo.size(); i++)
+		{
+			PowerInfo pi = powerInfo.get(i);
+			if(pi.peace) // we are at peace with this power
+				pi.peaceActuality--;
 		}
 	}
 	

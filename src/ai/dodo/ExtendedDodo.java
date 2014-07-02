@@ -199,7 +199,7 @@ public class ExtendedDodo extends AI {
 	{
 		AllianceInfo allianceInfo = belief.allianceByPower(p);
 		// Decrement trust of the power
-		belief.defectDec(allianceInfo.time, p);
+		belief.defectDec(allianceInfo.actuality, p);
 		// Disband the alliance ??
 		belief.deleteAllAlliancesWith(p);
 	}
