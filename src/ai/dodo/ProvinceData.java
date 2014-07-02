@@ -73,6 +73,8 @@ public class ProvinceData {
 	public float defendGain; 
 	public float smoothedGains; 
 
+	
+
 	public ProvinceData(Power power, Province province, ArrayList<Power> powers) {
 		//TODO set supply type
 
