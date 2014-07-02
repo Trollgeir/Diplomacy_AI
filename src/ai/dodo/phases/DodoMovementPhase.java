@@ -57,7 +57,10 @@ public class DodoMovementPhase extends DodoPhase {
 	}
 
 	public void run(LinkedBlockingQueue<Order> queue) {
-		MapInfo mapInfo = new MapInfo(map, power);
+		float[] willAttack = belief.allAttackAgainstWeights(); 
+		float[] willDefend = belief.allDefendAgainstWeights(); 
+
+		MapInfo mapInfo = new MapInfo(map, power, willAttack, willDefend);
 		
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;

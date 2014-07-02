@@ -11,8 +11,7 @@ import kb.province.Province;
 import kb.unit.Unit;
 import message.DaideMessage;
 import message.order.*;
-import message.press.Alliance;
-import message.press.Peace;
+import message.press.*;
 import message.press.Proposal;
 import message.press.Send;
 import message.server.Huh;
@@ -204,142 +203,46 @@ public class ExtendedDodo extends AI {
 		belief.deleteAllAlliancesWith(p);
 	}
 	
-	public void attack(ProvinceData target, ArrayList<UnitData> units, ArrayList<UnitData> usedUnits, ArrayList<Province> usedProvinces) {
-		UnitData holdingUnit = null;
-		UnitData movingUnit = null;
-		for (UnitData u : units) {
-			if (u.unit.location.province == target.province) {
-				holdingUnit = u;
-				usedUnits.add(u);
-				break;
-			}
-		}
-
-		if (holdingUnit != null) {
-			units.remove(holdingUnit);
-			usedUnits.add(holdingUnit);
-			queue.add(new Hold(holdingUnit.unit));
-		} else {
-			movingUnit = units.get(0);
-			usedUnits.add(movingUnit);
-			units.remove(movingUnit);
-			queue.add(new Move(movingUnit.unit, movingUnit.destNode));
-		}
-		usedProvinces.add(target.province);
-
-		int used = 0;
-		int needed = target.supportNeeded;
-		while (used < needed - 1) {
-			UnitData supportUnit = units.get(used); 
-			if (holdingUnit == null) {
-				queue.add(new SupportToMove(supportUnit.unit, movingUnit.unit, movingUnit.destNode.province));
-			} else {
-				queue.add(new SupportToHold(supportUnit.unit, holdingUnit.unit));
-			}
-
-			usedUnits.add(supportUnit);
-			usedProvinces.add(supportUnit.unit.location.province);
-			used++;
-		}
-	}
-
-
-	/***********************************
-	||   ||     ==        =====   ||   // 
-	||   ||   //  \\     //       ||  //
-	|=====|  ||===||    ||        || //
-	||   ||  ||   ||    \\        || \\
-	||   ||  ||   ||      =====   ||  \\
-	***********************************/
-
-	public ArrayList<Node> filterNeighbours(ArrayList<Node> neighbours, ArrayList<Province> occupied) {
-		ArrayList<Node> result = new ArrayList<Node>();
-		for (Node n : neighbours) {
-			if (!occupied.contains(n.province)) result.add(n);
-		} 
-		return result;
-	}
-
-	public ArrayList<Province> filterProvinces(ArrayList<Province> provinces, ArrayList<Province> built, ArrayList<Unit> units) {
-		ArrayList<Province> result = new ArrayList<Province>(); 
-		for (Province p : provinces) {
-			if (built.contains(p)) continue; 
-			if (!power.homeProvinces.contains(p)) continue;
-			boolean empty = true; 
-			for (Unit u : units) {
-				if (u.location.province == p) {
-					empty = false; 
-					break; 
-				} 
-			}
-			if (empty) result.add(p);
-		}
-		return result;
-	};
-
-	public ArrayList<Node> getSupplyCenterNodes(ArrayList<Node> nodes, boolean ours) {
-		//only return those nodes which are in a province with supply center which are NOT ours!
-		ArrayList<Node> result = new ArrayList<Node>(); 
-		for (Node n : nodes) {
-			if (n.province.isSupplyCenter()) {
-				if (ours && n.province.getOwner() == power) {
-					result.add(n);
-				} else if (!ours && n.province.getOwner() != power) {
-					result.add(n);
-				}
-			}
-		}
-		return result; 
-	}
-
-	public Node moveToSupplyCenter(Unit unit, ArrayList<Node> neighbourhood, ArrayList<Province> occupied, boolean move, boolean ours) {
-		ArrayList<Node> supplyCenters = getSupplyCenterNodes(neighbourhood, ours); 
-		if (supplyCenters.size() > 0) {
-			return getRandomElement(supplyCenters);  
-		} else {
-			ArrayList<Node> indirectSupplyCenters = new ArrayList<Node>(); 
-			for (Node node : neighbourhood) {
-				ArrayList<Node> n_neigbourhood = filterNeighbours(map.getValidNeighbours(unit, node), occupied);
-				ArrayList<Node> n_supplyCenters = getSupplyCenterNodes(n_neigbourhood, ours);
-				if (n_supplyCenters.size() > 0) indirectSupplyCenters.add(node); 
-			}
-			if (indirectSupplyCenters.size() > 0) {
-				return getRandomElement(indirectSupplyCenters);
-			}
-		}
-		if(move)
-			return getRandomElement(neighbourhood); 
-		else
-			return null;
-	}
-
-	public <T> T getRandomElement(ArrayList<T> list) {
-		return list.get((int)(Math.random() * list.size())); 
-	}
-
+	
+	
 	public DodoBeliefBase getBeliefBase() {
 		return belief;
 	}
 
-	/***********************************
-	||   ||     ==        =====   ||   // 
-	||   ||   //  \\     //       ||  //
-	|=====|  ||===||    ||        || //
-	||   ||  ||   ||    \\        || \\
-	||   ||  ||   ||      =====   ||  \\
-	***********************************/
-
-
 	public void newTurn()
 	{
 		if (!power.alive) return;
-		MapInfo mapInfo = new MapInfo(map, power);
 
 		System.out.println();
 		System.out.println("The new Dodo lives!");
 		System.out.println("New turn for " + power.getName());
 		System.out.println("Year: " + map.getYear() + " -----------  Phase: " + map.getPhase()); 
+
+		if (power.getName().equals("ITA")) {
+			System.out.println("Hey, I am Italy and I want peace with Austria! :D"); 
+			Power[] peace = new Power[2];
+			peace[0] = power; 
+			peace[1] = map.getPower("AUS");
+			Game.server.send(new Send(new Proposal(new Peace(peace)), peace[1]));  
+		}
+
+		//Suggesting alliances to EVERYONE!
+		/*Power[] me = {power};
 		
+		for ( Power ally : map.powers )
+		{
+			for ( Power enemy : map.powers )
+			{
+				Power[] against = {enemy};
+				DaideMessage msg = new Send(new Proposal(new Alliance(me, against)), ally);
+				
+				if (ally != enemy && ally != power && enemy != power)
+				{
+					Game.server.send(msg);
+					System.out.println(msg);
+				}
+			}
+		}*/
 		
 		
 		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
