@@ -37,6 +37,8 @@ public class ProvinceData {
 
 	public static float c_counter = 5.0f; 
 
+	public static float attackThreshold = 3.0f; 
+
 /*
 	public static float c_normalSuply = 1.0f;
 	public static float c_homeSuply = 1.2f; 
@@ -73,12 +75,18 @@ public class ProvinceData {
 	public float defendGain; 
 	public float smoothedGains; 
 
-	public ProvinceData(Power power, Province province, ArrayList<Power> powers) {
-		//TODO set supply type
+	public float[] willAttack;
+	public float[] willDefend;  
 
+	public ProvinceData(Power power, Province province, ArrayList<Power> powers, 
+						float[] willAttack, float[] willDefend) {
+		
 		this.power = power; 
 		this.province = province;
 		this.powers = powers; 
+
+		this.willAttack = willAttack;
+		this.willDefend =willDefend; 
 
 		adjProvinces = new ArrayList<Province>();
 		adjProvDatas = new ArrayList<ProvinceData>();
@@ -145,7 +153,6 @@ public class ProvinceData {
 
 	}
 
-	//values weightKernel between 0 and 1
 	public float getDefendSupplyGain(ArrayList<ArrayList<ProvinceData>> provinceKernel, float[] weightKernel) {
 		boolean isSCO = province.isSupplyCenter(); 
 		Power isHomeSCO = isHomeSCO(province);
@@ -202,6 +209,12 @@ public class ProvinceData {
 		for (UnitData unit : nearUnits.get(idx)) {
 			if (unit.provData == this) continue;
 			weight -= c_shared * unit.provData.smoothedGains;
+		}
+
+		int ownerIdx = getProvinceOwner(); 
+		if (ownerIdx != - 1 && ownerIdx != powers.indexOf(power)) {
+			float newWeight = weight * willAttack[ownerIdx];
+			weight = (newWeight > attackThreshold ? newWeight : weight);
 		}
 
 		if (weight < 0) weight = 0; 
@@ -308,19 +321,16 @@ public class ProvinceData {
 		mainEnemy = -1;
 
 		for (int i = 0; i < powers.size(); ++i) {
-			if (power != powers.get(i) && nearUnits.get(i).size() > maxNegSupport) {
-				maxNegSupport = nearUnits.get(i).size();
+			if (power != powers.get(i) &&  willDefend[i] * nearUnits.get(i).size() > maxNegSupport) {
+				maxNegSupport = (int)(willDefend[i] * nearUnits.get(i).size());
 				mainEnemy = i; 
 			}
 		}
 	}
 
 	private void computeSupport(Power power) {
-		for (int i = 0; i < powers.size(); ++i) {
-			if (power == powers.get(i)) {
-				support = nearUnits.get(i).size();
-			}
-		}
+		int idx = powers.indexOf(power);
+		support = nearUnits.get(idx).size();
 	}
 
 	//Add the units from nearProv to nearUnits.
@@ -395,7 +405,19 @@ public class ProvinceData {
 		}
 	}
 
-	
+	//Is for the belief stuf
+	//returns the owner of the unit on this province.
+	//otherwise the owner of the SCO
+	//otherwise neutral
+	public int getProvinceOwner() {
+		Unit unit = province.getUnit();
+		if (unit != null) return powers.indexOf(unit.owner);
+
+		if (province.isSupplyCenter()) return powers.indexOf(province.getOwner()); 	
+
+		return -1; 	
+	}
+
 	public ArrayList<UnitData> getAvailebleUnits() {
 		int powerIdx = powers.indexOf(power);
 		ArrayList<UnitData> sortedList = new ArrayList<UnitData> ();

@@ -25,10 +25,16 @@ public class MapInfo {
 	ArrayList<Unit> units;
 	ArrayList<ProvinceData> provinceData; 
 
-	public MapInfo(Map map, Power power) {
+	public float[] willAttack;
+	public float[] willDefend;  
+
+	public MapInfo(Map map, Power power, float[] willAttack, float[] willDefend) {
 		this.map = map; 
 		this.power = power; 
 		units = map.getUnitsByOwner(power);
+
+		this.willAttack = willAttack;
+		this.willDefend =willDefend; 
 
 		provinceData = new ArrayList<ProvinceData>();
 
@@ -41,7 +47,7 @@ public class MapInfo {
 	*/
 	private void initProvinceDataList() {
 		for (Province prov : map.provinces) {
-			provinceData.add(new ProvinceData(power, prov, map.powers));
+			provinceData.add(new ProvinceData(power, prov, map.powers, willAttack, willDefend));
 		}
 
 		for (ProvinceData p : provinceData) p.computeAdjProvDatas(provinceData);
@@ -170,19 +176,6 @@ public class MapInfo {
 	public <T> T getRandomElement(ArrayList<T> list) {
 		return list.get((int)(Math.random() * list.size())); 
 	}
-
-	/*
-	Create province data
-	*/
-	private void addProvinceData(Unit u, Node n) {
-		for (ProvinceData data : provinceData) {
-			if (data.province == n.province) {
-				return; 
-			}
-		}
-		provinceData.add(new ProvinceData(power, n.province, map.powers));
-	}
-
 	
 	/*
 	Return a list of home SCO's under our control, which do not have our units on there 

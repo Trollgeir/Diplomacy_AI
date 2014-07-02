@@ -68,7 +68,10 @@ public class DodoBuildPhase extends DodoPhase {
 			BUILD PHASE
 		*/
 
-		MapInfo mapInfo = new MapInfo(map, power);
+		float[] willAttack;
+		float[] willDefend;  
+
+		MapInfo mapInfo = new MapInfo(map, power, willAttack, willDefend);
 
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
