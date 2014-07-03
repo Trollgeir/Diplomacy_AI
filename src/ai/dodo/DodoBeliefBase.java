@@ -72,7 +72,7 @@ public class DodoBeliefBase {
 		for (Power p : map.powers)
 		{
 			if(ai.names != null)
-				powerInfo.put(p, new PowerInfo(ai.names.getNameByPower(p)), ai);
+				powerInfo.put(p, new PowerInfo(ai.names.getNameByPower(p), ai));
 		}
 	}
 	
