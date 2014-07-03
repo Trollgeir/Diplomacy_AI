@@ -71,8 +71,9 @@ public class MapInfo {
 		//sort in descending order.
 		Collections.sort(sortedList,
 			new Comparator<ProvinceData>(){
-					public int compare(ProvinceData p1, ProvinceData p0) {
-					return (int)(100 * Math.abs(p0.weight) -  100 * Math.abs(p1.weight));
+				public int compare(ProvinceData p1, ProvinceData p0) {
+					int val = ((int)(100 * Math.abs(p0.weight) -  100 * Math.abs(p1.weight)));
+					return  (val > 0) ? 1 : ((val < 0) ? -1 : 0);
 				}
 			});
 
