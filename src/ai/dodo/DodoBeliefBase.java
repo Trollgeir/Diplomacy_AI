@@ -52,7 +52,7 @@ public class DodoBeliefBase {
 	
 	// The initial values which are used for incrementation and decrementation of support and trust
 	public double supIntolerance = 0.5;		//Pick a value between 0-1. 0 means you don't care about support reciprocity
-	public double decay = 1.1;				//Treaty half-life. This indicates how fast treaties decay
+	public double decay = 1.05;				//Treaty half-life. This indicates how fast treaties decay
 	public double incTrust = 0.03;			//How much trust to increment for every phase as long as the treaty holds.
 	
 	public ArrayList<AllianceInfo>					allianceInfo;
@@ -145,9 +145,10 @@ public class DodoBeliefBase {
 		{
 			AllianceInfo alliance = allianceInfo.get(i);
 			
-			alliance.actuality = Math.pow(1.05, (-alliance.time));
+			alliance.actuality = Math.pow(decay, (-alliance.time));
 			PowerInfo pi = powerInfo.get(alliance.with);
-			pi.paranoia = 1 - (Math.pow(decay, alliance.time) * pi.trust/10 + (incTrust * alliance.time));
+			pi.trust += incTrust * alliance.time;
+			pi.paranoia = 1 - (Math.pow(decay, alliance.time) * pi.trust/10);
 			alliance.time++;
 		}
 	}
@@ -159,7 +160,7 @@ public class DodoBeliefBase {
 			PowerInfo pi = powerInfo.get(map.powers.get(i));
 			if(pi.peace) 
 			{
-				pi.peaceActuality = Math.pow(1.05, (-pi.peaceTime));
+				pi.peaceActuality = Math.pow(decay, (-pi.peaceTime));
 				pi.peaceTime++;
 			}
 		}
@@ -179,7 +180,7 @@ public class DodoBeliefBase {
 	}
 	public void supCalc(int supFavor, Power p) {
 		//Function for trust alteration based on support reciprocity
-		powerInfo.get(p).trust += round((this.supIntolerance * Math.abs(supFavor)) / 100);
+		powerInfo.get(p).trust += round((supIntolerance * Math.abs(supFavor)) / 100);
 	}
 	public double pUpdate(double time) {	
 		//Function for trust alteration while holding a treaty
@@ -192,14 +193,15 @@ public class DodoBeliefBase {
 
 	public float defendAgainstWeight(Power p) {
 		PowerInfo info = powerInfo.get(p); 
-		if (info == null) return 0; 
-		return info.peace ? 0.0f : 1.0f; 
+		if(info != null)
+			return (float)info.paranoia;
+		return 0.0f;
 	}
 
 	public float attackAgainstWeight(Power p) {
 		PowerInfo info = powerInfo.get(p);
 		if (info == null) return 0; 
-		return info.peace ? 0.0f : 1.0f; 
+		return (float)Math.pow((float)1.1, (float)info.peaceActuality)*((float)1-(float)ai.righteousness); 
 	}
 
 	public float[] allDefendAgainstWeights() {

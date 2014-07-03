@@ -426,7 +426,7 @@ public class Negotiator {
 		//AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
 		
 		if (dodoAI.belief.powerInfo.get(supported.getOwner()).supFavor < 0) //We owe them
-		{
+		{			
 			if (dodoAI.righteousness >= 1.0) //TODO: should this be righteousness > paranoia or something?
 				return true;
 		}
