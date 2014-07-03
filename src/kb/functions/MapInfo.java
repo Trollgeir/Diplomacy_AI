@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.Collections;
 import java.lang.Comparable;
 import ai.dodo.UnitData; 
+import ai.dodo.NeighborData;
 
 public class MapInfo {
 
@@ -54,7 +55,11 @@ public class MapInfo {
 
 		for (ProvinceData p : provinceData) p.determineSharedUnits(provinceData);
 
-		for (ProvinceData p : provinceData) p.computeSupportValues();
+		for (ProvinceData p : provinceData) p.computeOwnSupport();
+	}
+
+	public void computeGains() {
+		for (ProvinceData p : provinceData) p.computeNegSupportValues();
 
 		for (ProvinceData p : provinceData) p.computeGains(provinceData);
 
@@ -63,7 +68,6 @@ public class MapInfo {
 		for (ProvinceData p : provinceData) p.computeWeight();
 	}
 
-
 	public ArrayList<ProvinceData> getSortedTargets() {
 		ArrayList<ProvinceData> sortedList = new ArrayList<ProvinceData>();
 		sortedList.addAll(provinceData);
@@ -71,8 +75,11 @@ public class MapInfo {
 		//sort in descending order.
 		Collections.sort(sortedList,
 			new Comparator<ProvinceData>(){
-					public int compare(ProvinceData p1, ProvinceData p0) {
-					return (int)(100 * Math.abs(p0.weight) -  100 * Math.abs(p1.weight));
+				public int compare(ProvinceData p1, ProvinceData p0) {
+					//return ((int)(100 * Math.abs(p0.weight) -  100 * Math.abs(p1.weight)));
+					if (Math.abs(p0.weight) > Math.abs(p1.weight)) return 1;
+					if (Math.abs(p0.weight) < Math.abs(p1.weight)) return -1;
+					return 0;
 				}
 			});
 
@@ -248,17 +255,45 @@ public class MapInfo {
 		return result; 
 	}
 
-	public int[] getNeighborCount() {
-		int[] res = new int[map.powers.size()];
+	public ArrayList<NeighborData> getNeighborCount() {
+		ArrayList<ArrayList<Unit>> units = new ArrayList<ArrayList<Unit>>();
+		for (int i = 0; i < map.powers.size(); ++i) units.add(new ArrayList<Unit>());
+
 		int powerIdx = map.powers.indexOf(power);
 
 		for (ProvinceData provData : provinceData) {
-			if (provData.support > 0) {
-				int ownerIdx = provData.getProvinceOwner();
-				if (ownerIdx != -1 && ownerIdx != powerIdx) res[ownerIdx]++; 
+			for (int i = 0; i < map.powers.size(); ++i) {
+				if (i == powerIdx || provData.support == 0) continue;
+
+				for (UnitData unitData : provData.nearUnits.get(i)) {
+					if (!units.get(i).contains(unitData.unit)) {
+						units.get(i).add(unitData.unit);
+					}
+				}
 			}
 		}
 
+		ArrayList<NeighborData> res = new ArrayList<NeighborData>();
+		for (int i = 0; i < map.powers.size(); ++i) {
+			NeighborData data = new NeighborData(units.get(i), map.powers.get(i));
+
+			ArrayList<Province> ownedProvinces = map.getProvincesByOwner(data.power);
+			for (Province prov : ownedProvinces) {
+				if (prov.isSupplyCenter()) data.numSCO++; 
+			}
+
+			res.add(data);
+		}
+
+		
+		//sort in descending order.
+		Collections.sort(res,
+			new Comparator<NeighborData>(){
+					public int compare(NeighborData d0, NeighborData d1) {
+						return d1.getSize() - d0.getSize();
+				}
+			});
+		
 		return res; 
 	}
 

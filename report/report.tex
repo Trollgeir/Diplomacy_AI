@@ -134,7 +134,17 @@ We chose this gain because blablabla. This one should then be higher because bla
 
 
 
+
+\subsection{Support}
+
+In order to prepare a movement, it is important to know whether the movement can be effective. Consider the situation where a province is occupied by one enemy unit, then it is useless to try to move to that province with only one unit. In this case at least two units are needed to kick the enemy out, and perheps additional units are needed to cope with enemy support. The gain system calculates the amount of units that is needed to invade a province. This is done by keeping track of all units that possibly can support each province, as well for the own power as for the enemy powers. At least one unit is needed when a province is not occupied by an enemy unit, and at least two units are needed for a occupied province. For each possibly supporting enemy unit, a unit from the own power has maybe to support. But it is not certain whether this unit needs to support, since it is not possible to know on forehand whether the enemy unit will support. To cope with this uncertainty, we incorparated a risk variable. This variable determines how large the support needs to be. It could become possible to move to an unoccupied province with only one unit and without any further support, while the enemy has two potentially supporting units. For each of the units that can support, a check is done whether a random value is larger than $\alpha_{sup}$ and the number of support is increased by one when this evaluates true. However this does not determine which units need to support, only how much units need to support in the case that this province is going to be invaded. We have chosen to define $\alpha_{sup}$ as $risk^{k}$ where risk is between 0 and 1, and k is the amount of enemy support and $k>0$. By the amount of enemy support is meant the highest enemy support of all individual enemies. We choose for an exponential function since we believe that when something is important and hard, it is better to strike hard. Besides a human experiences a move whith too less units as a stupid move. 
+
+\subsubsection{Drawback support}
+Consider the case that all units already have a task assigned, except for one unit. This unit could move to an unoccupied province surrounded by three enemy units. Since the enemy support is quitte high, it is likely that there also will be a high number support assigned to this province. As result this province is filtered out as untakeable. But how realistic is this? Since it concerns the last unit, the priority of the province won't be very high and therefore it is not likely that the enemy would use so much units on this province. To cope with this drawback, the risk variable should be slightly increased every time a target is chosen. In this way very low risks are taken with high priority targets, and more risk is taken with lower priority targets. 
+
 \subsection{Threat}
+
+\subsection{}
 
 \begin{tikzpicture}
   \begin{axis}[ 
