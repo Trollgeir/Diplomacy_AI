@@ -34,7 +34,7 @@ class PowerInfo
 		peace = false;
 		peaceActuality = 1;
 		peaceTime = 0;
-		paranoia = 1 - trust;
+		paranoia = 1-trust;
 	}
 	
 	public int 		supFavor;
@@ -151,7 +151,7 @@ public class DodoBeliefBase {
 			alliance.actuality = Math.pow(decay, (-alliance.time));
 			PowerInfo pi = powerInfo.get(alliance.with);
 			pi.trust += incTrust * alliance.time;
-			pi.paranoia = 1 - (Math.pow(decay, alliance.time) * pi.trust/10);
+			pi.paranoia = 1 - (Math.pow(decay, alliance.time) * pi.trust);
 			alliance.time++;
 		}
 	}
