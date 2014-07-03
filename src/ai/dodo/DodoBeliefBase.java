@@ -164,6 +164,7 @@ public class DodoBeliefBase {
 			if(pi.peace) 
 			{
 				pi.peaceActuality = Math.pow(decay, (-pi.peaceTime));
+				pi.paranoia = 1 - (Math.pow(decay, pi.peaceTime) * pi.trust);
 				pi.peaceTime++;
 			}
 		}
