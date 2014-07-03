@@ -147,7 +147,8 @@ public class DodoBeliefBase {
 			
 			alliance.actuality = Math.pow(ai.decay, (-alliance.time));
 			PowerInfo pi = powerInfo.get(alliance.with);
-			pi.trust += ai.incTrust * alliance.time;
+			pi.trust += ai.incTrust;
+			pi.trust = pi.trust < 0 ? 0 : pi.trust > 1 ? 1 : pi.trust;
 			pi.paranoia += 1 - (Math.pow(ai.decay, alliance.time) * pi.trust);
 			alliance.time++;
 		}
@@ -160,6 +161,8 @@ public class DodoBeliefBase {
 			PowerInfo pi = powerInfo.get(map.powers.get(i));
 			if(!pi.name.equals(ai.name) && pi.peace) 
 			{
+				pi.trust += ai.incTrust;
+				pi.trust = pi.trust < 0 ? 0 : pi.trust > 1 ? 1 : pi.trust;
 				pi.peaceActuality = Math.pow(ai.decay, (-pi.peaceTime));
 				pi.paranoia += 1 - (Math.pow(ai.decay, pi.peaceTime) * pi.trust);
 				pi.peaceTime++;
