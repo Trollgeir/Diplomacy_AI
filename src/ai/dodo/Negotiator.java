@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import message.DaideList;
+import message.DaideMessage;
 import message.order.*;
 import message.press.*;
 import message.server.*;
@@ -21,6 +22,7 @@ public class Negotiator {
 	protected DodoAI dodoAI;
 	protected ArrayList<Order> proposedOrders = new ArrayList<Order>();
 	protected Map map;
+	protected ArrayList<Power> backstabbers = new ArrayList<Power>();
 
 	public Negotiator(DodoAI dodo, Map map) 
 	{
@@ -39,6 +41,27 @@ public class Negotiator {
 			queue.clear();
 		}
 	}
+	
+	
+	public void initiateAlliance(Power with, Power against) {
+		Power[] allies = new Power[]{with, dodoAI.getPower()};
+		Power[] enemies = new Power[] {against};
+		
+		if (acceptAlliance(allies, enemies)) {
+			DaideMessage msg = new Send(new Proposal(new Alliance(allies, enemies)), with);
+			Game.server.send(msg);
+		}
+	}
+	
+	public void initiatePeace(Power with) {
+		Power[] members = new Power[]{with, dodoAI.getPower()};
+		
+		if (acceptPeace(members)) {
+			DaideMessage msg = new Send(new Proposal(new Peace(members)), with);
+			Game.server.send(msg);
+		}
+	}
+
 
 	public void handleProposal() {
 		int end1, end2, i;
@@ -310,8 +333,10 @@ public class Negotiator {
 								
 								for (int n = 0; n < allies.length; n++) 
 								{
-									if (allies[n] != self)
+									if (allies[n] != self) {
 										setAlliance(allies[n], enemies, false);
+										initiatePeace(allies[n]);
+									}
 								}
 								
 							} 

@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 
 import ai.dodo.phases.*;
 import kb.Map;
@@ -375,6 +376,8 @@ public class DodoAI extends AI {
 		belief.defectDec(allianceInfo.actuality, p);
 		// Disband the alliance ??
 		belief.deleteAllAlliancesWith(p);
+		
+		negotiator.backstabbers.add(p);
 	}
 	
 	
@@ -398,13 +401,14 @@ public class DodoAI extends AI {
 		System.out.println("New turn for " + power.getName());
 		System.out.println("Year: " + map.getYear() + " -----------  Phase: " + map.getPhase()); 
 
+		/*
 		if (power.getName().equals("ITA") && map.getYear() == 1901) {
 			System.out.println("Hey, I am Italy and I want peace with Austria! :D"); 
 			Power[] peace = new Power[2];
 			peace[0] = power; 
 			peace[1] = map.getPower("AUS");
 			Game.server.send(new Send(new Proposal(new Peace(peace)), peace[1]));  
-		}
+		} */
 
 		//Suggesting alliances to EVERYONE!
 		/*Power[] me = {power};
@@ -423,6 +427,42 @@ public class DodoAI extends AI {
 				}
 			}
 		}*/
+		
+		// initiate negotiations (should be moved to negotiator)
+		java.util.LinkedHashMap<Power, Power> alliances = Heuristics.PreferredAlliances(power, map.getStandard(), map);
+		
+		int numberofAlliances = 0;
+		ArrayList <Power> possibleAllies = new ArrayList<>();
+		ArrayList <Power> possibleEnemies = new ArrayList<>();
+		for (Entry<Power, Power> entry : alliances.entrySet()) {
+			boolean exactAlliance = false;
+			boolean alliance = false;
+			Power with = entry.getKey();
+			Power against = entry.getValue();
+			for (AllianceInfo info : belief.allianceInfo) {
+				if (info.with.equals(with)) {
+					alliance = true;
+					if (info.against.contains(against)) {
+						exactAlliance = true;
+					}
+				}
+			}
+			if (alliance) {
+				numberofAlliances++;
+			}
+			
+			if (!exactAlliance && numberofAlliances < 4 && belief.powerInfo.get(with).trust > 0.2 && !possibleAllies.contains(against) && !possibleEnemies.contains(with) && !negotiator.backstabbers.contains(with)) {
+				negotiator.initiateAlliance(with, against);
+				if (!alliance)
+					numberofAlliances++;
+				possibleAllies.add(with);
+				possibleEnemies.add(against);
+			} else if (!alliance && !belief.powerInfo.get(with).peace && !possibleAllies.contains(against) && !possibleEnemies.contains(with)) {
+				negotiator.initiatePeace(with);
+			} 
+			
+		}
+		
 		
 		
 		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
