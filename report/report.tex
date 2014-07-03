@@ -4,6 +4,7 @@
 \usepackage{cite}
 \usepackage{hyperref}
 \usepackage{pgfplots}
+\usepackage{float}
 \bibliographystyle{alpha}
 
 \title{Diplomacy}
@@ -68,12 +69,68 @@ We have chosen to give the supply center a defend gain $g_{defend}$ if $threat >
 Using only the aforementioned gains, we perceived that units on threatened home supply centers displaying  ``camping'' behaviour. The unit keeps defending the home supply center from a neighbouring enemy whereas the neighbouring is interested in the home supply center and hence does not move away. We therefore introduced a high counter gain $g_{counter}$, to provinces adjacent to a home supply center and containing an enemy unit. This way, instead of endlessly holding the home supply center, units will start to make offensive moves against adjacent enemies driving the threat away instead of waiting for it to go.        
 
 \subsubsection{Kill gain}
-Another thing we also witnessed by watching our AI play is that very often units of a power are on the far side of the map - far from any support. This units are often left unattended as a single unit is not considered a threat. We therefore introduced a kill gain. This is a very high gain for a province containing a lonely enemy unit (no other enemy units as close as two tiles away), and this unit has limited provinces $< \varepsilon_{kill}$ to retreat to - likely causing it to disband when attacked. 
+Another thing we also witnessed by watching our AI play is that very often units of a power are on the far side of the map - far from any support. This units are often left unattended as a single unit is not considered a threat. We therefore introduced a kill gain $g_{kill}$. This is a very high gain for a province containing a lonely enemy unit (no other enemy units as close as two tiles away), and this unit has limited provinces $< \varepsilon_{kill}$ to retreat to - likely causing it to disband when attacked. 
 Another issue solved by this, is that very often the last living unit of a power is left unattended and sometimes even regains considerable power. 
 
 \subsection{Smoothing gains}
 
 
+\subsubsection{Gain values}
+
+We chose this gain because blablabla. This one should then be higher because bla. Therefore bla. Blip bloop blababliebloopie. 
+
+\begin{figure}[H]
+\centering
+\begin{tabular}{| l | c |}
+  \hline            
+  {\bf Gain} & {\bf Value}\\
+  {Supply Gains} &  \\
+  $g_{supply}$ & 3.0 \\
+  $g_{ourSupply}$ & 0.25 \\
+  $g_{home}$ & 3.2 \\
+  $g_{ourHome}$ & 0.3 \\
+  $g_{takenHome}$ & 5.0 \\
+  {Defend gains} &  \\
+  $g_{defend}$ &  3.0 \\
+  $g_{defendHome}$ & 3.2 \\
+  {Counter gain} & \\
+  $g_{counter}$ & 5.5 \\
+  {Kill gain} & \\
+  $g_{kill}$ & 5.0 \\
+  \hline  
+\end{tabular}
+\caption{Values choses for the various gain variables}
+\end{figure}
+
+
+    % public static float c_smooth = 0.25f;
+    % public static float c_threat = 1.0f;
+    
+    % public static float c_shared = 0.0f;
+    % //public static float risk = 1.0f; 
+    % //public static float sharedRisk = 1.0f;
+    % public static float defence = 1.0f; 
+
+    % public static float takeOverRisk = 0.5f;
+
+    % public static float c_normalNotOurs = 3.0f; 
+    % public static float c_homeNotOurs = 3.2f; 
+
+    % public static float c_normalOurs = 0.25f; 
+    % public static float c_homeOurs = 0.30f; 
+
+    % public static float c_normalOursThreat = 3.0f; 
+    % public static float c_homeOursThreat = 3.2f; 
+
+    % public static float c_homeOursTaken = 5.0f; 
+
+    % public static float c_threatThreshold = 1.10f; 
+
+    % public static float c_counter = 5.5f; 
+
+    % public static float c_kill = 5.0f; 
+
+    % public static float attackThreshold = 3.0f; 
 
 
 
@@ -117,7 +174,6 @@ Another issue solved by this, is that very often the last living unit of a power
   \end{axis}
 \end{tikzpicture}
 
-\end{description} 
 
 % \begin{thebibliography}{1}
 
