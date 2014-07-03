@@ -33,10 +33,10 @@ public class DodoAI extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
 	
 	public double initialTrust = 0.5;
-	public double decay = 0.05;
-	public double righteousness = 0.5;
-	public double supIntolerance = 0.5;
-	public double incTrust = 0.03;
+	public double decay = 1.1;
+	public double righteousness = 0.05;
+	public double supIntolerance = 0.05;
+	public double incTrust = 0.003;
 	public String fileName = "";
 	
 	protected Negotiator negotiator;

@@ -184,7 +184,7 @@ public class DodoBeliefBase {
 	}
 	public void supCalc(int supFavor, Power p) {
 		//Function for trust alteration based on support reciprocity
-		powerInfo.get(p).trust += round((ai.supIntolerance * Math.abs(supFavor)) / 100);
+		powerInfo.get(p).trust += round(Math.pow(ai.supIntolerance * Math.abs(supFavor), 2) / 1000);
 	}
 	public double pUpdate(double time) {	
 		//Function for trust alteration while holding a treaty
