@@ -1,6 +1,13 @@
 package ai.dodo;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import ai.dodo.phases.*;
@@ -12,8 +19,6 @@ import kb.unit.Unit;
 import message.DaideMessage;
 import message.order.*;
 import message.press.*;
-import message.press.Proposal;
-import message.press.Send;
 import message.server.Huh;
 import ai.AI;
 import ai.Heuristics;
@@ -28,9 +33,11 @@ public class DodoAI extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
 	
 	public double initialTrust = 0.5;
-	public double decay = 0.05;
-	public double righteousness = 0.5;
-	public double supportSteep = 0.5;
+	public double decay = 1.1;
+	public double righteousness = 0.05;
+	public double supIntolerance = 0.05;
+	public double incTrust = 0.003;
+	public String fileName = "";
 	
 	protected Negotiator negotiator;
 	
@@ -55,18 +62,180 @@ public class DodoAI extends AI {
 		for (int i = 2; i < args.length; i ++) {
 			String flag = args[i]; 
 			if (flag.equals("-n")) {
-				setName(args[++i]);  
+				if (!fileName.equals("")) {
+					System.out.println("Name already set with -f argument. Ignored."); 
+				} else {
+					setName(args[++i]);  
+				}
 			} else if (flag.equals("-l")) {
 				names = new Names(args[++i]); 
 			} else if (flag.equals("-k")) {
 				key_to_send = true; 
-			} else  {
+			} else if (flag.equals("-f")) {
+				//System.out.println("Ddodo"); 
+				fileName = args[++i];
+			}
+				else  {
 				//hack to throw outofboundexception
 				String error = args[-20]; 
 			}
 		}
 	}
 
+	public void parseTrustFile()
+	{		
+		if(names != null){
+			BufferedWriter bw = null;
+			BufferedReader br = null;
+			try{
+				bw = new BufferedWriter(new FileWriter(name +"Trust.txt", true));
+				bw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try{
+				br = new BufferedReader(new FileReader(name +"Trust.txt"));
+				try{
+					String line = br.readLine();
+					while(line != null)
+					{
+						String[] splitted = line.split(" ");
+						for(Power p : map.powers)
+						{
+							PowerInfo pi = belief.powerInfo.get(p);
+							if(!pi.name.equals(this.name) && splitted[0].equals(pi.name)) // found the player inside our trust file
+							{
+								pi.trust = Double.parseDouble(splitted[1]);
+								pi.seenBefore = true;
+							}
+						}
+						line = br.readLine();
+					}
+					br.close();
+					try{
+						bw = new BufferedWriter(new FileWriter(name +"Trust.txt", true));
+						for(Power p: map.powers)
+						{
+							PowerInfo pi = belief.powerInfo.get(p);
+							if(!pi.name.equals(this.name) && !pi.seenBefore) // not seen before
+							{// thus add it to the text file
+								pi.trust = initialTrust;
+								bw.append(pi.name + " " + pi.trust);
+								bw.newLine();
+							}
+						}
+						bw.close();
+					}
+					catch(IOException e){
+						e.printStackTrace();
+					}
+				} catch (IOException e){
+					e.printStackTrace();
+				}
+			} catch (FileNotFoundException e){
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void writeToFile()
+	{
+		if(names != null)
+		{
+			BufferedReader br = null; BufferedWriter bw = null;
+			ArrayList<String> output = new ArrayList<String>();
+			try{
+				br = new BufferedReader(new FileReader(name +"Trust.txt"));
+				try{
+					String line = br.readLine();
+					while(line != null)
+					{
+						output.add(line);
+						line = br.readLine();
+					}
+					br.close();
+				}
+				catch (IOException e){
+					e.printStackTrace();
+				}
+			} catch (FileNotFoundException e){
+				e.printStackTrace();
+			}
+			try{
+				bw = new BufferedWriter(new FileWriter(name +"Trust.txt", true));
+				for(int i = 0; i < output.size(); i++)
+				{
+					String[] splitted = output.get(i).split(" ");
+					if(names != null){
+						for(Power p : map.powers)
+						{
+							PowerInfo pi = belief.powerInfo.get(p);
+							if(!pi.name.equals(this.name) && splitted[0].equals(pi.name)) // found a power we know, update the values
+							{
+								splitted[1] = Double.toString(pi.trust);
+								output.set(i, (splitted[0] + " " + splitted[1]));
+								break;
+							}
+						}
+					}
+				}
+				for(int i = 0; i < output.size(); i++)
+				{
+					bw.append(output.get(i));
+				}
+			}
+			catch(IOException e){
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void parseTextFile(String fileName)
+	{
+		System.out.println("u,aua,"); 
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			try{
+				String line = br.readLine();
+				int index = 0;
+				String result = "";
+				while (line != null)
+				{
+					index = line.lastIndexOf("=");
+					result = line.substring(index + 1);
+					if(result.startsWith(" ")){
+						result = result.substring(1);
+					}
+					if(line.startsWith("name")) {
+						name = result;
+						System.out.println(this.name); 
+					} else if (line.startsWith("initialTrust")){
+						initialTrust = Double.parseDouble(result);
+					}
+					else if (line.startsWith("decay")){
+						decay = Double.parseDouble(result);
+					}
+					else if (line.startsWith("righteousness"))
+					{
+						righteousness = Double.parseDouble(result);
+					}
+					else if (line.startsWith("supIntolerance"))
+					{
+						supIntolerance = Double.parseDouble(result);
+					}
+					line = br.readLine();
+				}			
+			} catch (IOException e){
+				e.printStackTrace();
+			}
+		} catch(FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
 	public void findGains()
 	{}
 		
@@ -83,6 +252,7 @@ public class DodoAI extends AI {
 		}
 		
 		belief = new DodoBeliefBase(map, power, this);
+		parseTrustFile();
 	}
 	@Override
 	protected void handleSLO(String[] message)
@@ -101,13 +271,14 @@ public class DodoAI extends AI {
 	@Override
 	protected void handleSMR(String[] message)
 	{
+
 		System.out.println("\n endgame info: \n");
 		for (String m : message) {
 			if (m == null) break; 
 			System.out.println("" + m);
 		
 		}
-		//TODO Write belief base info to file. thanks.
+		writeToFile();
 		System.out.println("TO BE CONTINUED?"); 
 		System.exit(0); 
 	}
@@ -166,6 +337,9 @@ public class DodoAI extends AI {
 	@Override
 	public void init(String[] args) throws ArrayIndexOutOfBoundsException {
 		parseCommandLineArguments(args);
+		if(!fileName.equals(""))
+			parseTextFile(fileName);
+		System.out.println(name); 
 	}
 
 	public static void main(String[] args) {

@@ -1,5 +1,6 @@
 name = Dodo
-initialTrust = 5.0
-halflife = 0.05
-rightesnous = 0.5
-supportSteep = 0.5
+initialTrust = 0.5
+decay = 1.1
+righteousness = 0.05
+supIntolerance = 0.05
+incTrust = 0.003
