@@ -80,114 +80,119 @@ public class DodoAI extends AI {
 
 	public void parseTrustFile()
 	{		
-		BufferedWriter bw = null;
-		BufferedReader br = null;
-		try{
-			bw = new BufferedWriter(new FileWriter(name +"Trust.txt", true));
-			bw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try{
-			br = new BufferedReader(new FileReader(name +"Trust.txt"));
+		if(names != null){
+			BufferedWriter bw = null;
+			BufferedReader br = null;
 			try{
-				String line = br.readLine();
-				while(line != null)
-				{
-					String[] splitted = line.split(" ");
-					for(Power p : map.powers)
-					{
-						PowerInfo pi = belief.powerInfo.get(p);
-						if(splitted[0].equals(pi.name)) // found the player inside our trust file
-						{
-							pi.trust = Double.parseDouble(splitted[1]);
-							pi.seenBefore = true;
-						}
-					}
-					line = br.readLine();
-				}
-				br.close();
-				try{
-					bw = new BufferedWriter(new FileWriter(name +"Trust.txt", true));
-					for(Power p: map.powers)
-					{
-						if(!p.getName().equals(name))
-						{
-							PowerInfo pi = belief.powerInfo.get(p);
-							if(!pi.seenBefore) // not seen before
-							{// thus add it to the text file
-								pi.trust = initialTrust;
-								bw.append(pi.name + " " + pi.trust);
-								bw.newLine();
-							}
-						}
-					}
-					bw.close();
-				}
-				catch(IOException e){
-					e.printStackTrace();
-				}
-			} catch (IOException e){
+				bw = new BufferedWriter(new FileWriter(name +"Trust.txt", true));
+				bw.close();
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} catch (FileNotFoundException e){
-			e.printStackTrace();
+			try{
+				br = new BufferedReader(new FileReader(name +"Trust.txt"));
+				try{
+					String line = br.readLine();
+					while(line != null)
+					{
+						String[] splitted = line.split(" ");
+						for(Power p : map.powers)
+						{
+							PowerInfo pi = belief.powerInfo.get(p);
+							if(splitted[0].equals(pi.name)) // found the player inside our trust file
+							{
+								pi.trust = Double.parseDouble(splitted[1]);
+								pi.seenBefore = true;
+							}
+						}
+						line = br.readLine();
+					}
+					br.close();
+					try{
+						bw = new BufferedWriter(new FileWriter(name +"Trust.txt", true));
+						for(Power p: map.powers)
+						{
+							if(!p.getName().equals(name))
+							{
+								PowerInfo pi = belief.powerInfo.get(p);
+								if(!pi.seenBefore) // not seen before
+								{// thus add it to the text file
+									pi.trust = initialTrust;
+									bw.append(pi.name + " " + pi.trust);
+									bw.newLine();
+								}
+							}
+						}
+						bw.close();
+					}
+					catch(IOException e){
+						e.printStackTrace();
+					}
+				} catch (IOException e){
+					e.printStackTrace();
+				}
+			} catch (FileNotFoundException e){
+				e.printStackTrace();
+			}
 		}
 	}
 	
 	public void writeToFile()
 	{
-		BufferedReader br = null; BufferedWriter bw = null;
-		ArrayList<String> output = new ArrayList<String>();
-		try{
-			br = new BufferedReader(new FileReader(name +"Trust.txt"));
+		if(names != null)
+		{
+			BufferedReader br = null; BufferedWriter bw = null;
+			ArrayList<String> output = new ArrayList<String>();
 			try{
-				String line = br.readLine();
-				while(line != null)
-				{
-					output.add(line);
-					br.readLine();
+				br = new BufferedReader(new FileReader(name +"Trust.txt"));
+				try{
+					String line = br.readLine();
+					while(line != null)
+					{
+						output.add(line);
+						br.readLine();
+					}
+					br.close();
 				}
-				br.close();
-			}
-			catch (IOException e){
+				catch (IOException e){
+					e.printStackTrace();
+				}
+			} catch (FileNotFoundException e){
 				e.printStackTrace();
 			}
-		} catch (FileNotFoundException e){
-			e.printStackTrace();
-		}
-		try{
-			bw = new BufferedWriter(new FileWriter(name +"Trust.txt", false));
-			for(int i = 0; i < output.size(); i++)
-			{
-				String[] splitted = output.get(i).split(" ");
-				if(names != null){
-					for(Power p : map.powers)
-					{
-						if(!p.getName().equals(name))
+			try{
+				bw = new BufferedWriter(new FileWriter(name +"Trust.txt", false));
+				for(int i = 0; i < output.size(); i++)
+				{
+					String[] splitted = output.get(i).split(" ");
+					if(names != null){
+						for(Power p : map.powers)
 						{
-							PowerInfo pi = belief.powerInfo.get(p);
-							if(splitted[0].equals(pi.name)) // found a power we know, update the values
+							if(!p.getName().equals(name))
 							{
-								splitted[1] = Double.toString(pi.trust);
-								output.set(i, (splitted[0] + " " + splitted[1]));
-								break;
+								PowerInfo pi = belief.powerInfo.get(p);
+								if(splitted[0].equals(pi.name)) // found a power we know, update the values
+								{
+									splitted[1] = Double.toString(pi.trust);
+									output.set(i, (splitted[0] + " " + splitted[1]));
+									break;
+								}
 							}
 						}
 					}
 				}
+				for(int i = 0; i < output.size(); i++)
+				{
+					bw.append(output.get(i));
+					bw.newLine();
+				}
+				bw.close();
 			}
-			for(int i = 0; i < output.size(); i++)
-			{
-				bw.append(output.get(i));
-				bw.newLine();
+			catch(IOException e){
+				e.printStackTrace();
 			}
-			bw.close();
+			System.out.println("DONE WRITING!");
 		}
-		catch(IOException e){
-			e.printStackTrace();
-		}
-		System.out.println("DONE WRITING!");
 	}
 	
 	public void parseTextFile(String fileName)
