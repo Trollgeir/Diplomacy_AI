@@ -29,6 +29,29 @@ The online diplomacy game is based on the map of 1901 Europe, but can also be pl
 Then there is the MOVE action, with it the unit moves from one province to an adjacent province.
 Then there are two types of support moves, the SUPPORT HOLD, this is a support for the defending HOLD move. The SUPPORT HOLD gives the defending army an additional unit to defend with. And then there is the SUPPORT MOVE, which is basically the same but for attacking. The last move is the CONVOY move, for this move a player needs a fleet and an army. The fleet needs to be in the ocean. Then the army moves via the fleet over the ocean to the next province.
 The CONVOY move can also be chained if mutiple fleets are adjacent, this is still seen as one move.
+
+
+\section{Gain system}
+
+In order for our AI to know where it should move it's units to, we make use of a gain system. For every province we calculate a gain value. This value signifies the importance of this province based on a variety of properties and heuristics. We weigh this gain with factors such as likeliness to succeed and whether we defect allies by moving to this province. 
+
+\subsection{Gains}  
+
+For each province the gain value signifies the importance of that province. To calculated the gain, we have selected a number of properties which we believe makes a province important. 
+
+supply center
+home supply center
+
+defend supply gain
+defend home supply
+
+take back home
+counter
+finish him  
+
+
+
+
 \section{Gains \& Weights}
 
 In order for our AI to move units around the map, we make use of a gains \& weights system. For every province we calculate a gain value. This values signifies the importance of this province based on a variety of properties and variables. This gain is weighed by the weight value, which not only signifies the likeliness of succes to take this province - but also the cost (for example, do we defect allies with this action?).

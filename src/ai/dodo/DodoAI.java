@@ -38,7 +38,7 @@ public class DodoAI extends AI {
 	public double supIntolerance = 0.5;
 	public double incTrust = 0.03;
 	public String name = "dudo";
-	public String fileName = "initFile.txt";
+	public String fileName = "";
 	
 	protected Negotiator negotiator;
 	
