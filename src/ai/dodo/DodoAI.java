@@ -37,7 +37,6 @@ public class DodoAI extends AI {
 	public double righteousness = 0.5;
 	public double supIntolerance = 0.5;
 	public double incTrust = 0.03;
-	public String name = "";
 	public String fileName = "";
 	
 	protected Negotiator negotiator;
@@ -172,7 +171,7 @@ public class DodoAI extends AI {
 					if(names != null){
 						for(Power p : map.powers)
 						{
-							if(!p.getName().equals(name))
+							if(!p.getName().equals(this.name))
 							{
 								PowerInfo pi = belief.powerInfo.get(p);
 								if(splitted[0].equals(pi.name)) // found a power we know, update the values
