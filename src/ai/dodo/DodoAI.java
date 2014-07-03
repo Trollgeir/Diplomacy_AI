@@ -149,8 +149,9 @@ public class DodoAI extends AI {
 					String line = br.readLine();
 					while(line != null)
 					{
+						System.out.println(line);
 						output.add(line);
-						br.readLine();
+						line = br.readLine();
 					}
 					br.close();
 				}
@@ -161,7 +162,7 @@ public class DodoAI extends AI {
 				e.printStackTrace();
 			}
 			try{
-				bw = new BufferedWriter(new FileWriter(name +"Trust.txt", false));
+				bw = new BufferedWriter(new FileWriter(name +"Trust.txt", true));
 				for(int i = 0; i < output.size(); i++)
 				{
 					String[] splitted = output.get(i).split(" ");
@@ -180,14 +181,13 @@ public class DodoAI extends AI {
 				}
 				for(int i = 0; i < output.size(); i++)
 				{
+					System.out.println("SECOND FORLOOP: " + output.get(i));
 					bw.append(output.get(i));
-					bw.newLine();
 				}
 			}
 			catch(IOException e){
 				e.printStackTrace();
 			}
-			System.out.println("DONE WRITING!");
 		}
 	}
 	
