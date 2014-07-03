@@ -59,11 +59,14 @@ public class DodoBeliefBase {
 	public java.util.Map<Power, PowerInfo>			powerInfo;
 	
 	
-	public DodoBeliefBase(Map map, Power self)
+	public DodoBeliefBase(Map map, Power self, DodoAI ai)
 	{
 		this.map = map;
 		this.self = self;
-		
+		//This one is for the wizards:
+		this.ai = ai; 
+
+
 		allianceInfo = new ArrayList<AllianceInfo>();
 		powerInfo = new java.util.HashMap<Power, PowerInfo>();
 		

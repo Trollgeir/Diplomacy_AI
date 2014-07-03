@@ -82,7 +82,7 @@ public class DodoAI extends AI {
 			names.init(map);
 		}
 		
-		belief = new DodoBeliefBase(map, power);
+		belief = new DodoBeliefBase(map, power, this);
 	}
 	@Override
 	protected void handleSLO(String[] message)
