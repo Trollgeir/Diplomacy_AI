@@ -152,7 +152,7 @@ public class DodoBeliefBase {
 		for(int i = 0; i < map.powers.size(); i++)
 		{
 			PowerInfo pi = powerInfo.get(map.powers.get(i));
-			if(!pi.peace) // we are at peace with this power
+			if(pi.peace) // we are at peace with this power
 				pi.peaceActuality--;
 		}
 	}
