@@ -22,6 +22,8 @@ import ai.AI;
 import ai.dodo.Negotiator;
 import game.Game;
 import kb.Names; 
+import java.util.ArrayList;
+import java.util.Set;
 
 public class Heuristics {
 	
@@ -244,6 +246,81 @@ public class Heuristics {
 			} 
 		}
 		return preferred;
+	}
+	
+	public static java.util.LinkedHashMap<Power, Power> PreferredAlliances(Power power, boolean isStandard, Map map) {
+		java.util.LinkedHashMap<Power, Power> result = new java.util.LinkedHashMap<Power, Power>();
+		if (isStandard) {
+			Power AUS = map.getPower("AUS");
+			Power ENG = map.getPower("ENG");
+			Power FRA = map.getPower("FRA");
+			Power GER = map.getPower("GER");
+			Power ITA = map.getPower("ITA");
+			Power RUS = map.getPower("RUS");
+			Power TUR = map.getPower("TUR");
+			
+			if (power.getName().equals("AUS")) {
+				result.put(ITA, TUR);
+				result.put(RUS, TUR);
+				result.put(TUR, RUS);
+				result.put(GER, RUS);
+				result.put(FRA, GER);
+				result.put(ENG, RUS);
+			} else if (power.getName().equals("ENG")) {
+				result.put(FRA, GER);
+				result.put(GER, FRA);
+				result.put(RUS, GER);
+				result.put(ITA, FRA);
+				result.put(AUS, RUS);
+				result.put(TUR, RUS);
+				
+			} else if (power.getName().equals("FRA")) {
+				result.put(ENG, GER);
+				result.put(GER, ITA);
+				result.put(ITA, GER);
+				result.put(AUS, GER);
+				result.put(RUS, GER);
+				result.put(TUR, AUS);
+				
+			} else if (power.getName().equals("GER")) {
+				result.put(ENG, FRA);
+				result.put(FRA, ENG);
+				result.put(RUS, ENG);
+				result.put(ITA, FRA);
+				result.put(AUS, ITA);
+				result.put(TUR, RUS);
+				
+			} else if (power.getName().equals("ITA")) {
+				result.put(AUS, TUR);
+				result.put(RUS, AUS);
+				result.put(GER, FRA);
+				result.put(FRA, GER);
+				result.put(ENG, GER);
+				result.put(TUR, AUS);
+				
+			} else if (power.getName().equals("RUS")) {
+				result.put(TUR, AUS);
+				result.put(GER, ENG);
+				result.put(ITA, TUR);
+				result.put(AUS, TUR);
+				result.put(FRA, GER);
+				result.put(ENG, GER);
+				
+			} else if (power.getName().equals("TUR")) {
+				result.put(RUS, AUS);
+				result.put(ITA, AUS);
+				result.put(GER, RUS);
+				result.put(FRA, ITA);
+				result.put(FRA, GER);
+				result.put(ENG, RUS);
+				
+			} 
+		}
+		
+		
+		
+		return result;
+		
 	}
 	
 }
