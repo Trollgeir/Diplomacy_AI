@@ -147,7 +147,8 @@ public class DodoBeliefBase {
 			
 			alliance.actuality = Math.pow(ai.decay, (-alliance.time));
 			PowerInfo pi = powerInfo.get(alliance.with);
-			pi.trust += ai.incTrust * alliance.time;
+			pi.trust += ai.incTrust;
+			pi.trust = pi.trust < 0 ? 0 : pi.trust > 1 ? 1 : pi.trust;
 			pi.paranoia += 1 - (Math.pow(ai.decay, alliance.time) * pi.trust);
 			alliance.time++;
 		}
@@ -158,8 +159,10 @@ public class DodoBeliefBase {
 		for(int i = 0; i < map.powers.size(); i++)
 		{
 			PowerInfo pi = powerInfo.get(map.powers.get(i));
-			if(pi.peace) 
+			if(!pi.name.equals(ai.name) && pi.peace) 
 			{
+				pi.trust += ai.incTrust;
+				pi.trust = pi.trust < 0 ? 0 : pi.trust > 1 ? 1 : pi.trust;
 				pi.peaceActuality = Math.pow(ai.decay, (-pi.peaceTime));
 				pi.paranoia += 1 - (Math.pow(ai.decay, pi.peaceTime) * pi.trust);
 				pi.peaceTime++;
@@ -181,7 +184,7 @@ public class DodoBeliefBase {
 	}
 	public void supCalc(int supFavor, Power p) {
 		//Function for trust alteration based on support reciprocity
-		powerInfo.get(p).trust += round((ai.supIntolerance * Math.abs(supFavor)) / 100);
+		powerInfo.get(p).trust += round(Math.pow(ai.supIntolerance * Math.abs(supFavor), 2) / 1000);
 	}
 	public double pUpdate(double time) {	
 		//Function for trust alteration while holding a treaty

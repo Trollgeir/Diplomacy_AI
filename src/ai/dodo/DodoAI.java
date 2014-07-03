@@ -33,10 +33,10 @@ public class DodoAI extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
 	
 	public double initialTrust = 0.5;
-	public double decay = 0.05;
-	public double righteousness = 0.5;
-	public double supIntolerance = 0.5;
-	public double incTrust = 0.03;
+	public double decay = 1.1;
+	public double righteousness = 0.05;
+	public double supIntolerance = 0.05;
+	public double incTrust = 0.003;
 	public String fileName = "";
 	
 	protected Negotiator negotiator;
@@ -150,7 +150,6 @@ public class DodoAI extends AI {
 					String line = br.readLine();
 					while(line != null)
 					{
-						System.out.println(line);
 						output.add(line);
 						line = br.readLine();
 					}
@@ -182,7 +181,6 @@ public class DodoAI extends AI {
 				}
 				for(int i = 0; i < output.size(); i++)
 				{
-					System.out.println("SECOND FORLOOP: " + output.get(i));
 					bw.append(output.get(i));
 				}
 			}
