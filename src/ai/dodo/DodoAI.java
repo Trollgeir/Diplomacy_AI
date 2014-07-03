@@ -37,7 +37,7 @@ public class DodoAI extends AI {
 	public double righteousness = 0.5;
 	public double supIntolerance = 0.5;
 	public double incTrust = 0.03;
-	public String name = "dudo";
+/*	public String name = "dudo";*/
 	public String fileName = "";
 	
 	protected Negotiator negotiator;
@@ -73,6 +73,7 @@ public class DodoAI extends AI {
 			} else if (flag.equals("-k")) {
 				key_to_send = true; 
 			} else if (flag.equals("-f")) {
+				//System.out.println("Ddodo"); 
 				fileName = args[++i];
 			}
 				else  {
@@ -201,6 +202,7 @@ public class DodoAI extends AI {
 	
 	public void parseTextFile(String fileName)
 	{
+		System.out.println("u,aua,"); 
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
 			try{
@@ -214,9 +216,10 @@ public class DodoAI extends AI {
 					if(result.startsWith(" ")){
 						result = result.substring(1);
 					}
-					if(line.startsWith("name"))
+					if(line.startsWith("name")) {
 						name = result;
-					else if (line.startsWith("initialTrust")){
+						System.out.println(this.name); 
+					} else if (line.startsWith("initialTrust")){
 						initialTrust = Double.parseDouble(result);
 					}
 					else if (line.startsWith("decay")){
@@ -346,6 +349,7 @@ public class DodoAI extends AI {
 		parseCommandLineArguments(args);
 		if(!fileName.equals(""))
 			parseTextFile(fileName);
+		System.out.println(name); 
 	}
 
 	public static void main(String[] args) {

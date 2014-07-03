@@ -33,11 +33,13 @@ public class Game extends Receiver {
 
 		try {
 			ai.init(args); 
+			System.out.println("namee" + ai.getName()); 
 			String name = args[0];
 			String port = args[1];
 			server = new Server(InetAddress.getByName(name), Integer.parseInt(port));
 			server.addMessageListener(dispatcher); 
 			server.connect();
+			System.out.println("connecting as" + ai.getName()); 
 			Connect connect = new Connect(ai.getName(), ai.getVersion()); 
 			server.send(connect);
 		} catch (ArrayIndexOutOfBoundsException e) {
