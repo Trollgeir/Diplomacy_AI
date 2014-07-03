@@ -63,9 +63,11 @@ public class DodoBeliefBase {
 		allianceInfo = new ArrayList<AllianceInfo>();
 		powerInfo = new java.util.HashMap<Power, PowerInfo>();
 		
+		System.out.println("I am believing!");
+		
 		for (Power p : map.powers)
 		{
-			if (!p.equals(self))
+			//if (!p.equals(self))
 				powerInfo.put(p, new PowerInfo());
 		}
 	}
@@ -147,10 +149,10 @@ public class DodoBeliefBase {
 	
 	public void incrementPeaceTime()
 	{
-		for(int i = 0; i < powerInfo.size(); i++)
+		for(int i = 0; i < map.powers.size(); i++)
 		{
-			PowerInfo pi = powerInfo.get(i);
-			if(pi.peace) // we are at peace with this power
+			PowerInfo pi = powerInfo.get(map.powers.get(i));
+			if(!pi.peace) // we are at peace with this power
 				pi.peaceActuality--;
 		}
 	}

@@ -212,13 +212,19 @@ public class DodoAI extends AI {
 	public void newTurn()
 	{
 		if (!power.alive) return;
-
+		
+		if(belief != null)
+		{
+			belief.incrementPeaceTime();
+			belief.incrementAllianceTime();
+		}
+		
 		System.out.println();
 		System.out.println("The new Dodo lives!");
 		System.out.println("New turn for " + power.getName());
 		System.out.println("Year: " + map.getYear() + " -----------  Phase: " + map.getPhase()); 
 
-		if (power.getName().equals("ITA")) {
+		if (power.getName().equals("ITA") && map.getYear() == 1901) {
 			System.out.println("Hey, I am Italy and I want peace with Austria! :D"); 
 			Power[] peace = new Power[2];
 			peace[0] = power; 
