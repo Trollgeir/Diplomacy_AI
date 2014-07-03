@@ -27,11 +27,12 @@ class AllianceInfo
 
 class PowerInfo
 {
-	public PowerInfo(String name)
+	public PowerInfo(String name, DodoAI ai)
 	{
 		supFavor = 0;
 		peace = false;
 		peaceActuality = 1;
+		trust = ai.initialTrust;
 		peaceTime = 0;
 		paranoia = 1 - trust;
 		this.name = name;
@@ -71,7 +72,7 @@ public class DodoBeliefBase {
 		for (Power p : map.powers)
 		{
 			if(ai.names != null)
-				powerInfo.put(p, new PowerInfo(ai.names.getNameByPower(p)));
+				powerInfo.put(p, new PowerInfo(ai.names.getNameByPower(p), ai));
 		}
 	}
 	
