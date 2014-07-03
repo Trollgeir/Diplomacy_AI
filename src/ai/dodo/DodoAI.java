@@ -63,7 +63,11 @@ public class DodoAI extends AI {
 		for (int i = 2; i < args.length; i ++) {
 			String flag = args[i]; 
 			if (flag.equals("-n")) {
-				setName(args[++i]);  
+				if (!fileName.equals("")) {
+					System.out.println("Name already set with -f argument. Ignored."); 
+				} else {
+					setName(args[++i]);  
+				}
 			} else if (flag.equals("-l")) {
 				names = new Names(args[++i]); 
 			} else if (flag.equals("-k")) {
