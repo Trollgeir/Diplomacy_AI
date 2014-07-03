@@ -348,7 +348,7 @@ public class ProvinceData {
 		for (int i = 0; i < supportLeft; ++i) {
 			if (possibleNegSupport == 0) break;
 			
-			if (Math.random() > Math.pow(1 - takeOverRisk, k)) {
+			if (Math.random() >= Math.pow(takeOverRisk, k)) {
 				possibleNegSupport--;
 				supportNeeded++;
 			}
@@ -442,8 +442,6 @@ public class ProvinceData {
 			for (UnitData unitData : nearUnits.get(idx)) {
 				if (unitUsed.unit == unitData.unit) {
 					support--;
-					//if this unit was shared then the shared state needs to be decremented.
-					//if (unitData.shared > 0) shared[idx]--;
 				 	
 				 	//remove the unit from the nearUnits
 					removeList.add(unitData);
