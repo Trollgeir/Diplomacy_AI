@@ -2,6 +2,7 @@ package ai.dodo;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -36,6 +37,7 @@ public class DodoAI extends AI {
 	public double righteousness = 0.5;
 	public double supIntolerance = 0.5;
 	public double incTrust = 0.03;
+	public String name = "dodo";
 	public String fileName = "initFile.txt";
 	
 	protected Negotiator negotiator;
@@ -74,13 +76,20 @@ public class DodoAI extends AI {
 				String error = args[-20]; 
 			}
 		}
-		parseTrustFile();
 	}
 
 	public void parseTrustFile()
 	{		
+		BufferedWriter bw = null;
+		BufferedReader br = null;
 		try{
-			BufferedReader br = new BufferedReader(new FileReader(this.name +"Trust"));
+			bw = new BufferedWriter(new FileWriter(name +"Trust.txt", true));
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try{
+			br = new BufferedReader(new FileReader(name +"Trust.txt"));
 			try{
 				String line = br.readLine();
 				while(line != null)
@@ -97,7 +106,10 @@ public class DodoAI extends AI {
 					}
 					line = br.readLine();
 				}
-				try(BufferedWriter bw = new BufferedWriter(new FileWriter(this.name +"Trust", true))){
+				br.close();
+				try{
+					bw = new BufferedWriter(new FileWriter(name +"Trust.txt", true));
+					System.out.println("DERP");
 					for(Power p: map.powers)
 					{
 						PowerInfo pi = belief.powerInfo.get(p);
@@ -107,6 +119,7 @@ public class DodoAI extends AI {
 							bw.append(pi.name + " " + pi.trust);
 						}
 					}
+					bw.close();
 				}
 				catch(IOException e){
 					e.printStackTrace();
@@ -121,22 +134,27 @@ public class DodoAI extends AI {
 	
 	public void writeToFile()
 	{
+		BufferedReader br = null; BufferedWriter bw = null;
 		ArrayList<String> output = new ArrayList<String>();
 		try{
-			BufferedReader br = new BufferedReader(new FileReader(this.name +"Trust"));
+			br = new BufferedReader(new FileReader(name +"Trust.txt"));
 			try{
 				String line = br.readLine();
 				while(line != null)
 				{
 					output.add(line);
+					br.readLine();
 				}
-			} catch (IOException e){
+				br.close();
+			}
+			catch (IOException e){
 				e.printStackTrace();
 			}
 		} catch (FileNotFoundException e){
 			e.printStackTrace();
 		}
-		try(BufferedWriter bw = new BufferedWriter(new FileWriter(this.name +"Trust", false))){
+		try{
+			bw = new BufferedWriter(new FileWriter(name +"Trust.txt", false));
 			for(int i = 0; i < output.size(); i++)
 			{
 				String[] splitted = output.get(i).split(" ");
@@ -158,10 +176,12 @@ public class DodoAI extends AI {
 				bw.append(output.get(i));
 				bw.newLine();
 			}
+			bw.close();
 		}
 		catch(IOException e){
 			e.printStackTrace();
 		}
+		System.out.println("DONE WRITING!");
 	}
 	
 	public void parseTextFile(String fileName)
@@ -224,6 +244,7 @@ public class DodoAI extends AI {
 		}
 		
 		belief = new DodoBeliefBase(map, power, this);
+		parseTrustFile();
 	}
 	@Override
 	protected void handleSLO(String[] message)
@@ -242,13 +263,14 @@ public class DodoAI extends AI {
 	@Override
 	protected void handleSMR(String[] message)
 	{
+
 		System.out.println("\n endgame info: \n");
 		for (String m : message) {
 			if (m == null) break; 
 			System.out.println("" + m);
 		
 		}
-		//TODO Write belief base info to file. thanks.
+		writeToFile();
 		System.out.println("TO BE CONTINUED?"); 
 		System.exit(0); 
 	}
