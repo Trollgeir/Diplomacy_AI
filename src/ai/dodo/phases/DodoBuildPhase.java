@@ -73,6 +73,7 @@ public class DodoBuildPhase extends DodoPhase {
 		float[] willDefend = belief.allDefendAgainstWeights();
 
 		MapInfo mapInfo = new MapInfo(map, power, willAttack, willDefend);
+		mapInfo.computeGains();
 
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;

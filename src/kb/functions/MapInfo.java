@@ -55,7 +55,11 @@ public class MapInfo {
 
 		for (ProvinceData p : provinceData) p.determineSharedUnits(provinceData);
 
-		for (ProvinceData p : provinceData) p.computeSupportValues();
+		for (ProvinceData p : provinceData) p.computeOwnSupport();
+	}
+
+	public void computeGains() {
+		for (ProvinceData p : provinceData) p.computeNegSupportValues();
 
 		for (ProvinceData p : provinceData) p.computeGains(provinceData);
 
@@ -63,7 +67,6 @@ public class MapInfo {
 
 		for (ProvinceData p : provinceData) p.computeWeight();
 	}
-
 
 	public ArrayList<ProvinceData> getSortedTargets() {
 		ArrayList<ProvinceData> sortedList = new ArrayList<ProvinceData>();
