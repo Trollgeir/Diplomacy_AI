@@ -18,11 +18,11 @@ import kb.province.Province;
 public class Negotiator {
 
 	protected LinkedBlockingQueue<String[]> queue = new LinkedBlockingQueue<String[]>();
-	protected ExtendedDodo dodoAI;
+	protected DodoAI dodoAI;
 	protected ArrayList<Order> proposedOrders = new ArrayList<Order>();
 	protected Map map;
 
-	public Negotiator(ExtendedDodo dodo, Map map) 
+	public Negotiator(DodoAI dodo, Map map) 
 	{
 		this.dodoAI = dodo;
 		this.map = map;

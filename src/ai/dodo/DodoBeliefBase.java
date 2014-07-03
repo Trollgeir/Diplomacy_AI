@@ -44,7 +44,7 @@ class PowerInfo
 public class DodoBeliefBase {
 	Map		map;
 	Power	self;
-	ExtendedDodo ai;
+	DodoAI ai;
 	
 	// The initial values which are used for incrementation and decrementation of support and trust
 	public double supIntolerance = 0.5; 		//Pick a value between 0-1. 0 means you don't care about support reciprocity

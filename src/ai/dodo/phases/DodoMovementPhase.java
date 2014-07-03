@@ -2,6 +2,7 @@ package ai.dodo.phases;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.ArrayList;
+
 import message.order.*; 
 import message.press.*;
 import kb.functions.*;
@@ -13,8 +14,8 @@ import ai.dodo.*;
 
 public class DodoMovementPhase extends DodoPhase {
 
-	public DodoMovementPhase(ExtendedDodo ai) {
-		super(ai); 
+	public DodoMovementPhase(DodoAI dodoAI) {
+		super(dodoAI); 
 	} 
 
 	public void attack(ProvinceData target, ArrayList<UnitData> units, ArrayList<UnitData> usedUnits, ArrayList<Province> usedProvinces, LinkedBlockingQueue<Order> queue) {
