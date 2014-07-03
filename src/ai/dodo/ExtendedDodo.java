@@ -218,13 +218,13 @@ public class ExtendedDodo extends AI {
 		System.out.println("New turn for " + power.getName());
 		System.out.println("Year: " + map.getYear() + " -----------  Phase: " + map.getPhase()); 
 
-		if (power.getName().equals("ITA")) {
+/*		if (power.getName().equals("ITA")) {
 			System.out.println("Hey, I am Italy and I want peace with Austria! :D"); 
 			Power[] peace = new Power[2];
 			peace[0] = power; 
 			peace[1] = map.getPower("AUS");
 			Game.server.send(new Send(new Proposal(new Peace(peace)), peace[1]));  
-		}
+		}*/
 
 		//Suggesting alliances to EVERYONE!
 		/*Power[] me = {power};
