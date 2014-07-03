@@ -102,7 +102,7 @@ public class DodoAI extends AI {
 						for(Power p : map.powers)
 						{
 							PowerInfo pi = belief.powerInfo.get(p);
-							if(splitted[0].equals(pi.name)) // found the player inside our trust file
+							if(!pi.name.equals(this.name) && splitted[0].equals(pi.name)) // found the player inside our trust file
 							{
 								pi.trust = Double.parseDouble(splitted[1]);
 								pi.seenBefore = true;
@@ -115,15 +115,12 @@ public class DodoAI extends AI {
 						bw = new BufferedWriter(new FileWriter(name +"Trust.txt", true));
 						for(Power p: map.powers)
 						{
-							if(!p.getName().equals(name))
-							{
-								PowerInfo pi = belief.powerInfo.get(p);
-								if(!pi.seenBefore) // not seen before
-								{// thus add it to the text file
-									pi.trust = initialTrust;
-									bw.append(pi.name + " " + pi.trust);
-									bw.newLine();
-								}
+							PowerInfo pi = belief.powerInfo.get(p);
+							if(!pi.name.equals(this.name) && !pi.seenBefore) // not seen before
+							{// thus add it to the text file
+								pi.trust = initialTrust;
+								bw.append(pi.name + " " + pi.trust);
+								bw.newLine();
 							}
 						}
 						bw.close();
@@ -171,15 +168,12 @@ public class DodoAI extends AI {
 					if(names != null){
 						for(Power p : map.powers)
 						{
-							if(!p.getName().equals(this.name))
+							PowerInfo pi = belief.powerInfo.get(p);
+							if(!pi.name.equals(this.name) && splitted[0].equals(pi.name)) // found a power we know, update the values
 							{
-								PowerInfo pi = belief.powerInfo.get(p);
-								if(splitted[0].equals(pi.name)) // found a power we know, update the values
-								{
-									splitted[1] = Double.toString(pi.trust);
-									output.set(i, (splitted[0] + " " + splitted[1]));
-									break;
-								}
+								splitted[1] = Double.toString(pi.trust);
+								output.set(i, (splitted[0] + " " + splitted[1]));
+								break;
 							}
 						}
 					}
@@ -189,7 +183,6 @@ public class DodoAI extends AI {
 					bw.append(output.get(i));
 					bw.newLine();
 				}
-				bw.close();
 			}
 			catch(IOException e){
 				e.printStackTrace();
