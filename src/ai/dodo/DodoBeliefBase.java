@@ -73,6 +73,8 @@ public class DodoBeliefBase {
 		{
 			if(ai.names != null)
 				powerInfo.put(p, new PowerInfo(ai.names.getNameByPower(p), ai));
+			else
+				powerInfo.put(p, new PowerInfo("Unknown name", ai));
 		}
 	}
 	
@@ -184,7 +186,7 @@ public class DodoBeliefBase {
 	}
 	public void supCalc(int supFavor, Power p) {
 		//Function for trust alteration based on support reciprocity
-		powerInfo.get(p).trust += round(Math.pow(ai.supIntolerance * Math.abs(supFavor), 2) / 1000);
+		powerInfo.get(p).trust += round((ai.supIntolerance * Math.abs(supFavor)) / 100);
 	}
 	public double pUpdate(double time) {	
 		//Function for trust alteration while holding a treaty
