@@ -76,8 +76,10 @@ public class MapInfo {
 		Collections.sort(sortedList,
 			new Comparator<ProvinceData>(){
 				public int compare(ProvinceData p1, ProvinceData p0) {
-					int val = ((int)(100 * Math.abs(p0.weight) -  100 * Math.abs(p1.weight)));
-					return  (val > 0) ? 1 : ((val < 0) ? -1 : 0);
+					//return ((int)(100 * Math.abs(p0.weight) -  100 * Math.abs(p1.weight)));
+					if (Math.abs(p0.weight) > Math.abs(p1.weight)) return 1;
+					if (Math.abs(p0.weight) < Math.abs(p1.weight)) return -1;
+					return 0;
 				}
 			});
 
