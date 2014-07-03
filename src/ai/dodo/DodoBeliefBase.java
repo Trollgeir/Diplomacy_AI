@@ -158,7 +158,7 @@ public class DodoBeliefBase {
 		for(int i = 0; i < map.powers.size(); i++)
 		{
 			PowerInfo pi = powerInfo.get(map.powers.get(i));
-			if(pi.peace) 
+			if(!pi.name.equals(ai.name) && pi.peace) 
 			{
 				pi.peaceActuality = Math.pow(ai.decay, (-pi.peaceTime));
 				pi.paranoia += 1 - (Math.pow(ai.decay, pi.peaceTime) * pi.trust);

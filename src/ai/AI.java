@@ -19,7 +19,7 @@ import game.Receiver;
 
 public abstract class AI extends Receiver {
 
-	protected String name;
+	public String name;
 	protected String version;
 	protected String usage; 
 	protected Power power;

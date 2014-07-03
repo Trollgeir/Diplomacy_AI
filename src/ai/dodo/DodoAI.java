@@ -149,7 +149,6 @@ public class DodoAI extends AI {
 					String line = br.readLine();
 					while(line != null)
 					{
-						System.out.println(line);
 						output.add(line);
 						line = br.readLine();
 					}
@@ -181,7 +180,6 @@ public class DodoAI extends AI {
 				}
 				for(int i = 0; i < output.size(); i++)
 				{
-					System.out.println("SECOND FORLOOP: " + output.get(i));
 					bw.append(output.get(i));
 				}
 			}
