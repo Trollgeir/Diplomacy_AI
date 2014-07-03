@@ -2,6 +2,7 @@ package ai.dodo.phases;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.ArrayList;
+
 import message.order.*; 
 import message.press.*;
 import kb.functions.*;
@@ -12,8 +13,8 @@ import ai.dodo.*;
 
 public class DodoRetreatPhase extends DodoPhase {
 
-	public DodoRetreatPhase(ExtendedDodo ai) {
-		super(ai); 
+	public DodoRetreatPhase(DodoAI dodoAI) {
+		super(dodoAI); 
 	} 
 	
 	public Node getDestination(MapInfo mapInfo, Unit unit, ArrayList<UnitData> usedUnits, ArrayList<ProvinceData> usedProvinces) {

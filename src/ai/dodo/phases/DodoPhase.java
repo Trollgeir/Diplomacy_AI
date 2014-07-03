@@ -15,7 +15,7 @@ public abstract class DodoPhase {
 	protected DodoBeliefBase belief;
 	protected Map map; 
 
-	public DodoPhase(ExtendedDodo ai) {
+	public DodoPhase(DodoAI ai) {
 		power = ai.getPower(); 
 		belief = ai.getBeliefBase(); 
 		map = ai.getMap(); 
