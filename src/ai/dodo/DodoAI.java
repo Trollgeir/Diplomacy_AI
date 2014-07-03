@@ -37,7 +37,7 @@ public class DodoAI extends AI {
 	public double righteousness = 0.5;
 	public double supIntolerance = 0.5;
 	public double incTrust = 0.03;
-	public String name = "dodo";
+	public String name = "dudo";
 	public String fileName = "initFile.txt";
 	
 	protected Negotiator negotiator;
@@ -109,14 +109,17 @@ public class DodoAI extends AI {
 				br.close();
 				try{
 					bw = new BufferedWriter(new FileWriter(name +"Trust.txt", true));
-					System.out.println("DERP");
 					for(Power p: map.powers)
 					{
-						PowerInfo pi = belief.powerInfo.get(p);
-						if(!pi.seenBefore) // not seen before
-						{// thus add it to the text file
-							bw.newLine();
-							bw.append(pi.name + " " + pi.trust);
+						if(!p.getName().equals(name))
+						{
+							PowerInfo pi = belief.powerInfo.get(p);
+							if(!pi.seenBefore) // not seen before
+							{// thus add it to the text file
+								pi.trust = initialTrust;
+								bw.append(pi.name + " " + pi.trust);
+								bw.newLine();
+							}
 						}
 					}
 					bw.close();
@@ -161,12 +164,15 @@ public class DodoAI extends AI {
 				if(names != null){
 					for(Power p : map.powers)
 					{
-						PowerInfo pi = belief.powerInfo.get(p);
-						if(splitted[0].equals(pi.name)) // found a power we know, update the values
+						if(!p.getName().equals(name))
 						{
-							splitted[1] = Double.toString(pi.trust);
-							output.set(i, (splitted[0] + " " + splitted[1]));
-							break;
+							PowerInfo pi = belief.powerInfo.get(p);
+							if(splitted[0].equals(pi.name)) // found a power we know, update the values
+							{
+								splitted[1] = Double.toString(pi.trust);
+								output.set(i, (splitted[0] + " " + splitted[1]));
+								break;
+							}
 						}
 					}
 				}
