@@ -15,10 +15,12 @@ class AllianceInfo
 	{
 		//TODO: Just some default values, may need tweaking.
 		against = new ArrayList<Power>();
-		actuality = 10;
+		actuality = 1.0;
+		time = 0;
 	}
 	
-	public int				actuality;
+	public double			actuality;
+	public int 				time;
 	public Power			with;
 	public ArrayList<Power>	against;
 }
@@ -31,11 +33,13 @@ class PowerInfo
 		trust = 0.5;
 		peace = false;
 		peaceActuality = 1;
+		peaceTime = 0;
 		paranoia = 1.0;
 	}
 	
 	public int 		supFavor;
 	public boolean 	peace;
+	public int 		peaceTime;
 	public double 	peaceActuality;
 	public double	paranoia;
 	public double 	trust;
@@ -141,7 +145,7 @@ public class DodoBeliefBase {
 		{
 			AllianceInfo alliance = allianceInfo.get(i);
 			
-			alliance.actuality--;
+			alliance.actuality = Math.pow(1.05, (-alliance.time));
 			PowerInfo pi = powerInfo.get(alliance.with);
 			pi.paranoia = 1.0 - (ai.belief.pUpdate(alliance.actuality)*(ai.belief.powerInfo.get(alliance.with).trust/10));
 		}
@@ -152,8 +156,11 @@ public class DodoBeliefBase {
 		for(int i = 0; i < map.powers.size(); i++)
 		{
 			PowerInfo pi = powerInfo.get(map.powers.get(i));
-			if(pi.peace) // we are at peace with this power
-				pi.peaceActuality--;
+			if(pi.peace) 
+			{
+				pi.peaceActuality = Math.pow(1.05, (-pi.peaceTime));
+				pi.peaceTime++;
+			}
 		}
 	}
 
