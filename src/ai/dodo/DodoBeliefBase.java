@@ -34,7 +34,7 @@ class PowerInfo
 		peace = false;
 		peaceActuality = 1;
 		peaceTime = 0;
-		paranoia = trust;
+		paranoia = 1 - trust;
 	}
 	
 	public int 		supFavor;
