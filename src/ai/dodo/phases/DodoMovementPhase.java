@@ -62,21 +62,9 @@ public class DodoMovementPhase extends DodoPhase {
 
 		MapInfo mapInfo = new MapInfo(map, power, willAttack, willDefend);
 
-		int[] neighborCount = mapInfo.getNeighborCount();
-		int max = 0;
-		int bestIdx = -1;
-		for (int i = 0; i < neighborCount.length; ++i) {
-			if (neighborCount[i] > max) {
-				max = neighborCount[i];
-				bestIdx = i;
-			}
-		}
-
-		if (bestIdx != -1) {
-			System.out.println("Peace suggestion: " + map.powers.get(bestIdx).getName());
-		} else {
-			System.out.println("No powers to make peace with");
-		}
+		System.out.println("Neighbor Count\n");
+		ArrayList<NeighborData> neighborCount = mapInfo.getNeighborCount();
+		for (NeighborData neighbor : neighborCount) System.out.println(neighbor);
 		
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
