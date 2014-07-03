@@ -1,6 +1,12 @@
 package ai.dodo;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import ai.dodo.phases.*;
@@ -12,8 +18,6 @@ import kb.unit.Unit;
 import message.DaideMessage;
 import message.order.*;
 import message.press.*;
-import message.press.Proposal;
-import message.press.Send;
 import message.server.Huh;
 import ai.AI;
 import ai.Heuristics;
@@ -30,7 +34,9 @@ public class DodoAI extends AI {
 	public double initialTrust = 0.5;
 	public double decay = 0.05;
 	public double righteousness = 0.5;
-	public double supportSteep = 0.5;
+	public double supIntolerance = 0.5;
+	public double incTrust = 0.03;
+	public String fileName = "initFile.txt";
 	
 	protected Negotiator negotiator;
 	
@@ -60,13 +66,148 @@ public class DodoAI extends AI {
 				names = new Names(args[++i]); 
 			} else if (flag.equals("-k")) {
 				key_to_send = true; 
-			} else  {
+			} else if (flag.equals("-f")) {
+				fileName = args[++i];
+			}
+				else  {
 				//hack to throw outofboundexception
 				String error = args[-20]; 
 			}
 		}
+		parseTrustFile();
 	}
 
+	public void parseTrustFile()
+	{		
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(this.name +"Trust"));
+			try{
+				String line = br.readLine();
+				while(line != null)
+				{
+					String[] splitted = line.split(" ");
+					for(Power p : map.powers)
+					{
+						PowerInfo pi = belief.powerInfo.get(p);
+						if(splitted[0].equals(pi.name)) // found the player inside our trust file
+						{
+							pi.trust = Double.parseDouble(splitted[1]);
+							pi.seenBefore = true;
+						}
+					}
+					line = br.readLine();
+				}
+				try(BufferedWriter bw = new BufferedWriter(new FileWriter(this.name +"Trust", true))){
+					for(Power p: map.powers)
+					{
+						PowerInfo pi = belief.powerInfo.get(p);
+						if(!pi.seenBefore) // not seen before
+						{// thus add it to the text file
+							bw.newLine();
+							bw.append(pi.name + " " + pi.trust);
+						}
+					}
+				}
+				catch(IOException e){
+					e.printStackTrace();
+				}
+			} catch (IOException e){
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void writeToFile()
+	{
+		ArrayList<String> output = new ArrayList<String>();
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(this.name +"Trust"));
+			try{
+				String line = br.readLine();
+				while(line != null)
+				{
+					output.add(line);
+				}
+			} catch (IOException e){
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e){
+			e.printStackTrace();
+		}
+		try(BufferedWriter bw = new BufferedWriter(new FileWriter(this.name +"Trust", false))){
+			for(int i = 0; i < output.size(); i++)
+			{
+				String[] splitted = output.get(i).split(" ");
+				if(names != null){
+					for(Power p : map.powers)
+					{
+						PowerInfo pi = belief.powerInfo.get(p);
+						if(splitted[0].equals(pi.name)) // found a power we know, update the values
+						{
+							splitted[1] = Double.toString(pi.trust);
+							output.set(i, (splitted[0] + " " + splitted[1]));
+							break;
+						}
+					}
+				}
+			}
+			for(int i = 0; i < output.size(); i++)
+			{
+				bw.append(output.get(i));
+				bw.newLine();
+			}
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void parseTextFile(String fileName)
+	{
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			try{
+				String line = br.readLine();
+				int index = 0;
+				String result = "";
+				while (line != null)
+				{
+					index = line.lastIndexOf("=");
+					result = line.substring(index + 1);
+					if(result.startsWith(" ")){
+						result = result.substring(1);
+					}
+					if(line.startsWith("name"))
+						name = result;
+					else if (line.startsWith("initialTrust")){
+						initialTrust = Double.parseDouble(result);
+					}
+					else if (line.startsWith("decay")){
+						decay = Double.parseDouble(result);
+					}
+					else if (line.startsWith("righteousness"))
+					{
+						righteousness = Double.parseDouble(result);
+					}
+					else if (line.startsWith("supIntolerance"))
+					{
+						supIntolerance = Double.parseDouble(result);
+					}
+					line = br.readLine();
+				}			
+			} catch (IOException e){
+				e.printStackTrace();
+			}
+		} catch(FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
 	public void findGains()
 	{}
 		
@@ -166,6 +307,8 @@ public class DodoAI extends AI {
 	@Override
 	public void init(String[] args) throws ArrayIndexOutOfBoundsException {
 		parseCommandLineArguments(args);
+		if(!fileName.equals(""))
+			parseTextFile(fileName);
 	}
 
 	public static void main(String[] args) {

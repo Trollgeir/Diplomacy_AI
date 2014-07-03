@@ -14,8 +14,8 @@ public class Names {
 	String path; 
 
 	// 
-	Power[] powers; 
-	String[] names;
+	public Power[] powers; 
+	public String[] names;
 
 	public Names(String path) {
 		this.path = path; 
@@ -39,5 +39,16 @@ public class Names {
  			System.out.println(names[i] + ", " + powers[i].getName()); 
  		}
  	}
-
+ 	
+ 	public String getNameByPower(Power p)
+ 	{
+ 		for(int i = 1; i < 8; i++)
+ 		{
+ 			if(powers[i].getName().equals(p.getName()))
+ 			{
+ 				return names[i];
+ 			}
+ 		}
+ 		return "";
+ 	}
 }
