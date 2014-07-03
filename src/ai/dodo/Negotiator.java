@@ -18,11 +18,11 @@ import kb.province.Province;
 public class Negotiator {
 
 	protected LinkedBlockingQueue<String[]> queue = new LinkedBlockingQueue<String[]>();
-	protected ExtendedDodo dodoAI;
+	protected DodoAI dodoAI;
 	protected ArrayList<Order> proposedOrders = new ArrayList<Order>();
 	protected Map map;
 
-	public Negotiator(ExtendedDodo dodo, Map map) 
+	public Negotiator(DodoAI dodo, Map map) 
 	{
 		this.dodoAI = dodo;
 		this.map = map;
@@ -426,7 +426,7 @@ public class Negotiator {
 		//AllianceInfo alliance = dodoAI.belief.allianceByPower(supported.getOwner());
 		
 		if (dodoAI.belief.powerInfo.get(supported.getOwner()).supFavor < 0) //We owe them
-		{
+		{			
 			if (dodoAI.righteousness >= 1.0) //TODO: should this be righteousness > paranoia or something?
 				return true;
 		}
@@ -463,7 +463,7 @@ public class Negotiator {
 		if (accepted)
 		{
 			powerInfo.peaceActuality = 1.0;
-			powerInfo.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(powerInfo.trust/10));
+			powerInfo.paranoia = 1 - powerInfo.trust;
 		}
 		else
 		{
@@ -490,7 +490,7 @@ public class Negotiator {
 				{
 					System.out.println("Refreshing alliance with "+ally.getName());
 					addNew = false;
-					pi.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(pi.trust/10));	
+					pi.paranoia = 1 - pi.trust;	
 				}
 			}
 			if (addNew)
@@ -500,7 +500,7 @@ public class Negotiator {
 				
 				newAlliance.against.addAll(enemiesList);
 				newAlliance.with = ally;
-				pi.paranoia = 1 - (dodoAI.belief.pUpdate(0)*(pi.trust/10));
+				pi.paranoia = 1 - pi.trust;
 				
 				dodoAI.belief.allianceInfo.add(newAlliance);
 			}
