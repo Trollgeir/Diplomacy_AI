@@ -260,13 +260,12 @@ public class ProvinceData {
 			if (unit.provData == this) continue;
 			weight -= c_shared * unit.provData.smoothedGains;
 		}
+		if (weight < 0) weight = 0; 
 
 		int ownerIdx = getProvinceOwner(); 
-		if (ownerIdx != - 1 && ownerIdx != powers.indexOf(power)) {
-			if (weight < attackThreshold) weight = 0;
+		if (ownerIdx != -1 && ownerIdx != powers.indexOf(power)) {
+			if (willAttack[ownerIdx] < 1 && weight < attackThreshold) weight = 0;
 		}
-
-		if (weight < 0) weight = 0; 
 
 		weight *= weight; 
 	}
@@ -288,39 +287,32 @@ public class ProvinceData {
 		//if (num > 0) smoothedGains += total / num; 
 	}
 
-	public void computeSupportValues() { 
-		computeSupport(power);
+	public void computeOwnSupport() {
+		int idx = powers.indexOf(power);
+		support = nearUnits.get(idx).size();
+	}
+
+	public void computeNegSupportValues() { 
 		computeNegSupport(power);
 		computeSupportNeeded();
+	}
+
+	private void computeNegSupport(Power power) {
+		maxNegSupport = 0;
+		mainEnemy = -1;
+
+		for (int i = 0; i < powers.size(); ++i) {
+			if (power != powers.get(i) &&  willDefend[i] * nearUnits.get(i).size() > maxNegSupport) {
+				maxNegSupport = (int)(willDefend[i] * nearUnits.get(i).size());
+				mainEnemy = i; 
+			}
+		}
 	}
 
 	//be sure that determineSharedUnits() is already called.
 	public void computeWeight() { 
 		computeWeight(power);
 	} 
-
-	//remove the used units from nearUnits 
-	public void update(ArrayList<UnitData> usedUnits) {
-		int idx = powers.indexOf(power);
-		ArrayList<UnitData> removeList = new ArrayList<UnitData>();
-
-		//check whether a nearUnit is the same a usedUnit.
-		for (UnitData unitUsed : usedUnits) {
-			
-			for (UnitData unitData : nearUnits.get(idx)) {
-				if (unitUsed.unit == unitData.unit) {
-					support--;
-					//if this unit was shared then the shared state needs to be decremented.
-					//if (unitData.shared > 0) shared[idx]--;
-				 	
-				 	//remove the unit from the nearUnits
-					removeList.add(unitData);
-				}
-			}
-		} 
-
-		nearUnits.get(idx).removeAll(removeList);
-	}
 
 	public boolean isTakeable() {
 		return support >= supportNeeded; 
@@ -356,7 +348,7 @@ public class ProvinceData {
 		for (int i = 0; i < supportLeft; ++i) {
 			if (possibleNegSupport == 0) break;
 			
-			if (Math.random() > Math.pow(1 - takeOverRisk, k)) {
+			if (Math.random() >= Math.pow(takeOverRisk, k)) {
 				possibleNegSupport--;
 				supportNeeded++;
 			}
@@ -365,22 +357,7 @@ public class ProvinceData {
 
 	
 
-	private void computeNegSupport(Power power) {
-		maxNegSupport = 0;
-		mainEnemy = -1;
 
-		for (int i = 0; i < powers.size(); ++i) {
-			if (power != powers.get(i) &&  willDefend[i] * nearUnits.get(i).size() > maxNegSupport) {
-				maxNegSupport = (int)(willDefend[i] * nearUnits.get(i).size());
-				mainEnemy = i; 
-			}
-		}
-	}
-
-	private void computeSupport(Power power) {
-		int idx = powers.indexOf(power);
-		support = nearUnits.get(idx).size();
-	}
 
 	//Add the units from nearProv to nearUnits.
 	//This is done seperatly for each power. 
@@ -452,6 +429,27 @@ public class ProvinceData {
 			}
 			
 		}
+	}
+
+	//remove the used units from nearUnits 
+	public void update(ArrayList<UnitData> usedUnits) {
+		int idx = powers.indexOf(power);
+		ArrayList<UnitData> removeList = new ArrayList<UnitData>();
+
+		//check whether a nearUnit is the same a usedUnit.
+		for (UnitData unitUsed : usedUnits) {
+			
+			for (UnitData unitData : nearUnits.get(idx)) {
+				if (unitUsed.unit == unitData.unit) {
+					support--;
+				 	
+				 	//remove the unit from the nearUnits
+					removeList.add(unitData);
+				}
+			}
+		} 
+
+		nearUnits.get(idx).removeAll(removeList);
 	}
 
 	//Is for the belief stuff

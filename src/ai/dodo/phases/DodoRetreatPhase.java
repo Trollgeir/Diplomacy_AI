@@ -37,6 +37,7 @@ public class DodoRetreatPhase extends DodoPhase {
 		float[] willDefend = belief.allDefendAgainstWeights(); 
 
 		MapInfo mapInfo = new MapInfo(map, power, willAttack, willDefend);
+		mapInfo.computeGains();
 
 		ArrayList<Unit> units = map.getUnitsByOwner(this.getPower());
 		ArrayList<Province> home = power.homeProvinces;
@@ -53,9 +54,13 @@ public class DodoRetreatPhase extends DodoPhase {
 						ArrayList<UnitData> usedUnits = new ArrayList<UnitData>();
 						ArrayList<ProvinceData> usedProvinces = new ArrayList<ProvinceData>(); 
 						Node node = getDestination(mapInfo, u, usedUnits, usedProvinces);
-						if (node == null) System.err.println("Error in retreat!");
-						queue.add(new Retreat(u, node)); 
-
+						if (node == null) {
+							System.err.println("Nowhere to retreat!");
+							queue.add(new Disband(u)); 
+						} else {
+							queue.add(new Retreat(u, node)); 	
+						}
+						
 						mapInfo.updateByMove(usedUnits, usedProvinces);
 					}
 				}
