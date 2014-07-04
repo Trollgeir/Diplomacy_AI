@@ -451,17 +451,33 @@ public class DodoAI extends AI {
 				numberofAlliances++;
 			}
 			
-			if (!exactAlliance && numberofAlliances < 4 && belief.powerInfo.get(with).trust > 0.2 && !possibleAllies.contains(against) && !possibleEnemies.contains(with) && !negotiator.backstabbers.contains(with)) {
+			if (!exactAlliance && numberofAlliances < 3 && belief.powerInfo.get(with).trust > 0.2 && !possibleAllies.contains(against) && !possibleEnemies.contains(with) && !negotiator.backstabbers.contains(with) && with.alive && against.alive) {
 				negotiator.initiateAlliance(with, against);
 				System.out.println("Initiating alliance with "+with.daide()+" against "+against.daide());
 				if (!alliance)
 					numberofAlliances++;
 				possibleAllies.add(with);
 				possibleEnemies.add(against);
-			} else if (!alliance && !belief.powerInfo.get(with).peace && !possibleAllies.contains(against) && !possibleEnemies.contains(with)) {
+			} else if (!alliance && !belief.powerInfo.get(with).peace && !possibleAllies.contains(against) && !possibleEnemies.contains(with) && with.alive && against.alive) {
 				negotiator.initiatePeace(with);
 			} 
 			
+		}
+		
+		// clean up alliances (also should probably be in negotiator)
+		for (AllianceInfo info : belief.allianceInfo) {
+			if (!info.with.alive) {
+				belief.deleteAllAlliancesWith(info.with);
+			} else {
+				boolean targetisAlive = false;;
+				for (Power enemy : info.against) {
+					if (enemy.alive) 
+						targetisAlive = true;
+				}
+				if (!targetisAlive) {
+					alliances.remove(info);
+				}
+			}
 		}
 		
 		
