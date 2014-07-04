@@ -444,13 +444,23 @@ public class Negotiator {
 	}
 
 	private boolean acceptPeace(Power[] members) {
+		
+		double minTrust = 1.0;
+		
 		for (Power member : members) {
+			//deny when there's an alliance against this guy
 			if (dodoAI.belief.isEnemy(member)){
 				return false;
 			}
+			
+			if (member != dodoAI.belief.self)
+			{
+				PowerInfo info = dodoAI.belief.powerInfo.get(member);
+				minTrust = Math.min(minTrust, info.trust);
+			}
 		}
-		// TODO: check if this is correct
-		return true;
+		
+		return minTrust > dodoAI.trustPeaceThreshold;
 	}
 	
 	private boolean acceptSupportMoveProposal(Province supporting, Province supported, Province target)
