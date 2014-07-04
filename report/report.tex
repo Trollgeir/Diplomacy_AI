@@ -5,7 +5,9 @@
 \usepackage{hyperref}
 \usepackage{pgfplots}
 \usepackage{float}
+\usepackage{listings} 
 \bibliographystyle{alpha}
+
 
 \title{Diplomacy}
 \type{Report}
@@ -103,36 +105,39 @@ We chose this gain because blablabla. This one should then be higher because bla
 \end{figure}
 
 
-    % public static float c_smooth = 0.25f;
-    % public static float c_threat = 1.0f;
-    
-    % public static float c_shared = 0.0f;
-    % //public static float risk = 1.0f; 
-    % //public static float sharedRisk = 1.0f;
-    % public static float defence = 1.0f; 
+\section{Implementation}
+\subsection{User manual}
 
-    % public static float takeOverRisk = 0.5f;
+\subsubsection{AIServer}
+In order to run our AI, you first need an AIServer which runs the game and to which the AI can connect. In order for our AI to fully function we use the AIServer that can be downloaded from: 
 
-    % public static float c_normalNotOurs = 3.0f; 
-    % public static float c_homeNotOurs = 3.2f; 
+\noindent\url{http://johnnewbury.me.uk/diplomacy/downloads/aiserver/aiserver-0.38~1.1-release-notice.htm}
 
-    % public static float c_normalOurs = 0.25f; 
-    % public static float c_homeOurs = 0.30f; 
+The AIServer contains a Windows executable file but also runs perfectly under Wine on Linux. Upon running this executable the user is presented with various options. For our AI, make sure that the \textit{Log All Messages} is on and the press level is set to a minimum of 20 (otherwise the server does not allow for alliance negotiation). A new game can now be started by clicking the \textit{New Game} button. This opens up a lobby, and the game will start as soon as 7 players have joined.     
 
-    % public static float c_normalOursThreat = 3.0f; 
-    % public static float c_homeOursThreat = 3.2f; 
+\subsubsection{DodoAI}
+In order to compile and run the Java code you can either import it an Java IDE such as Eclipse or use the command line. For the latter option we have included a makefile in the $src$ directory. Make sure a Java SDK (OpenJDK or Sun) is installed. After a succesfull compilation (ignore the warnings) you can run the program by running the DodoAI class with Java. Assuming a Unix-like operating system:       
+\begin{lstlisting}[frame=single] 
+cd location/of/repository/src/
+make
+java ai.dodo.DodoAI [ip] [port] [options]
+\end{lstlisting}
 
-    % public static float c_homeOursTaken = 5.0f; 
+Where \textit{ip} should be the ip address of the server - if run locally on the same machine use \textit{localhost} for this. \textit{port} is the port on which the server is listening. The default option for this is 16713 but can be adjusted in the AIServer settings. After these two arguments, several options can be set with flags
 
-    % public static float c_threatThreshold = 1.10f; 
+\begin{description}
+\item[-n [name]] Using the -n flag the name for the AI (default DodoAI) can be changed. 
+\item[-l [filename]] Using the -l flag, you can set the location of the server log file. Using this log file the AI will extract the names of all AI's and corresponding power from the server log file. Though this is not allowed by official Daide rules, this allows our AI to know who plays which power during the game. This is necessary as one of our goals was to include reputation in our AI. Note that this option is only possible if the server runs on the same machine or has remote access to the server log file.  
+\item[-f [filename]] The -f flag can be used to set a personality file for this AI in order to create a unique personality. An example of a personality file can be found somewhere TODO. Note that the personality file includes a name which will override a name given a name with the -n flag.  %TODO!!%.  
+\item[-k] If the -k flag is given, the AI will require a keypress in order to submit it's orders at the end of a turn. This is very useful when observing an AI-only game, the game is over so fast that is impossible to see what happened. We recommend running a single instance of DodoAI with the -k flag (Instead of all 7), as the rest of the AI's will automatically have to wait for this instance.  
+\end{description} 
 
-    % public static float c_counter = 5.5f; 
+\subsubsection{AIMapper}
+In order to visualize the game or play against our AI yourself, you need the AIMapper. This AIMapper can be downloaded from: 
 
-    % public static float c_kill = 5.0f; 
+\noindent\url{http://johnnewbury.me.uk/diplomacy/downloads/aimapper/aimapper-0.41~1.1-release-notice.htm}
 
-    % public static float attackThreshold = 3.0f; 
-
-
+As with the AIServer the AIMapper comes as a windows executable, but is fully functional under Wine in Linux. You can join as either an observer (only watch the game) or player (play yourself). 
 
 
 \subsection{Support}
