@@ -45,19 +45,27 @@ A very important underlying assumption in Diplomacy is that the initial relation
 \item[Alliance treaty]: Includes peace, but also imply an obligation to support each other in attacking a specific enemy.
 \end{description}
 
-Communication in Diplomacy offers cheap talk, an aspect of game theory which is defined as being costless due to not requiring players to sacrifice any resources exchanging words. However, one of the clinchers of the game itself lies within the complexity of deception - how would you ever trust the current treaty you have just made with a neighboring power? It is common knowledge for most Diplomacy players that there is a real incentive to exploit others when they have lowered their guard. Hence, one of the real talents of being a good player is to be able to take precautions, or in other words - recognize players who are likely to defect.
+Communication in Diplomacy offers cheap talk, an aspect of game theory which is defined as being costless due to not requiring players to sacrifice any resources exchanging words. However, one of the clinchers of the game itself lies within the complexity of deception - how would you ever trust the current treaty you have just made with a neighboring power? It is common knowledge for most Diplomacy players that there is a real incentive to exploit others when they have lowered their guard. Hence, one of the real talents of being a good player is to be able to take precautions, or in other words - recognize players who are likely to defect. Considering evolutionary stable strategies like tit-for-tat are dominant for examples like the iterated Prisoners Dilemma \cite{dilemmas}, we have reason to believe we can design a similar mechanism to make our bot be able to benefit from cooperation without being fragile for exploitation.
 
-As trust is defined by keeping your end of a deal, it is impossible for two fully trustworthy players left in the game to ever finish if they are at peace. One possible solution to this problem is to explicitly state your peace/alliance proposals with a duration variable, expressed in game phases. An honest player will then be able to attack another honest player after the expiration of the peace treaty. However, due to the limitations of the DAIDE server in which our bot communicates with, there is no option to state a time constraint to any treaty, nor is this a norm by human players.
+We define trust as $T$ [0-1], an indicator of a power by means of measuring how likely they are to keep up an end of a deal. A full value of $1$ is one you can safely assume will never backstab you, where as $0$ implies any treaty with the power should not be taken seriously. An initialization of our bot should also have a trait of exploitation, something we label as righteousness $R$ [0-1], implying the likelyhood of defect in tempting scenarios [0 = never]. The overall goal for this system to be rigid would demand that your righteousness should correlates with how other people models your trust level. 
 
-However, in most cases backstabbing a player whom you recently made a peace or alliance treaty with is judged as bigger breach of trust than someone who backstabs you after several phases after the treaty. After all, all treaties will cease to exist at some point, and this is common knowledge among all players of Diplomacy due to the winning conditions of the game. As such we have reached a more fuzzy alternative, implying that treaties decays ($D$) over time [CITATION ]. The reason why exponential is more fitting than linear is the fact that it should never fully dissolve, as there is no time constraint expressed in the treaty. We now have a way to decrement someone's trust  more dynamically when they choose to defect a treaty, respecting the norms of the game where the severity of defecting decreases over time. In addition, we need a constant rate of increment ($\tau$) as long as treaties are upheld which is essential to ever build up trust with anyone.\
+For Diplomacy in specific, it is impossible for two fully righteous players left in the game to ever finish if they are at peace. One possible solution to this problem is to explicitly state your peace/alliance proposals with a duration variable, expressed in game phases. An honest player will then be able to attack another honest player after the expiration of the peace treaty. However, due to the limitations of the DAIDE server in which our bot communicates with, there is no option to state a time constraint to any treaty, nor is this a norm by human players.
 
-For defecting a treaty: 
-$T'_p = T_p - \frac{D^{-t}} {10}$ \\
+However, in most cases backstabbing a player whom you recently made a peace or alliance treaty with is judged as bigger breach of trust than someone who backstabs you after several phases after the treaty. After all, all treaties will cease to exist at some point, and this is common knowledge among all players of Diplomacy due to the winning conditions of the game. Together with some inspiration from C. Sierra \cite{trust}, we have reached a more dynamic alternative where treaties dissolves throughout time $t$ with the help of a variable called decay-rate $D$.
+
+\subsection{Gaining and losing trust}
 \
-For maintaining a treaty: 
-$T'_p = T_p + (\tau \cdot t)$
-\\
- \begin{center}
+\begin{description}
+\item[For defecting a treaty]: 
+$$T'_p = T_p - \frac{D^{-t}} {10}$$ \\
+\
+\item[For maintaining a treaty]: 
+$$T'_p = T_p + (\tau \cdot t)$$
+\end{description}
+
+The reason why exponential is more fitting than linear is the fact that it should never fully dissolve, as there is no time constraint expressed in the treaty. We now have a way to decrement someone's trust in line with the norms when they choose to defect a treaty, where the severity of defecting decreases over time. In addition to counter-balance the decrements, we need a constant rate of increment ($\tau$) as long as treaties are upheld which is essential to ever build up trust with anyone. The example below uses $\tau = 0.002$ and $D = 1.1$.
+
+\begin{center}
 \begin{tikzpicture}
   \begin{axis}[ 
   	width = 300,
@@ -81,6 +89,8 @@ $T'_p = T_p + (\tau \cdot t)$
 
 It is crucial to understand that the trust-value assigned to different players in our system is not an indicator of how reliable they are. A player could for example reject a peace proposal and reliably not attack you consistently. But due to our expectations of the norms of peace, we expect no player nor bot to have this behavior. As such, in our system we choose to implement 'trust' as a fitness for choosing whom we should ally ourselves with, in addition to guiding how paranoid we should be against every other power. Having peace with someone you do not trust should be possible, but internally the bot should be paranoid in regards to defending his borders. The justification for such a possibility is for the untrusted power to have a chance to redeem itself if it chooses to adopt a more cooperative strategy. Given the decay of treaties, we can safely assume that the closer they are to diminishing, the more paranoid we should be. To repeat the inital statement of this section regarding seeing every power we do not have any treaty with as hostile, we assign them all with a full level of paranoia ($P = 1$). Every treaty initializes with an paranoia equal to the relevant powers current trust. 
 
+\subsection{Paranoia}
+\
   \[ P_p = \left\{ 
   \begin{array}{l l}
     1 - \Big( D^{-t} \cdot T_p \Big) & \quad \text{for $T > 0$} \\
@@ -113,39 +123,13 @@ It is crucial to understand that the trust-value assigned to different players i
 Paranoia [0-1]  is a value attached to any power within an instance of a game which offers us the ability to predict whether or not we should expect them to defect. A procedure to reduce paranoia of any power we already have a treaty with is to re-iterate the initial proposal. In practice it is equivalent to ask our ally 'is our deal still on?'. To attend the issue regarding a deadlock of two fully righteous powers who never wishes to break a treaty, one will eventually ask if the deal is still on in which the other is at liberty to decline. As a result, this solution to breaking peace/alliance is possible without breaching any trust.
 
 
-Support obligations of alliances
+\subsection{Support obligations of alliances}
 
 Within a conjoint alliance treaty together with power A, there lies an agreement to conduct both defensive and offensive support moves against power B. However, considering the fact that there can only be one winner of power B’s supply centers, the alliance can only be mutually beneficial if both parties divide the spoils of war. However, there might be possible moves towards gaining a supply center given the accessibility of one's own units if they were not requested somewhere else by our ally. If one would ignore how other players viewed us (righteousness of 0), it would be rational to reject this request. This, however, is not a fair deal for the other party, as it can be exploited if it mindlessly helps the other with supports without realizing the other does not reciprocate. A solution is needed which makes us sensitive to injustice in terms of our spoils and our ally's spoils.
 
  In addition we also have a model of appropriate conduct if we would want to be righteous, implying that we would be permissible if the other party declined supporting us if we knew we were in debt - that is, knowing he has currently been supporting us more than he has received from us. But even if our personality is exploitive, we should also recognize those powers who are vulnerable to be exploited, namely altruists.
 
-The function essentially captures the underlying obligation for allies to reciprocate support-moves. If a power asks for support all the time without reciprocating, its trust will decrement per support they reject when they owe us support. Given the fact that trust-values are altered online, the support-favor is stored as an attachment for every power per game.
-
-An indirect consequence of this leaves exploiting players to be forced to team up with a high paranoia, which is a severe disadvantage compared to the cooperative players.
-
-As we have now covered the trust mechanics, the remaining personality factor is that of trust initialization for new players our bot meets. A value of 0 implies that its fully cautious at the start of treaties, whereas 10 implies full naivety of opponents exploitative capabilities. 
-
-A summary of trust increments and decrements for each treaty per phase:
-
-Incrementation:
-+ For every phase a treaty is maintained 
-+ If you get support from an ally you consider altruistic
-
-Decrementation: 
-- Defect in upholding a treaty (backstab)
-- If you get a rejection in your support proposal from an ally which you deem exploitive.
-
-
-\
-\
-
-
-supIntolerance = $S$ 0.0005\\
-time = $t$ \\
-$D$ = 1.1 \\
-$\tau$ = 0.002\\
-
-
+The function essentially captures the underlying obligation for allies to reciprocate support-moves. If a power asks for support all the time without reciprocating, its trust will decrement per support they REJECT when they owe us support. Although, whenever they  ACCEPT our request while we still owe them, we increment their trust on the basis of them being altruistic. Given the fact that trust-values are altered online, the support-favor $\sigma$ is stored as an attachment for every power per game. $\sigma > 0 $ implies you owe them supports, while $\sigma < 0$ implies they owe you. In addition, we have a variable for how intolerant we should be for deviation of reciprocity equilibria ($\sigma$ = 0), defined as $S$ (default value = 0.0005).\\
 
 
   \[ T'_p = T_p + \left\{ 
@@ -179,6 +163,22 @@ $\tau$ = 0.002\\
 \end{tikzpicture}
 \end{center}
 
+An indirect consequence of this leaves exploiting players to be forced to team up with a high paranoia, which is a severe disadvantage compared to the cooperative players.
+
+\subsection{Trust summary}
+\
+As we have now covered the trust mechanics, the remaining personality factor is that of trust initialization for new players our bot meets. A value of 0 implies that its fully cautious at the start of treaties, whereas 1 implies full naivety of opponents exploitative capabilities.\\
+\
+\textbf{Incrementation:} \\
+\begin{itemize}
+\item {Every phase a treaty is maintained}
+\item {Getting support from an ally you consider altruistic}
+\end{itemize}
+\textbf{Decrementation:}
+\begin{itemize}
+\item{Defect in upholding a treaty (backstab)}
+\item{If you get a rejection in your support proposal from an ally which you deem exploitive.}
+\end{itemize}
 \section{Gain system}
 
 
@@ -303,43 +303,6 @@ Consider the case that all units already have a task assigned, except for one un
 
 During the movement phase the units get orders assigned to defend or invade provinces, or to support another units. There are countless possibilities of how units can be deployed, and by far not enough computational power to consider each option.   
 
-\begin{tikzpicture}
-  \begin{axis}[ 
-    xlabel= time,
-    ylabel={},
-    xtick = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15},
-    ytick = {0,1},
-    xmin = 0,
-    ymin = 0,
-    xmax = 16,
-    ymax = 1,
-    domain = 0:15
-  ] 
-    \addplot {1-((1.1^(-x))*(0.9+0.02*x))};
-    \addplot {(1.1^(1-x))};
-    \addplot {0.02*x};
-    \legend{Case 1,Case 2, Case 3};
-  \end{axis}
-\end{tikzpicture}
-
-\begin{tikzpicture}
-  \begin{axis}[ 
-    xlabel= time,
-    ylabel={},
-    xtick = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15},
-    ytick = {0,1},
-    xmin = 0,
-    ymin = 0,
-    xmax = 16,
-    ymax = 1,
-    domain = 0:15
-  ] 
-    \addplot {1-((1.1^(-x))*(0.0+0.02*x))};
-    \addplot {(1.1^(1-x))};
-    \addplot {0.02*x};
-    \legend{Case 1,Case 2, Case 3};
-  \end{axis}
-\end{tikzpicture}
 
 
 % \begin{thebibliography}{1}
