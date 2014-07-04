@@ -111,9 +111,11 @@ We chose this gain because blablabla. This one should then be higher because bla
 \subsubsection{AIServer}
 In order to run our AI, you first need an AIServer which runs the game and to which the AI can connect. In order for our AI to fully function we use the AIServer that can be downloaded from: 
 
+\begin{sloppypar}
 \noindent\url{http://johnnewbury.me.uk/diplomacy/downloads/aiserver/aiserver-0.38~1.1-release-notice.htm}
+\end{sloppypar}
 
-The AIServer contains a Windows executable file but also runs perfectly under Wine on Linux. Upon running this executable the user is presented with various options. For our AI, make sure that the \textit{Log All Messages} is on and the press level is set to a minimum of 20 (otherwise the server does not allow for alliance negotiation). A new game can now be started by clicking the \textit{New Game} button. This opens up a lobby, and the game will start as soon as 7 players have joined.     
+The AIServer contains a Windows executable file but also runs perfectly under Wine on Linux. Upon running this executable the user is presented with various options. For our AI, make sure that the \textit{Log All Messages} option is on and the press level is set to a minimum of 20 (otherwise the server does not allow for alliance negotiation). A new game can now be started by clicking the \textit{New Game} button. This opens up a lobby, and the game will start as soon as 7 players have joined.     
 
 \subsubsection{DodoAI}
 In order to compile and run the Java code you can either import it an Java IDE such as Eclipse or use the command line. For the latter option we have included a makefile in the $src$ directory. Make sure a Java SDK (OpenJDK or Sun) is installed. After a succesfull compilation (ignore the warnings) you can run the program by running the DodoAI class with Java. Assuming a Unix-like operating system:       
@@ -135,7 +137,9 @@ Where \textit{ip} should be the ip address of the server - if run locally on the
 \subsubsection{AIMapper}
 In order to visualize the game or play against our AI yourself, you need the AIMapper. This AIMapper can be downloaded from: 
 
+\begin{sloppypar}
 \noindent\url{http://johnnewbury.me.uk/diplomacy/downloads/aimapper/aimapper-0.41~1.1-release-notice.htm}
+\end{sloppypar}
 
 As with the AIServer the AIMapper comes as a windows executable, but is fully functional under Wine in Linux. You can join as either an observer (only watch the game) or player (play yourself). 
 
