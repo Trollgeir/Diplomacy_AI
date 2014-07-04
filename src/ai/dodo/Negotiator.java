@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import message.DaideList;
+import message.DaideMessage;
 import message.order.*;
 import message.press.*;
 import message.server.*;
@@ -21,6 +22,7 @@ public class Negotiator {
 	protected DodoAI dodoAI;
 	protected ArrayList<Order> proposedOrders = new ArrayList<Order>();
 	protected Map map;
+	protected ArrayList<Power> backstabbers = new ArrayList<Power>();
 
 	public Negotiator(DodoAI dodo, Map map) 
 	{
@@ -39,6 +41,27 @@ public class Negotiator {
 			queue.clear();
 		}
 	}
+	
+	
+	public void initiateAlliance(Power with, Power against) {
+		Power[] allies = new Power[]{with, dodoAI.getPower()};
+		Power[] enemies = new Power[] {against};
+		
+		if (acceptAlliance(allies, enemies)) {
+			DaideMessage msg = new Send(new Proposal(new Alliance(allies, enemies)), with);
+			Game.server.send(msg);
+		}
+	}
+	
+	public void initiatePeace(Power with) {
+		Power[] members = new Power[]{with, dodoAI.getPower()};
+		
+		if (acceptPeace(members)) {
+			DaideMessage msg = new Send(new Proposal(new Peace(members)), with);
+			Game.server.send(msg);
+		}
+	}
+
 
 	public void handleProposal() {
 		int end1, end2, i;
@@ -310,8 +333,10 @@ public class Negotiator {
 								
 								for (int n = 0; n < allies.length; n++) 
 								{
-									if (allies[n] != self)
+									if (allies[n] != self) {
 										setAlliance(allies[n], enemies, false);
+										initiatePeace(allies[n]);
+									}
 								}
 								
 							} 
@@ -360,6 +385,7 @@ public class Negotiator {
 		System.out.print(" VERSUS ");
 		for (Power p : enemies)
 			System.out.print(p.getName() + ",");
+		System.out.println();
 		
 		// follow heuristics
 		if (map.getYear() == 1901) {
@@ -388,18 +414,27 @@ public class Negotiator {
 				}
 			}
 
+			if (!amIncluded) System.out.println("I am not suggested in this alliance");
+			if (!acceptAllies) System.out.println("I do not like having this ally");
+			if (!acceptEnemies) System.out.println("I do not like having this enemy");
 			return (amIncluded && acceptAllies && acceptEnemies);
 		}
 
 		for (Power ally : allies)
 		{
 			if (dodoAI.belief.isEnemy(ally))
+			{
+				System.out.println("This proposed ally is my enemy!");
 				return false;
+			}
 		}
 		for (Power enemy : enemies)
 		{
 			if (dodoAI.belief.isAlly(enemy))
+			{
+				System.out.println("This proposed enemy is my ally!");
 				return false;
+			}
 		}
 		
 		// TODO: add stuff on figuring out if we want the alliance, right now it accepts all alliances that don't clash with existing alliances.
