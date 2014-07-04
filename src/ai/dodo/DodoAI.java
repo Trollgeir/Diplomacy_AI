@@ -453,6 +453,7 @@ public class DodoAI extends AI {
 			
 			if (!exactAlliance && numberofAlliances < 4 && belief.powerInfo.get(with).trust > 0.2 && !possibleAllies.contains(against) && !possibleEnemies.contains(with) && !negotiator.backstabbers.contains(with)) {
 				negotiator.initiateAlliance(with, against);
+				System.out.println("Initiating alliance with "+with.daide()+" against "+against.daide());
 				if (!alliance)
 					numberofAlliances++;
 				possibleAllies.add(with);

@@ -385,6 +385,7 @@ public class Negotiator {
 		System.out.print(" VERSUS ");
 		for (Power p : enemies)
 			System.out.print(p.getName() + ",");
+		System.out.println();
 		
 		// follow heuristics
 		if (map.getYear() == 1901) {
@@ -413,18 +414,27 @@ public class Negotiator {
 				}
 			}
 
+			if (!amIncluded) System.out.println("I am not suggested in this alliance");
+			if (!acceptAllies) System.out.println("I do not like having this ally");
+			if (!acceptEnemies) System.out.println("I do not like having this enemy");
 			return (amIncluded && acceptAllies && acceptEnemies);
 		}
 
 		for (Power ally : allies)
 		{
 			if (dodoAI.belief.isEnemy(ally))
+			{
+				System.out.println("This proposed ally is my enemy!");
 				return false;
+			}
 		}
 		for (Power enemy : enemies)
 		{
 			if (dodoAI.belief.isAlly(enemy))
+			{
+				System.out.println("This proposed enemy is my ally!");
 				return false;
+			}
 		}
 		
 		// TODO: add stuff on figuring out if we want the alliance, right now it accepts all alliances that don't clash with existing alliances.

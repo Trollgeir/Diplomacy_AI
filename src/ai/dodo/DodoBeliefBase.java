@@ -104,7 +104,8 @@ public class DodoBeliefBase {
 		{
 			ret += "\t" + info.with.getName() + " : \n";
 			ret += "\t - against : " + info.against + "\n";
-			ret += "\t - time : " + info.actuality + "\n";
+			ret += "\t - time : " + info.time + "\n";
+			ret += "\t - actuality : " + info.actuality + "\n";
 		}
 		
 		return ret + "\n========================";
