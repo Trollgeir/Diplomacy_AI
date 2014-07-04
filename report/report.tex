@@ -196,7 +196,7 @@ For each province the gain value signifies the importance of that province. To c
 \end{itemize}
 
 \subsubsection{Supply gain}
-
+\label{sec:supplygain}
 The supply gain is given to provinces which contain a supply center. In order to win the game one has to control more than half of all the supply centers. Also, the number of supply centers you control determines how much units you are allowed to have. Therefore, capturing supply centers is crucial to winning the game and these provinces are important and we give these a gain. There are however different types of supply centers we have to consider. 
 
 Supply centers can be controlled by a power. If a supply center is not controlled by us (so either neutral or under control by any other power), we can potentially take over this supply center. We give these a gain $g_{supply}$. Supply centers we control have no real gain as we can not take them over again. However, in the case that there is nothing more important to do, we would prefer units to move to one of our supply centers as a means of defence. We therefore give a small symbolic gain $g_{ourSupply}$ to supply centers we own. 
@@ -206,7 +206,7 @@ Some supply centers are home supply centers. These are home to a specific power 
 Following this rule, our own home supply centers are also very important. As with normal supply centers, if we control them they get a small gain $g_{ourHome}$. However, if a home supply center is under control by another power it is very important to get it back in order to build new units. In this we assign a very high gain $g_{takenHome}$. 
 
 \subsubsection{Defend gain}
-
+\label{sec:defendgain}
 Without defending the supply centers we already control, they will just as easy be taken back from us. The defend gain is therefore given to supply centers we control and are under threat. In order to do this we first have to quantify threat. We calculate the threat by a weighted sum of the first and second order enemies from the same power (e.g. the enemies one tile away and the enemies two tiles away respectively). 
 
 $$threat = max_{threat}\{ threat : C_1 \sum_{i} e^{1}_{ij} + C_2 \sum_{i} e^{2}_{ij}\}$$
@@ -216,9 +216,11 @@ Where $e^1_{ij}$ and $e^2_{ij}$ are the ith respectively first and second order 
 We have chosen to give the supply center a defend gain $g_{defend}$ if $threat > \varepsilon_{threat}$. As we belief that defending home supply centers is more important these get a different gain $g_{defendHome}$. 
 
 \subsubsection{Counter gain}
+\label{sec:countergain}
 Using only the aforementioned gains, we perceived that units on threatened home supply centers displaying  ``camping'' behaviour. The unit keeps defending the home supply center from a neighbouring enemy whereas the neighbouring is interested in the home supply center and hence does not move away. We therefore introduced a high counter gain $g_{counter}$, to provinces adjacent to a home supply center and containing an enemy unit. This way, instead of endlessly holding the home supply center, units will start to make offensive moves against adjacent enemies driving the threat away instead of waiting for it to go.        
 
 \subsubsection{Kill gain}
+\label{sec:killgain}
 Another thing we also witnessed by watching our AI play is that very often units of a power are on the far side of the map - far from any support. This units are often left unattended as a single unit is not considered a threat. We therefore introduced a kill gain $g_{kill}$. This is a very high gain for a province containing a lonely enemy unit (no other enemy units as close as two tiles away), and this unit has limited provinces $< \varepsilon_{kill}$ to retreat to - likely causing it to disband when attacked. 
 Another issue solved by this, is that very often the last living unit of a power is left unattended and sometimes even regains considerable power. 
 
@@ -235,8 +237,7 @@ Due to smoothing the differences of gains between provinces decreases. In order 
 
 \subsection{Gain values}
 
-
-
+In \autoref{table:gains} we present the values selected for the various gain variables introduced in the previous sections. 
 
 \begin{figure}[H]
 \centering
@@ -259,8 +260,10 @@ Due to smoothing the differences of gains between provinces decreases. In order 
   \hline  
 \end{tabular}
 \caption{Values choses for the various gain variables}
+\label{table:gains}
 \end{figure}
 
+We started with simple choosing some value for $g_{supply}$. Following \autoref{sec:supplygain} we chose a slighty higher value for $g_{home}$, much low values for $g_{ourSupply}$ and $g_{ourHome}$ and a much higher value for $g_{takenHome}$. The rest of the values were set and all values were tweaked by trial and error (e.g. watching the bot play and try to reduce dumb moves to a gain). Automatic learning on these values might be possible but would be very hard, as it is difficult to determine whether a change is succesful or not. Also these gains might differ a lot for playing a diffent power and depend on alliances and such. Instead we believe that implementing more heuristics is the key. 
 
 \section{Implementation}
 \subsection{User manual}
