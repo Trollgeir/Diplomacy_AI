@@ -5,7 +5,9 @@
 \usepackage{hyperref}
 \usepackage{pgfplots}
 \usepackage{float}
-\usepackage{listings} 
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{amsmath}
 \bibliographystyle{alpha}
 
 
@@ -33,8 +35,152 @@ Then there is the MOVE action, with it the unit moves from one province to an ad
 Then there are two types of support moves, the SUPPORT HOLD, this is a support for the defending HOLD move. The SUPPORT HOLD gives the defending army an additional unit to defend with. And then there is the SUPPORT MOVE, which is basically the same but for attacking. The last move is the CONVOY move, for this move a player needs a fleet and an army. The fleet needs to be in the ocean. Then the army moves via the fleet over the ocean to the next province.
 The CONVOY move can also be chained if mutiple fleets are adjacent, this is still seen as one move.
 
+\section{Trust}
+
+
+A very important underlying assumption in Diplomacy is that the initial relations with everyone is hostile. In other words, you have no reason to expect other players to leave your supply centers be as they have a strong incentive to claim them. Knowing that another power will not attack you is a tremendous benefit for a player as armies and fleets can be directed on offense against someone else while not being concerned about leaving supply centers adjacent to a pacifist power undefended. Below we have made some definitions of the implicit meaning of treaties based on the norms of the game.
+\begin{description}
+\item[Peace treaty]: Simply means that you will refrain from attacking each other.
+
+\item[Alliance treaty]: Includes peace, but also imply an obligation to support each other in attacking a specific enemy.
+\end{description}
+
+Communication in Diplomacy offers cheap talk, an aspect of game theory which is defined as being costless due to not requiring players to sacrifice any resources exchanging words. However, one of the clinchers of the game itself lies within the complexity of deception - how would you ever trust the current treaty you have just made with a neighboring power? It is common knowledge for most Diplomacy players that there is a real incentive to exploit others when they have lowered their guard. Hence, one of the real talents of being a good player is to be able to take precautions, or in other words - recognize players who are likely to defect.
+
+As trust is defined by keeping your end of a deal, it is impossible for two fully trustworthy players left in the game to ever finish if they are at peace. One possible solution to this problem is to explicitly state your peace/alliance proposals with a duration variable, expressed in game phases. An honest player will then be able to attack another honest player after the expiration of the peace treaty. However, due to the limitations of the DAIDE server in which our bot communicates with, there is no option to state a time constraint to any treaty, nor is this a norm by human players.
+
+However, in most cases backstabbing a player whom you recently made a peace or alliance treaty with is judged as bigger breach of trust than someone who backstabs you after several phases after the treaty. After all, all treaties will cease to exist at some point, and this is common knowledge among all players of Diplomacy due to the winning conditions of the game. As such we have reached a more fuzzy alternative, implying that treaties decays ($D$) over time [CITATION ]. The reason why exponential is more fitting than linear is the fact that it should never fully dissolve, as there is no time constraint expressed in the treaty. We now have a way to decrement someone's trust  more dynamically when they choose to defect a treaty, respecting the norms of the game where the severity of defecting decreases over time. In addition, we need a constant rate of increment ($\tau$) as long as treaties are upheld which is essential to ever build up trust with anyone.\
+
+For defecting a treaty: 
+$T'_p = T_p - \frac{D^{-t}} {10}$ \\
+\
+For maintaining a treaty: 
+$T'_p = T_p + (\tau \cdot t)$
+\\
+ \begin{center}
+\begin{tikzpicture}
+  \begin{axis}[ 
+  	width = 300,
+    height = 200,
+    xlabel= time $t$,
+    ylabel={Trust alteration $T'_p$},
+    xtick = {0,5,10,15},
+    ytick = {0.1},
+    xmin = 0,
+    ymin = 0,
+    xmax = 16,
+    ymax = 0.1,
+    domain = 0:15
+  ] 
+    \addplot {(1.1^(-x)/10};
+    \addplot {0.002*x};
+    \legend{Defect penalty (-), Treaty maintenance (+)};
+  \end{axis}
+\end{tikzpicture}
+\end{center}
+
+It is crucial to understand that the trust-value assigned to different players in our system is not an indicator of how reliable they are. A player could for example reject a peace proposal and reliably not attack you consistently. But due to our expectations of the norms of peace, we expect no player nor bot to have this behavior. As such, in our system we choose to implement 'trust' as a fitness for choosing whom we should ally ourselves with, in addition to guiding how paranoid we should be against every other power. Having peace with someone you do not trust should be possible, but internally the bot should be paranoid in regards to defending his borders. The justification for such a possibility is for the untrusted power to have a chance to redeem itself if it chooses to adopt a more cooperative strategy. Given the decay of treaties, we can safely assume that the closer they are to diminishing, the more paranoid we should be. To repeat the inital statement of this section regarding seeing every power we do not have any treaty with as hostile, we assign them all with a full level of paranoia ($P = 1$). Every treaty initializes with an paranoia equal to the relevant powers current trust. 
+
+  \[ P_p = \left\{ 
+  \begin{array}{l l}
+    1 - \Big( D^{-t} \cdot T_p \Big) & \quad \text{for $T > 0$} \\
+ 	1 & \quad \text{for $T = 0$}
+    
+  \end{array} \right.\]
+  
+  \begin{center}
+\begin{tikzpicture}
+  \begin{axis}[ 
+  	width = 300,
+    height = 200,
+    xlabel= time $t$,
+    ylabel={Paranoia $P_p$},
+    xtick = {0,5,10,15},
+    ytick = {1},
+    xmin = 0,
+    ymin = 0,
+    xmax = 15,
+    ymax = 1,
+    domain = 0:15
+  ] 
+    \addplot {1-((1.1^(-x))*(0.8))};
+
+  \end{axis}
+\end{tikzpicture}
+\end{center}
+
+
+Paranoia [0-1]  is a value attached to any power within an instance of a game which offers us the ability to predict whether or not we should expect them to defect. A procedure to reduce paranoia of any power we already have a treaty with is to re-iterate the initial proposal. In practice it is equivalent to ask our ally 'is our deal still on?'. To attend the issue regarding a deadlock of two fully righteous powers who never wishes to break a treaty, one will eventually ask if the deal is still on in which the other is at liberty to decline. As a result, this solution to breaking peace/alliance is possible without breaching any trust.
+
+
+Support obligations of alliances
+
+Within a conjoint alliance treaty together with power A, there lies an agreement to conduct both defensive and offensive support moves against power B. However, considering the fact that there can only be one winner of power B’s supply centers, the alliance can only be mutually beneficial if both parties divide the spoils of war. However, there might be possible moves towards gaining a supply center given the accessibility of one's own units if they were not requested somewhere else by our ally. If one would ignore how other players viewed us (righteousness of 0), it would be rational to reject this request. This, however, is not a fair deal for the other party, as it can be exploited if it mindlessly helps the other with supports without realizing the other does not reciprocate. A solution is needed which makes us sensitive to injustice in terms of our spoils and our ally's spoils.
+
+ In addition we also have a model of appropriate conduct if we would want to be righteous, implying that we would be permissible if the other party declined supporting us if we knew we were in debt - that is, knowing he has currently been supporting us more than he has received from us. But even if our personality is exploitive, we should also recognize those powers who are vulnerable to be exploited, namely altruists.
+
+The function essentially captures the underlying obligation for allies to reciprocate support-moves. If a power asks for support all the time without reciprocating, its trust will decrement per support they reject when they owe us support. Given the fact that trust-values are altered online, the support-favor is stored as an attachment for every power per game.
+
+An indirect consequence of this leaves exploiting players to be forced to team up with a high paranoia, which is a severe disadvantage compared to the cooperative players.
+
+As we have now covered the trust mechanics, the remaining personality factor is that of trust initialization for new players our bot meets. A value of 0 implies that its fully cautious at the start of treaties, whereas 10 implies full naivety of opponents exploitative capabilities. 
+
+A summary of trust increments and decrements for each treaty per phase:
+
+Incrementation:
++ For every phase a treaty is maintained 
++ If you get support from an ally you consider altruistic
+
+Decrementation: 
+- Defect in upholding a treaty (backstab)
+- If you get a rejection in your support proposal from an ally which you deem exploitive.
+
+
+\
+\
+
+
+supIntolerance = $S$ 0.0005\\
+time = $t$ \\
+$D$ = 1.1 \\
+$\tau$ = 0.002\\
+
+
+
+
+  \[ T'_p = T_p + \left\{ 
+  \begin{array}{l l}
+    (S \cdot \sigma_p)^2 & \quad \text{if $\sigma_p > 0$ \& ACCEPT}\\
+    -(S \cdot \sigma_p)^2 & \quad \text{if $\sigma_p < 0$ \& REJECT}\\
+    \text{0} & \quad \text{if ($\sigma_p \le 0$ \& ACCEPT) or ($\sigma_p \geq 0$ \& REJECT)}
+    
+  \end{array} \right.\]
+  \\
+  
+ \begin{center}
+\begin{tikzpicture}
+  \begin{axis}[ 
+  	width = 300,
+    height = 200,
+  	axis x line = middle,
+    axis y line = middle,
+    xlabel= supFavor $\sigma$,
+    ylabel={Trust alteration $T'$},
+    xtick = {-15,-10,-5,0,5,10,15},
+    ytick = {-0.1,0,0.1},
+    xmin = -15,
+    ymin = -0.1,
+    xmax = 15,
+    ymax = 0.1,
+    domain = -15:15
+  ] 
+    \addplot [blue] [line width=2pt] {(x/abs(x))*((0.0005*x^2)};
+  \end{axis}
+\end{tikzpicture}
+\end{center}
 
 \section{Gain system}
+
 
 In order for our AI to know where it should move it's units to, we make use of a gain system. For every province we calculate a gain value. This value signifies the importance of this province based on a variety of properties and heuristics. We weigh this gain with factors such as likeliness to succeed and whether we defect allies by moving to this province. 
 
