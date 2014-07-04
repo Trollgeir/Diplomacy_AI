@@ -429,58 +429,72 @@ public class DodoAI extends AI {
 			}
 		}*/
 		
-		// initiate negotiations (should be moved to negotiator)
-		java.util.LinkedHashMap<Power, Power> alliances = Heuristics.PreferredAlliances(power, map.getStandard(), map);
-		
-		int numberofAlliances = 0;
-		ArrayList <Power> possibleAllies = new ArrayList<>();
-		ArrayList <Power> possibleEnemies = new ArrayList<>();
-		for (Entry<Power, Power> entry : alliances.entrySet()) {
-			boolean exactAlliance = false;
-			boolean alliance = false;
-			Power with = entry.getKey();
-			Power against = entry.getValue();
-			for (AllianceInfo info : belief.allianceInfo) {
-				if (info.with.equals(with)) {
-					alliance = true;
-					if (info.against.contains(against)) {
-						exactAlliance = true;
+		// initiate negotiations (only in spring atm) (should be moved to negotiator)
+		if (map.getPhase() == Phase.SPR) {
+			java.util.LinkedHashMap<Power, Power> alliances = Heuristics.PreferredAlliances(power, map.getStandard(), map);
+			
+			int numberofAlliances = 0;
+			ArrayList <Power> possibleAllies = new ArrayList<>();
+			ArrayList <Power> possibleEnemies = new ArrayList<>();
+			for (Entry<Power, Power> entry : alliances.entrySet()) {
+				boolean exactAlliance = false;
+				boolean alliance = false;
+				Power with = entry.getKey();
+				Power against = entry.getValue();
+				for (AllianceInfo info : belief.allianceInfo) {
+					if (info.with.equals(with)) {
+						alliance = true;
+						if (info.against.contains(against)) {
+							exactAlliance = true;
+						}
 					}
 				}
-			}
-			if (alliance) {
-				numberofAlliances++;
-			}
-			
-			if (!exactAlliance && numberofAlliances < 3 && belief.powerInfo.get(with).trust > 0.2 && !possibleAllies.contains(against) && !possibleEnemies.contains(with) && !negotiator.backstabbers.contains(with) && with.alive && against.alive) {
-				negotiator.initiateAlliance(with, against);
-				System.out.println("Initiating alliance with "+with.daide()+" against "+against.daide());
-				if (!alliance)
+				if (alliance) {
 					numberofAlliances++;
-				possibleAllies.add(with);
-				possibleEnemies.add(against);
-			} else if (!alliance && !belief.powerInfo.get(with).peace && !possibleAllies.contains(against) && !possibleEnemies.contains(with) && with.alive && against.alive) {
-				negotiator.initiatePeace(with);
-			} 
+				}
+				
+				if (!exactAlliance && numberofAlliances < 3 && belief.powerInfo.get(with).trust > 0.2 && !possibleAllies.contains(against) && !possibleEnemies.contains(with) && !negotiator.backstabbers.contains(with) && with.alive && against.alive) {
+					negotiator.initiateAlliance(with, against);
+					System.out.println("Initiating alliance with "+with.daide()+" against "+against.daide());
+					if (!alliance)
+						numberofAlliances++;
+					possibleAllies.add(with);
+					possibleEnemies.add(against);
+				} else if (!alliance && !belief.powerInfo.get(with).peace && !possibleAllies.contains(against) && !possibleEnemies.contains(with) && with.alive && against.alive) {
+					negotiator.initiatePeace(with);
+				} 
+				
+			}
 			
 		}
 		
 		// clean up alliances (also should probably be in negotiator)
-		for (AllianceInfo info : belief.allianceInfo) {
-			if (!info.with.alive) {
-				belief.deleteAllAlliancesWith(info.with);
-			} else {
-				boolean targetisAlive = false;;
-				for (Power enemy : info.against) {
-					if (enemy.alive) 
-						targetisAlive = true;
-				}
-				if (!targetisAlive) {
-					alliances.remove(info);
+		ArrayList<AllianceInfo> removeAlliances = new ArrayList<>();
+		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
+			for (AllianceInfo info : belief.allianceInfo) {
+				System.out.println("cleaning up alliances...");
+				if (!info.with.alive) {
+					System.out.println("Oh no! " + info.with.getName() + " is dead! prepare to remove alliance...");
+					removeAlliances.add(info);
+				} else if (info.with.alive){
+					System.out.println("Checking if targets of alliance are alive...");
+					boolean targetisAlive = false;
+					for (Power enemy : info.against) {
+						if (enemy.alive) {
+							targetisAlive = true;
+						} 
+					}
+					if (!targetisAlive) {
+						System.out.println("target is dead, prepare to remove alliance ");
+						removeAlliances.add(info);
+					}
 				}
 			}
 		}
-		
+		for (AllianceInfo info : removeAlliances) {
+			System.out.println("removing alliance with: " + info.with.getName());
+			belief.allianceInfo.remove(info);
+		}
 		
 		
 		if (map.getPhase() == Phase.SPR || map.getPhase() == Phase.FAL) {
