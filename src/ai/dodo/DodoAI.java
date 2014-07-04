@@ -34,7 +34,7 @@ public class DodoAI extends AI {
 /* This AI is called Dodo as it has no natural enemies. Also, naive. */
 	
 	public double initialTrust = 0.5;
-	public double trustPeaceThreshold = 0.5; //The minimum trust necessary for the AI to accept a peace offer
+	public double trustPeaceThreshold = 0.0; //The minimum trust necessary for the AI to accept a peace offer (set to 0.0, so it accepts everything right now)
 	public double decay = 1.1;
 	public double righteousness = 0.05;
 	public double supIntolerance = 0.05;
