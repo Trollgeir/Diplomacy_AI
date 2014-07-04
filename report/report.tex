@@ -63,9 +63,10 @@ $$T'_p = T_p - \frac{D^{-t}} {10}$$ \\
 $$T'_p = T_p + (\tau \cdot t)$$
 \end{description}
 
-The reason why exponential is more fitting than linear is the fact that it should never fully dissolve, as there is no time constraint expressed in the treaty. We now have a way to decrement someone's trust in line with the norms when they choose to defect a treaty, where the severity of defecting decreases over time. In addition to counter-balance the decrements, we need a constant rate of increment ($\tau$) as long as treaties are upheld which is essential to ever build up trust with anyone. The example below uses $\tau = 0.002$ and $D = 1.1$.
+The reason why exponential is more fitting than linear is the fact that it should never fully dissolve, as there is no time constraint expressed in the treaty. We now have a way to decrement someone's trust in line with the norms when they choose to defect a treaty, where the severity of defecting decreases over time. In addition to counter-balance the decrements, we need a constant rate of increment ($\tau$) as long as treaties are upheld which is essential to ever build up trust with anyone. The example in \autoref{fig:graph1} uses $\tau = 0.002$ and $D = 1.1$.
 
-\begin{center}
+\begin{figure}[H]
+\centering
 \begin{tikzpicture}
   \begin{axis}[ 
   	width = 300,
@@ -85,7 +86,9 @@ The reason why exponential is more fitting than linear is the fact that it shoul
     \legend{Defect penalty (-), Treaty maintenance (+)};
   \end{axis}
 \end{tikzpicture}
-\end{center}
+\caption{This is a graph}
+\label{fig:graph1}
+\end{figure}
 
 It is crucial to understand that the trust-value assigned to different players in our system is not an indicator of how reliable they are. A player could for example reject a peace proposal and reliably not attack you consistently. But due to our expectations of the norms of peace, we expect no player nor bot to have this behavior. As such, in our system we choose to implement 'trust' as a fitness for choosing whom we should ally ourselves with, in addition to guiding how paranoid we should be against every other power. Having peace with someone you do not trust should be possible, but internally the bot should be paranoid in regards to defending his borders. The justification for such a possibility is for the untrusted power to have a chance to redeem itself if it chooses to adopt a more cooperative strategy. Given the decay of treaties, we can safely assume that the closer they are to diminishing, the more paranoid we should be. To repeat the inital statement of this section regarding seeing every power we do not have any treaty with as hostile, we assign them all with a full level of paranoia ($P = 1$). Every treaty initializes with an paranoia equal to the relevant powers current trust. 
 
@@ -97,8 +100,8 @@ It is crucial to understand that the trust-value assigned to different players i
  	1 & \quad \text{for $T = 0$}
     
   \end{array} \right.\]
-  
-  \begin{center}
+\begin{figure}[H]
+\centering
 \begin{tikzpicture}
   \begin{axis}[ 
   	width = 300,
@@ -117,7 +120,9 @@ It is crucial to understand that the trust-value assigned to different players i
 
   \end{axis}
 \end{tikzpicture}
-\end{center}
+\caption{This is also a graph}
+\label{fig:graph2}
+\end{figure}
 
 
 Paranoia [0-1]  is a value attached to any power within an instance of a game which offers us the ability to predict whether or not we should expect them to defect. A procedure to reduce paranoia of any power we already have a treaty with is to re-iterate the initial proposal. In practice it is equivalent to ask our ally 'is our deal still on?'. To attend the issue regarding a deadlock of two fully righteous powers who never wishes to break a treaty, one will eventually ask if the deal is still on in which the other is at liberty to decline. As a result, this solution to breaking peace/alliance is possible without breaching any trust.
@@ -140,8 +145,8 @@ The function essentially captures the underlying obligation for allies to recipr
     
   \end{array} \right.\]
   \\
-  
- \begin{center}
+\begin{figure}[H]
+\centering
 \begin{tikzpicture}
   \begin{axis}[ 
   	width = 300,
@@ -161,7 +166,9 @@ The function essentially captures the underlying obligation for allies to recipr
     \addplot [blue] [line width=2pt] {(x/abs(x))*((0.0005*x^2)};
   \end{axis}
 \end{tikzpicture}
-\end{center}
+\caption{And this is a third graph}
+\label{fig:graph3}
+\end{figure}
 
 An indirect consequence of this leaves exploiting players to be forced to team up with a high paranoia, which is a severe disadvantage compared to the cooperative players.
 
