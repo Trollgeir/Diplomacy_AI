@@ -313,7 +313,11 @@ In \autoref{table:gains} we present the values selected for the various gain var
 We started with simple choosing some value for $g_{supply}$. Following \autoref{sec:supplygain} we chose a slighty higher value for $g_{home}$, much low values for $g_{ourSupply}$ and $g_{ourHome}$ and a much higher value for $g_{takenHome}$. The rest of the values were set and all values were tweaked by trial and error (e.g. watching the bot play and try to reduce dumb moves to a gain). Automatic learning on these values might be possible but would be very hard, as it is difficult to determine whether a change is succesful or not. Also these gains might differ a lot for playing a diffent power and depend on alliances and such. Instead we believe that implementing more heuristics is the key. 
 
 \section{Implementation}
-For our implementation we used DAIDE, the Diplomacy AI Development Environment. It provides an environment where new AI’s can be created and compete against each other. DAIDE provides the syntax of all the communication with the server, the communication protocols and the server itself. This way we only have to focus on the AI itself. 
+For our implementation we used DAIDE, the Diplomacy AI Development Environment:
+\begin{sloppypar}
+\noindent\url{https://sites.google.com/site/diplomacyai/home/daide}
+\end{sloppypar}
+It provides an environment where new AI’s can be created and compete against each other. DAIDE provides the syntax of all the communication with the server, the communication protocols and the server itself. This way we only have to focus on the AI itself. 
 There are several AI’s available for DAIDE to compete against, as well as a  so called AImapper to visualize the action. Communication with the server is done through simple TCP/IP connections, this way it is possible to create a bot using any language, as long as you can handle TCP/IP. 
 For our own specific implementation we build upon the ‘Diplominator’, which is a very simple AI that we stripped of almost everything except the communication functions. There are other frameworks available that also provides functions to parse the DAIDE syntax but since we wanted more control and a way to learn the syntax we created our own parsers. As for programming language we settled for Java, mostly because we needed a cross-platform language because some of our group use Linux. 
 
