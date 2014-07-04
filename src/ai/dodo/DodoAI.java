@@ -464,11 +464,6 @@ public class DodoAI extends AI {
 					negotiator.initiatePeace(with);
 				} 
 				
-				// clean up peace (easier here since you iterate over all other powers)
-				if (belief.powerInfo.get(with).peace && !with.alive) {
-					belief.powerInfo.get(with).peace = false;
-				}
-				
 			}
 			
 		}
