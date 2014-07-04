@@ -130,9 +130,9 @@ Paranoia [0-1]  is a value attached to any power within an instance of a game wh
 
 \subsection{Support obligations of alliances}
 
-Within a conjoint alliance treaty together with power A, there lies an agreement to conduct both defensive and offensive support moves against power B. However, considering the fact that there can only be one winner of power B’s supply centers, the alliance can only be mutually beneficial if both parties divide the spoils of war. However, there might be possible moves towards gaining a supply center given the accessibility of one's own units if they were not requested somewhere else by our ally. If one would ignore how other players viewed us (righteousness of 0), it would be rational to reject this request. This, however, is not a fair deal for the other party, as it can be exploited if it mindlessly helps the other with supports without realizing the other does not reciprocate. A solution is needed which makes us sensitive to injustice in terms of our spoils and our ally's spoils.
+Within a conjoint alliance treaty together with power A, there lies an agreement to conduct both defensive and offensive support moves against power B. However, considering the fact that there can only be one winner of power B’s supply centers, the alliance can only be mutually beneficial if both parties divide the spoils of war. However, there might be possible moves towards gaining a supply center given the accessibility of one's own units if they were not requested somewhere else by our ally. If one would ignore how other players viewed us ($R$= 0), it would be rational to reject this request. This is not a fair deal for the other party as it can be exploited. A solution is needed which makes us sensitive to injustice in terms of our spoils and our ally's spoils.
 
- In addition we also have a model of appropriate conduct if we would want to be righteous, implying that we would be permissible if the other party declined supporting us if we knew we were in debt - that is, knowing he has currently been supporting us more than he has received from us. But even if our personality is exploitive, we should also recognize those powers who are vulnerable to be exploited, namely altruists.
+ In addition we also want a model of appropriate conduct if we would want to be righteous, implying that we would be permissible if the other party declined supporting us if we knew we were in debt - that is, knowing he has currently been supporting us more than he has received from us. But even if our personality is unrighteous, we should also recognize those powers who are vulnerable to be exploited, namely altruists.
 
 The function essentially captures the underlying obligation for allies to reciprocate support-moves. If a power asks for support all the time without reciprocating, its trust will decrement per support they REJECT when they owe us support. Although, whenever they  ACCEPT our request while we still owe them, we increment their trust on the basis of them being altruistic. Given the fact that trust-values are altered online, the support-favor $\sigma$ is stored as an attachment for every power per game. $\sigma > 0 $ implies you owe them supports, while $\sigma < 0$ implies they owe you. In addition, we have a variable for how intolerant we should be for deviation of reciprocity equilibria ($\sigma$ = 0), defined as $S$.\\
 
@@ -170,9 +170,11 @@ The function essentially captures the underlying obligation for allies to recipr
 \label{fig:graph3}
 \end{figure}
 
-An indirect consequence of this leaves exploiting players to be forced to team up with a high paranoia, which is a severe disadvantage compared to the cooperative players.
-
 \subsection{Trust summary}
+
+A consequence of the trust mechanics should leave exploiting players to be the least favorable alliance partners. This puts them at a severe disadvantage, as the remaining powers available for alliances most likely have a low trust value themselves. If two exploiting powers would team up, they would  both be forced to spend resources to defend against each other instead of opimizing an assault on their common enemy.
+
+Cooperative players with a high righteousness will prefer each other as allies, without the disposition of a high paranoia. Their mutual trust boosts their utility.
 \
 As we have now covered the trust mechanics, the remaining personality factor is that of trust initialization for new players our bot meets. A value of 0 implies that its fully cautious at the start of treaties, whereas 1 implies full naivety of opponents exploitative capabilities. Below is a brief overview of events in the game which alters trust of other powers.\\
 \
