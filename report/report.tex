@@ -63,7 +63,9 @@ Following this rule, our own home supply centers are also very important. As wit
 
 Without defending the supply centers we already control, they will just as easy be taken back from us. The defend gain is therefore given to supply centers we control and are under threat. In order to do this we first have to quantify threat. We calculate the threat by a weighted sum of the first and second order enemies from the same power (e.g. the enemies one tile away and the enemies two tiles away respectively). 
 
-$$threat = max_{threat_j}\{ threat_j : C_1 \sum_{i} e^{1}_{ij} + C_2 \sum_{i} e^{2}_{ij}\}$$
+$$threat = max_{threat}\{ threat : C_1 \sum_{i} e^{1}_{ij} + C_2 \sum_{i} e^{2}_{ij}\}$$
+
+Where $e^1_{ij}$ and $e^2_{ij}$ are the ith respectively first and second order enemy units of power j. The treat is then the maximum threat of the threat each power. This assumes that the enemies will not cooporate, but the system can be easily adjusted to account for this as well (However, we would first need some assumptions on  alliances in the belief base). 
 
 We have chosen to give the supply center a defend gain $g_{defend}$ if $threat > \varepsilon_{threat}$. As we belief that defending home supply centers is more important these get a different gain $g_{defendHome}$. 
 
@@ -75,11 +77,20 @@ Another thing we also witnessed by watching our AI play is that very often units
 Another issue solved by this, is that very often the last living unit of a power is left unattended and sometimes even regains considerable power. 
 
 \subsection{Smoothing gains}
+Provinces adjacent to provinces with a high gain are inherently important. This is because moving to that province brings us closer to the high gain province. Therefore it is important to apply some kind of smoothing to the gains, in order to reflect this importance of adjacent provinces. We have experimented with various smoothing methods and kernels and eventually settled with: 
+
+$$g_{smoothed} = max(g_{base}, C_{s} max_{g}\{g : g^1_i\})$$
+
+Basicly the smoothed gain is the maximum gain of all first order neighbours gains $g^1_i$, weighed with a constant $C_s$. In the case that the province already has a gain higher than this we will use the orignal base gain $g_{base}$. 
+
+Due to smoothing the differences of gains between provinces decreases. In order to account for this we square all gains after the smoothing. 
 
 
-\subsubsection{Gain values}
 
-We chose this gain because blablabla. This one should then be higher because bla. Therefore bla. Blip bloop blababliebloopie. 
+\subsection{Gain values}
+
+
+
 
 \begin{figure}[H]
 \centering
